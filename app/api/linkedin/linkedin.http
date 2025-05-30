@@ -1,0 +1,8 @@
+@URL=http://localhost:3000
+
+###
+GET {{URL}}/api/linkedin/profile?profileUrl=https://linkedin.com/in/moeezali2375
+
+###
+GET {{URL}}/api/linkedin/job?keywords=golang&locationId=92000000&datePosted=anyTime&sort=mostRelevant
+
