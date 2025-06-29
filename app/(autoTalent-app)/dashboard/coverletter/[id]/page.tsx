@@ -3,16 +3,38 @@
 
 import { FC, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase/client";
-import { useParams } from "next/navigation"; // Correct way to get dynamic parameters
+import { useParams, useRouter } from "next/navigation"; // Correct way to get dynamic parameters
 import { jsPDF } from "jspdf";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { 
+  FileText, 
+  Save, 
+  Download, 
+  ArrowLeft, 
+  Eye, 
+  Edit3, 
+  CheckCircle, 
+  AlertCircle,
+  Loader2,
+  Sparkles
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 const EditCoverLetterPage: FC = () => {
   const { id } = useParams(); // Get the dynamic 'id' from params
+  const router = useRouter();
 
   const [coverLetter, setCoverLetter] = useState({ title: "", context: "" });
   const [editedContent, setEditedContent] = useState("");
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasChanges, setHasChanges] = useState(false);
 
   // Only fetch the cover letter once `id` is available
   useEffect(() => {
@@ -20,6 +42,11 @@ const EditCoverLetterPage: FC = () => {
       fetchCoverLetter();
     }
   }, [id]); // Add id as dependency
+
+  // Track changes
+  useEffect(() => {
+    setHasChanges(editedContent !== coverLetter.context);
+  }, [editedContent, coverLetter.context]);
 
   const fetchCoverLetter = async () => {
     setLoading(true);
@@ -42,6 +69,7 @@ const EditCoverLetterPage: FC = () => {
   };
 
   const handleSave = async () => {
+    setSaving(true);
     const { error } = await supabase
       .from("cover_letters")
       .update({ context: editedContent })
@@ -49,10 +77,19 @@ const EditCoverLetterPage: FC = () => {
 
     if (error) {
       console.error("Error saving cover letter:", error.message);
-      alert("Error saving cover letter. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to save cover letter. Please try again.",
+        variant: "destructive",
+      });
     } else {
-      alert("Cover letter saved!");
+      toast({
+        title: "Success",
+        description: "Cover letter saved successfully!",
+      });
+      setHasChanges(false);
     }
+    setSaving(false);
   };
 
   const handleDownloadPDF = () => {
@@ -65,7 +102,7 @@ const EditCoverLetterPage: FC = () => {
     const maxWidth = pageWidth - margin * 2;
   
     // Draw a colored header background
-    doc.setFillColor(63, 81, 181); // Indigo 500
+    doc.setFillColor(91, 105, 73); // #5b6949
     doc.rect(0, 0, pageWidth, 30, 'F');
   
     // Title styling
@@ -90,64 +127,210 @@ const EditCoverLetterPage: FC = () => {
     doc.line(margin, pageHeight - 20, pageWidth - margin, pageHeight - 20);
     doc.setFontSize(10);
     doc.setTextColor(120);
-    // doc.text('Generated with love ❤️ using jsPDF', margin, pageHeight - 10);
   
     // Save the PDF
     doc.save(`${coverLetter.title}.pdf`);
+    
+    toast({
+      title: "Downloaded",
+      description: "Cover letter downloaded as PDF successfully!",
+    });
   };
   
-  // Loading or error state handling
-  if (!id) return <p>Loading...</p>;
-  if (loading) return <p>Loading cover letter...</p>;
-  if (error) return <p>Error: {error}</p>;
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-gray-50 flex items-center justify-center">
+        <Card className="p-8 bg-white/80 backdrop-blur-xl border-white/40 shadow-2xl">
+          <div className="flex items-center gap-4">
+            <Loader2 className="w-6 h-6 text-[#5b6949] animate-spin" />
+            <span className="text-zinc-600">Loading cover letter...</span>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-gray-50 flex items-center justify-center">
+        <Card className="p-8 bg-white/80 backdrop-blur-xl border-white/40 shadow-2xl max-w-md">
+          <div className="text-center space-y-4">
+            <div className="p-3 rounded-full bg-red-100 mx-auto w-fit">
+              <AlertCircle className="w-8 h-8 text-red-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-zinc-900 mb-2">Error Loading Cover Letter</h2>
+              <p className="text-zinc-600 text-sm">{error}</p>
+            </div>
+            <Button
+              onClick={() => router.back()}
+              variant="outline"
+              className="w-full"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Go Back
+            </Button>
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto p-6 flex space-x-8">
-      <div className="w-1/2">
-        <h1 className="text-2xl font-semibold mb-4">Edit Cover Letter</h1>
-        <form>
-          <div className="mb-4">
-            <label className="block text-sm font-semibold">Title</label>
-            <input
-              type="text"
-              value={coverLetter.title}
-              readOnly
-              className="w-full p-2 border border-gray-300 rounded"
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-semibold">Content</label>
-            <textarea
-              value={editedContent}
-              onChange={(e) => setEditedContent(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
-              rows={10}
-            />
-          </div>
-          <div className="space-x-4">
-            <button
-              type="button"
-              onClick={handleSave}
-              className="px-4 py-2 bg-blue-600 text-white rounded"
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-gray-50">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="p-2 hover:bg-zinc-100/80"
             >
-              Save
-            </button>
-            <button
-              type="button"
-              onClick={handleDownloadPDF}
-              className="px-4 py-2 bg-green-600 text-white rounded"
-            >
-              Download as PDF
-            </button>
+              <ArrowLeft className="w-5 h-5 text-zinc-600" />
+            </Button>
+            <div className="flex items-center gap-3">
+              <div className={cn(
+                "p-2 rounded-lg transition-all duration-300",
+                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80",
+                "border border-zinc-200/60"
+              )}>
+                <FileText className="w-5 h-5 text-[#5b6949]" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-semibold text-zinc-900">Edit Cover Letter</h1>
+                <p className="text-sm text-zinc-600">Make changes and preview in real-time</p>
+              </div>
+            </div>
           </div>
-        </form>
-      </div>
 
-      <div className="w-1/2 border-l border-gray-300 pl-6">
-        <h2 className="text-xl font-semibold mb-4">Live Preview</h2>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-semibold">{coverLetter.title}</h3>
-          <p className="text-sm text-gray-600 mt-2">{editedContent}</p>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-3">
+            {hasChanges && (
+              <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
+                <AlertCircle className="w-4 h-4" />
+                <span>Unsaved changes</span>
+              </div>
+            )}
+            <Button
+              onClick={handleSave}
+              disabled={!hasChanges || saving}
+              className={cn(
+                "text-white shadow-lg hover:shadow-xl transition-all duration-500",
+                "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80",
+                "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
+                "group"
+              )}
+            >
+              {saving ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4 mr-2" />
+              )}
+              {saving ? "Saving..." : "Save Changes"}
+            </Button>
+            <Button
+              onClick={handleDownloadPDF}
+              variant="outline"
+              className="border-zinc-200 text-zinc-600 hover:bg-zinc-50"
+            >
+              <Download className="w-4 h-4 mr-2" />
+              Download PDF
+            </Button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[calc(100vh-280px)] min-h-[600px]">
+          {/* Editor Panel */}
+          <Card className="p-6 bg-white/80 backdrop-blur-sm border-white/40 shadow-xl flex flex-col h-full">
+            <div className="space-y-6 flex-1 overflow-y-auto">
+              {/* Title */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-zinc-700 flex items-center gap-2">
+                  <Edit3 className="w-4 h-4" />
+                  Cover Letter Title
+                </Label>
+                <Input
+                  type="text"
+                  value={coverLetter.title}
+                  readOnly
+                  className="bg-zinc-50/50 border-zinc-200 text-zinc-600"
+                />
+              </div>
+
+              {/* Content Editor */}
+              <div className="space-y-2 flex-1">
+                <Label className="text-sm font-medium text-zinc-700 flex items-center gap-2">
+                  <FileText className="w-4 h-4" />
+                  Content
+                </Label>
+                <Textarea
+                  value={editedContent}
+                  onChange={(e) => setEditedContent(e.target.value)}
+                  className={cn(
+                    "min-h-[300px] resize-none transition-all duration-200",
+                    "border-zinc-200 focus:border-[#5b6949]",
+                    "focus:ring-2 focus:ring-[#5b6949]/20",
+                    "bg-white/60 backdrop-blur-sm"
+                  )}
+                  placeholder="Edit your cover letter content here..."
+                />
+              </div>
+
+              {/* Character Count */}
+              <div className="flex justify-between items-center text-xs text-zinc-500 pt-4 border-t border-zinc-100">
+                <span>{editedContent.length} characters</span>
+                <span>{Math.ceil(editedContent.length / 5)} words</span>
+              </div>
+            </div>
+          </Card>
+
+          {/* Preview Panel */}
+          <Card className="p-6 bg-white/80 backdrop-blur-sm border-white/40 shadow-xl flex flex-col h-full max-h-[780px]">
+            <div className="space-y-4 flex-1 overflow-y-auto">
+              <div className="flex items-center gap-2 mb-4">
+                <Eye className="w-5 h-5 text-[#5b6949]" />
+                <h2 className="text-lg font-semibold text-zinc-900">Live Preview</h2>
+                <div className="ml-auto">
+                  <div className="flex items-center gap-1 text-xs text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">
+                    <Sparkles className="w-3 h-3" />
+                    <span>Real-time</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview Content */}
+              <div className="bg-white p-6 rounded-lg border border-zinc-200 shadow-sm flex-1 overflow-y-auto min-h-[300px]">
+                <h3 className="text-xl font-semibold text-zinc-900 mb-4 border-b border-zinc-200 pb-2">
+                  {coverLetter.title}
+                </h3>
+                <div className="prose prose-sm max-w-none max-h-[500px] overflow-y-auto">
+                  <div className="whitespace-pre-wrap text-zinc-700 leading-relaxed">
+                    {editedContent || (
+                      <span className="text-zinc-400 italic">
+                        Start typing to see your cover letter preview here...
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Preview Stats */}
+              <div className="flex items-center justify-between text-xs text-zinc-500 bg-zinc-50 p-3 rounded-lg border-t border-zinc-100">
+                <div className="flex items-center gap-4">
+                  <span>📄 {Math.ceil(editedContent.length / 500)} pages</span>
+                  <span>⏱️ {Math.ceil(editedContent.length / 200)} min read</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-3 h-3 text-green-500" />
+                  <span>Preview updated</span>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

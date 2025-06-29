@@ -70,8 +70,8 @@ export const EducationForm = memo(function EducationFormComponent({
             variant="outline" 
             className={cn(
               "flex-1 h-9 min-w-[120px]",
-              "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#38b6ff]/5",
-              "hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#38b6ff]/10",
+              "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5",
+              "hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#5b6949]/10",
               "border-2 border-dashed border-indigo-500/30 hover:border-indigo-500/40",
               "text-indigo-700 hover:text-indigo-800",
               "transition-all duration-300",
@@ -91,8 +91,8 @@ export const EducationForm = memo(function EducationFormComponent({
             buttonClassName={cn(
               "flex-1 mb-0 h-9 min-w-[120px]",
               "whitespace-nowrap text-[11px] @[300px]:text-sm",
-              "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#38b6ff]/5",
-              "hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#38b6ff]/10",
+              "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5",
+              "hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#5b6949]/10",
               "border-2 border-dashed border-indigo-500/30 hover:border-indigo-500/40",
               "text-indigo-700 hover:text-indigo-800"
             )}
@@ -105,7 +105,7 @@ export const EducationForm = memo(function EducationFormComponent({
           key={index} 
           className={cn(
             "relative group transition-all duration-300",
-            "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#38b6ff]/5",
+            "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5",
             "backdrop-blur-md border-2 border-indigo-500/30",
             "shadow-sm"
           )}

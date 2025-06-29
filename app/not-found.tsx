@@ -43,7 +43,7 @@ export default function UnderConstruction() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="mt-6 text-white bg-[#38b6ff] px-6 py-3 font-semibold rounded-lg shadow-lg hover:bg-blue-500"
+            className="mt-6 text-white bg-[#5b6949] px-6 py-3 font-semibold rounded-lg shadow-lg hover:bg-[#5b6949]/90"
           >
             Go to Dashboard
           </motion.button>

@@ -5,6 +5,11 @@ import { supabase } from "@/lib/supabase/client";
 import CoverLetterFormModal from "@/components/cover-letter/CoverLetterFormModal";
 import EmailCard from "@/components/emails/emails-card";
 import { useLoading } from "@/context/LoadingContext";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Mail, Plus, Sparkles, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
 interface Email {
   id: string;
   title: string;
@@ -18,27 +23,25 @@ const CoverLettersPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { setIsLoading } = useLoading();
+
   const fetchEmails = async () => {
     const { data, error } = await supabase.from("email_hr").select("*");
     console.log("Fetched Emails:", data, error);
 
     if (error) {
-      setError("Failed to fetch cover letters");
+      setError("Failed to fetch emails");
     } else {
       const parsedData = data.map((email: any) => {
-        let parsedContent = { content: "" };
-        try {
-          parsedContent =email.content;
-        } catch (e) {
-          console.error("Failed to parse content:", e);
-        }
-
+        // The content is already a string, no need for complex parsing
         return {
-          ...email,
-          parsedBody: parsedContent.content,
+          id: email.id,
+          title: email.title,
+          subject: email.subject,
+          content: email.content || "",
         };
       });
 
+      console.log("Parsed Emails:", parsedData);
       setEmails(parsedData as Email[]);
     }
   };
@@ -77,9 +80,6 @@ const CoverLettersPage = () => {
       const result = await response.json();
 
       console.log("API Response:", result);
-      //   if (!response.ok || !result.body || !result.subject) {
-      //     throw new Error(result.error || "Failed to generate email");
-      //   }
 
       const { subject, content } = result;
       const { error: insertError } = await supabase.from("email_hr").insert({
@@ -106,37 +106,156 @@ const CoverLettersPage = () => {
     }
   };
 
+  // Empty State Component
+  const EmptyState = () => (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] py-12">
+      <Card className="max-w-md w-full p-8 bg-white/80 backdrop-blur-xl border-white/40 shadow-2xl">
+        <div className="text-center space-y-6">
+          {/* Icon */}
+          <div className="relative">
+            <div className={cn(
+              "p-4 rounded-2xl transition-all duration-300",
+              "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
+            )}>
+              <Mail className="w-12 h-12 text-[#5b6949] mx-auto" />
+            </div>
+            <div className="absolute -top-2 -right-2">
+              <div className="p-2 rounded-full bg-[#5b6949]/10 border border-[#5b6949]/20">
+                <Sparkles className="w-4 h-4 text-[#5b6949]" />
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="space-y-3">
+            <h2 className="text-2xl font-semibold text-zinc-900">
+              No Follow-up Emails Yet
+            </h2>
+            <p className="text-zinc-600 text-sm leading-relaxed">
+              Create your first professional follow-up email to HR. Stand out from the crowd and increase your chances of getting that interview.
+            </p>
+          </div>
+
+          {/* Benefits */}
+          <div className="space-y-2 text-left">
+            <div className="flex items-center gap-3 text-sm text-zinc-600">
+              <div className="w-2 h-2 rounded-full bg-[#5b6949]" />
+              <span>Professional and personalized content</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-zinc-600">
+              <div className="w-2 h-2 rounded-full bg-[#5b6949]" />
+              <span>AI-powered tone optimization</span>
+            </div>
+            <div className="flex items-center gap-3 text-sm text-zinc-600">
+              <div className="w-2 h-2 rounded-full bg-[#5b6949]" />
+              <span>Save and manage all your emails</span>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            disabled={loading}
+            className={cn(
+              "w-full text-white shadow-lg hover:shadow-xl transition-all duration-500",
+              "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80",
+              "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
+              "group"
+            )}
+          >
+            <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+            {loading ? "Creating..." : "Create Your First Email"}
+            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+          </Button>
+        </div>
+      </Card>
+    </div>
+  );
+
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <h1 className="text-3xl font-semibold mb-6">Emails To HR</h1>
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-gray-50">
+      <div className="container mx-auto p-6 space-y-8">
+        {/* Header Section */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className={cn(
+              "p-3 rounded-xl transition-all duration-300",
+              "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
+            )}>
+              <Mail className="w-6 h-6 text-[#5b6949]" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-semibold text-zinc-900">
+                Follow-up Emails
+              </h1>
+              <p className="text-zinc-600 text-sm mt-1">
+                Professional emails to HR that get you noticed
+              </p>
+            </div>
+          </div>
 
-      {error && (
-        <div className="bg-red-100 text-red-700 px-4 py-2 rounded">{error}</div>
-      )}
+          {/* Action Button */}
+          <div className="flex justify-between items-center">
+            <Button
+              onClick={() => setIsModalOpen(true)}
+              disabled={loading}
+              className={cn(
+                "text-white shadow-lg hover:shadow-xl transition-all duration-500",
+                "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80",
+                "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
+                "group"
+              )}
+            >
+              <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
+              {loading ? "Creating..." : "New Follow-up Email"}
+            </Button>
 
-      <button
-        onClick={() => setIsModalOpen(true)}
-        className="px-4 py-2 bg-[#38b6ff]  hover:bg-blue-500 text-white rounded-lg mb-4"
-        disabled={loading}
-      >
-        {loading ? "Generating..." : "New Email To HR"}
-      </button>
+            {emails.length > 0 && (
+              <div className="text-sm text-zinc-500">
+                {emails.length} email{emails.length !== 1 ? 's' : ''} created
+              </div>
+            )}
+          </div>
+        </div>
 
-      {loading && (
-        <p className="text-gray-500">Please wait, generating email...</p>
-      )}
+        {/* Error Display */}
+        {error && (
+          <Card className="p-4 bg-red-50 border-red-200">
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-2 rounded-full bg-red-500" />
+              <span className="text-red-700 text-sm">{error}</span>
+            </div>
+          </Card>
+        )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {emails.map((email) => (
-          <EmailCard
-            key={email.id}
-            id={email.id}
-            subject={email.subject} // Pass the subject to EmailCard
-            body={email.content} // Pass the body to EmailCard (assuming 'context' is the body)
-          />
-        ))}
+        {/* Loading State */}
+        {loading && (
+          <Card className="p-6 bg-zinc-50 border-zinc-200">
+            <div className="flex items-center justify-center gap-3">
+              <div className="w-4 h-4 border-2 border-[#5b6949] border-t-transparent rounded-full animate-spin" />
+              <span className="text-zinc-600">Creating your follow-up email...</span>
+            </div>
+          </Card>
+        )}
+
+        {/* Content */}
+        {emails.length === 0 && !loading ? (
+          <EmptyState />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {emails.map((email) => (
+              <EmailCard
+                key={email.id}
+                id={email.id}
+                subject={email.subject}
+                body={email.content}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
+      {/* Modal */}
       <CoverLetterFormModal
         modalTitle="Create New Follow Up Email"
         isOpen={isModalOpen}

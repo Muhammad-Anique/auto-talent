@@ -145,20 +145,20 @@ export default async function Home({
       </div> */}
 
       {/* Content */}
-      <div className="relative z-10">
+      <div className="relative  z-10">
         {/* Profile Row Component */}
         <ProfileRow profile={profile} />
 
-        <div className="pl-2 sm:pl-0 sm:container sm:max-none  max-w-7xl mx-auto  lg:px-8 md:px-8 sm:px-6 pt-4 ">
+        <div className="sm:pl-0 sm:container sm:max-none  px-4  lg:px-8 md:px-8 sm:px-6 pt-4 ">
           {/* Profile Overview */}
           <div className="mb-6 space-y-4">
             {/* API Key Alert */}
             {!isProPlan && <ApiKeyAlert />}
 
             {/* Greeting & Edit Button */}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-2xl font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-semibold text-zinc-800">
                   {getGreeting()}, {profile.first_name}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-0.5">
@@ -169,8 +169,8 @@ export default async function Home({
 
             {/* Resume Bookshelf */}
             <div className="">
-              {/* Base Resumes Section */}
-              {/* <ResumesSection
+              {/* Base Resumes Section
+              <ResumesSection
                 type="base"
                 resumes={baseResumes}
                 profile={profile}

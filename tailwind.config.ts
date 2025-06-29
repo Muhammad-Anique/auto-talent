@@ -9,7 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        "blue-primary": "#38b6ff",
+        "blue-primary": "#5b6949",
+        primary: "#00ff00",
+        secondary: "#5b6949",
       },
       animation: {
         gradient: "gradient 15s ease infinite",

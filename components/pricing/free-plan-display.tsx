@@ -56,7 +56,7 @@ export function FreePlanDisplay({ initialProfile }: FreePlanDisplayProps) {
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-[40%] -right-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-teal-500/10 to-emerald-500/10 blur-3xl animate-[move_8s_ease-in-out_infinite]" />
-        <div className="absolute -bottom-[40%] -left-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[#38b6ff]/10 to-cyan-500/10 blur-3xl animate-[move_9s_ease-in-out_infinite]" style={{ animationDelay: '1s' }} />
+        <div className="absolute -bottom-[40%] -left-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[#5b6949]/10 to-cyan-500/10 blur-3xl animate-[move_9s_ease-in-out_infinite]" style={{ animationDelay: '1s' }} />
       </div>
 
       <motion.div

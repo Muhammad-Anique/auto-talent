@@ -9,7 +9,7 @@ import { Logo } from "@/components/ui/logo";
 
 const gradientClasses = {
   base: "bg-gradient-to-r from-violet-600 via-blue-600 to-violet-600",
-  hover: "hover:from-violet-500 hover:via-[#38b6ff] hover:to-violet-500",
+  hover: "hover:from-violet-500 hover:via-[#5b6949] hover:to-violet-500",
   shadow: "shadow-lg shadow-violet-500/25",
   animation: "transition-all duration-500 animate-gradient-x",
 };
@@ -126,7 +126,7 @@ export function WaitlistDialog() {
                   Priority Access
                 </span>
                 <span className="flex items-center">
-                  <Sparkles className="mr-1.5 w-3 h-3 text-[#38b6ff]" />
+                  <Sparkles className="mr-1.5 w-3 h-3 text-[#5b6949]" />
                   Extended Trial
                 </span>
                 <span className="flex items-center">

@@ -30,7 +30,7 @@ export function MiniResumePreview({
 
   // const accentBorder = type === 'base' ? 'purple-200' : 'pink-200';
   const accentBg = type === 'base' ? 'purple-50' : 'pink-50';
-  const accentText = type === 'base' ? 'blue-600' : 'blue-500';
+  const accentText = type === 'base' ? 'blue-600' : '[#5b6949]/90';
   const glowColor = type === 'base' 
     ? 'shadow-purple-500/20 hover:shadow-purple-500/30' 
     : 'shadow-rose-500/20 hover:shadow-rose-500/30';
@@ -40,7 +40,7 @@ export function MiniResumePreview({
       "relative w-full aspect-[8.5/11]",
       "rounded-lg overflow-hidden",
       "border shadow-lg",
-      `border-[#38b6ff]`,
+      `border-[#5b6949]`,
       "bg-white",
       "transition-all duration-300",
       "hover:shadow-xl hover:-translate-y-1",
@@ -149,8 +149,8 @@ export function MiniResumePreview({
         "transition-opacity duration-300",
         "bg-gradient-to-br",
         type === 'base'
-          ? "from-blue-500/5 to-blue-500/5"
-          : "from-[#38b6ff]/5 to-[#38b6ff]/5"
+          ? "from-[#5b6949]/90/5 to-[#5b6949]/90/5"
+          : "from-[#5b6949]/5 to-[#5b6949]/5"
       )} />
     </div>
   );

@@ -61,7 +61,7 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
           <AccordionItem
             key={index}
             value={`experience-${index}`}
-            className="bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#38b6ff]/5 backdrop-blur-md border border-cyan-500/30 hover:border-cyan-500/40 hover:shadow-lg transition-all duration-300 shadow-sm rounded-md overflow-hidden"
+            className="bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#5b6949]/5 backdrop-blur-md border border-cyan-500/30 hover:border-cyan-500/40 hover:shadow-lg transition-all duration-300 shadow-sm rounded-md overflow-hidden"
           >
             <AccordionTrigger className="px-4 py-2 hover:no-underline">
               <div className="flex items-center justify-between gap-3 flex-1">
@@ -266,7 +266,7 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
       <Button 
         variant="outline" 
         onClick={addExperience}
-        className="w-full bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#38b6ff]/5 hover:from-cyan-500/10 hover:via-cyan-500/15 hover:to-[#38b6ff]/10 border-dashed border-cyan-500/30 hover:border-cyan-500/40 text-cyan-700 hover:text-cyan-800 transition-all duration-300 h-8 text-sm"
+        className="w-full bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#5b6949]/5 hover:from-cyan-500/10 hover:via-cyan-500/15 hover:to-[#5b6949]/10 border-dashed border-cyan-500/30 hover:border-cyan-500/40 text-cyan-700 hover:text-cyan-800 transition-all duration-300 h-8 text-sm"
       >
         <Plus className="h-3.5 w-3.5 mr-1.5" />
         Add Work Experience

@@ -838,7 +838,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
               disabled={isCreating}
               className={cn(
                 "text-white shadow-lg hover:shadow-xl transition-all duration-500",
-                "bg-gradient-to-r from-[#38b6ff] via-blue-500 to-blue-700  hover:from-blue-700 hover:to-blue-700"
+                "bg-gradient-to-r from-[#5b6949] via-[#5b6949]/90 to-blue-700  hover:from-blue-700 hover:to-blue-700"
               )}
             >
               {isCreating ? (

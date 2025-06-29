@@ -69,7 +69,7 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
       {/* Decorative background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-[40%] -right-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-purple-500/10 to-violet-500/10 blur-3xl" />
-        <div className="absolute -bottom-[40%] -left-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-indigo-500/10 to-[#38b6ff]/10 blur-3xl" />
+        <div className="absolute -bottom-[40%] -left-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-indigo-500/10 to-[#5b6949]/10 blur-3xl" />
       </div>
 
       <motion.div

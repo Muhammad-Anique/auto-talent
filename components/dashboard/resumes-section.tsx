@@ -97,15 +97,15 @@ export function ResumesSection({
         "group/new-resume flex flex-col items-center justify-center gap-4",
         type === 'base' 
           ? "border-blue-300/70 hover:border-blue-400"
-          : "border-[#38b6ff]/70 hover:border-[#38b6ff]/40",
+          : "border-[#5b6949]/70 hover:border-[#5b6949]/40",
         type === 'base'
           ? "bg-gradient-to-br from-blue-50/80 via-blue-50/40 to-blue-100/60"
-          : "bg-gradient-to-br from-[#38b6ff]/20 via-[#38b6ff]/0 to-[#38b6ff]/20",
+          : "bg-gradient-to-br from-[#5b6949]/20 via-[#5b6949]/0 to-[#5b6949]/20",
         "hover:shadow-lg hover:shadow-purple-100/50 hover:-translate-y-1",
         "after:absolute after:inset-0 after:bg-gradient-to-br",
         type === 'base'
-          ? "after:from-[#38b6ff]/[0.03] after:to-blue-600/[0.03]"
-          : "after:from-[#38b6ff]/[0.03] after:to-[#38b6ff]/[0.03]",
+          ? "after:from-[#5b6949]/[0.03] after:to-blue-600/[0.03]"
+          : "after:from-[#5b6949]/[0.03] after:to-[#5b6949]/[0.03]",
         "after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-500 w-full sm:w-auto mr-8 sm:mr-0"
       )}>
         <div className={cn(
@@ -125,7 +125,7 @@ export function ResumesSection({
           )}>
             <config.icon className={cn(
               "h-5 w-5 transition-all duration-500",
-              type === 'base' ? "text-blue-500" : "text-[#38b6ff]",
+              type === 'base' ? "text-[#5b6949]/90" : "text-[#5b6949]",
               "group-hover/new-resume:scale-110"
             )} />
           </div>
@@ -133,7 +133,7 @@ export function ResumesSection({
           <span className={cn(
             "mt-4 text-sm font-medium",
             "transition-all duration-500",
-            type === 'base' ? "text-blue-500" : "text-[#38b6ff]",
+            type === 'base' ? "text-[#5b6949]/90" : "text-[#5b6949]",
             "group-hover/new-resume:font-semibold"
           )}>
             Create {type === 'base' ? 'Base' : 'Tailored'} Resume
@@ -142,7 +142,7 @@ export function ResumesSection({
           <span className={cn(
             "mt-2 text-xs",
             "transition-all duration-500 opacity-0",
-            type === 'base' ? "text-blue-500" : "text-[#38b6ff]",
+            type === 'base' ? "text-[#5b6949]/90" : "text-[#5b6949]",
             "group-hover/new-resume:opacity-70"
           )}>
             Click to start

@@ -52,7 +52,7 @@ const FollowUpEmailFormModal = ({
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#38b6ff]"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5b6949]"
               required
             />
           </div>
@@ -68,7 +68,7 @@ const FollowUpEmailFormModal = ({
               id="jobDescription"
               value={jobDescription}
               onChange={(e) => setJobDescription(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#38b6ff]"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5b6949]"
               rows={4}
               required
             />
@@ -106,7 +106,7 @@ const FollowUpEmailFormModal = ({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-[#38b6ff] text-white rounded-lg hover:bg-blue-500 transition"
+              className="px-5 py-2 bg-[#5b6949] text-white rounded-lg hover:bg-[#5b6949]/90 transition"
             >
               Submit
             </button>

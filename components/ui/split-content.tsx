@@ -53,7 +53,7 @@ export function SplitContent({
                     {heading}
                   </span>
                 </h2>
-                <div className="h-1 w-24 bg-gradient-to-r from-violet-500/80 to-[#38b6ff]/80 rounded-full" />
+                <div className="h-1 w-24 bg-gradient-to-r from-violet-500/80 to-[#5b6949]/80 rounded-full" />
               </div>
               
               {/* Enhanced description */}
@@ -79,8 +79,8 @@ export function SplitContent({
             "order-last lg:order-none"
           )}>
             {/* Enhanced decorative elements */}
-            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-[#38b6ff]/10 rounded-3xl transform rotate-2 scale-105 transition-transform duration-700 group-hover:scale-[1.02] group-hover:rotate-1" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#38b6ff]/10 to-indigo-500/10 rounded-3xl transform -rotate-2 scale-105 transition-transform duration-700 group-hover:scale-[1.02] group-hover:-rotate-1" />
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/10 to-[#5b6949]/10 rounded-3xl transform rotate-2 scale-105 transition-transform duration-700 group-hover:scale-[1.02] group-hover:rotate-1" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#5b6949]/10 to-indigo-500/10 rounded-3xl transform -rotate-2 scale-105 transition-transform duration-700 group-hover:scale-[1.02] group-hover:-rotate-1" />
             
             {/* Enhanced image container with deeper glass effect */}
             <div className="relative h-full w-full overflow-hidden rounded-2xl shadow-2xl transition-all duration-700 group-hover:shadow-3xl">
@@ -128,7 +128,7 @@ export function SplitContent({
                     {heading}
                   </span>
                 </h2>
-                <div className="h-1 w-24 bg-gradient-to-r from-violet-500/80 to-[#38b6ff]/80 rounded-full" />
+                <div className="h-1 w-24 bg-gradient-to-r from-violet-500/80 to-[#5b6949]/80 rounded-full" />
               </div>
               
               {/* Enhanced description */}

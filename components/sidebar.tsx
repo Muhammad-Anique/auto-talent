@@ -17,21 +17,23 @@ import {
   LogOut,
   Brain,
   Briefcase,
+  Pin,
+  PinOff,
+  BrainCircuitIcon,
 } from "lucide-react";
+import { useState } from "react";
+import React from "react";
+import { useSidebarContext } from '@/context/SidebarContext';
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { setIsLoading } = useLoading();
+  const { expanded, pinned, setPinned, setHovered } = useSidebarContext();
 
   const handleNavigation = (href: string) => {
-    // Don't navigate if already on the page
     if (pathname === href) return;
-
-    // Set loading state to true before navigation
     setIsLoading(true);
-
-    // Navigate to the new page
     router.push(href);
   };
 
@@ -91,25 +93,41 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-72 h-screen bg-white border-r border-r-gray-200 shadow-lg flex flex-col p-6">
-      <h1 className="text-3xl font-extrabold text-center text-[#38b6ff] flex flex-row items-center justify-center gap-0 mb-9 tracking-tight">
-        <Brain className="w-10 h-10 mr-2" />
-        <span className="text-center">autotalent</span>
-      </h1>
-      <nav className="flex-1">
-        <ul className="space-y-1">
+    <aside
+      className={`h-screen bg-white border-r border-r-gray-200 shadow-lg flex flex-col p-3 transition-all duration-200 ease-in-out ${
+        expanded ? "w-72" : "w-20"
+      }`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="flex  mb-5 mt-2">
+        <span className="inline-flex ml-2.5 size-9 rounded-full bg-[#5b6949] bg-opacity-10 overflow-hidden items-center justify-center">
+          <BrainCircuitIcon className="text-[#ffffff] size-6" />
+        </span>
+      </div>
+      <nav className="flex-1 gap-1 flex flex-col">
+        <ul className="flex flex-col gap-2">
           {links.map((link) => (
             <li key={link.href}>
               <a
                 onClick={() => handleNavigation(link.href)}
-                className={`flex items-center px-4 py-3 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                className={`flex flex-row items-center py-4 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                   pathname === link.href
-                    ? "bg-gray-100 text-[#38b6ff]"
+                    ? "bg-gray-100 text-[#5b6949]"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
-                {link.icon}
-                <span className="font-semibold">{link.name}</span>
+                <span className="flex items-center justify-center w-10 pl-4">
+                  {React.cloneElement(link.icon, { className: "w-6 h-6 flex-shrink-0" })}
+                </span>
+                <span
+                  className={`ml-2 font-semibold transition-all duration-200 ease-in-out whitespace-nowrap ${
+                    expanded ? "max-w-xs opacity-100" : "max-w-0 opacity-0 overflow-hidden"
+                  }`}
+                  style={{ transitionProperty: 'max-width, opacity', minWidth: 0 }}
+                >
+                  {link.name}
+                </span>
               </a>
             </li>
           ))}
@@ -117,10 +135,16 @@ export default function Sidebar() {
       </nav>
       <button
         onClick={handleLogout}
-        className="mt-12 flex items-center justify-center px-5 py-3 bg-[#38b6ff] text-white rounded-md hover:bg-blue-500 text-base"
+        className={`mt-8 flex items-center justify-center px-2 py-3 bg-[#5b6949] text-white rounded-md hover:bg-[#5b6949]/90 text-base transition-all duration-200 ${expanded ? "w-full" : "w-12 mx-auto"}`}
       >
         <LogOut className="w-5 h-5 mr-2" />
-        <span className="font-semibold">Logout</span>
+        <span
+          className={`font-semibold transition-all duration-200 ${
+            expanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
+          }`}
+        >
+          Logout
+        </span>
       </button>
     </aside>
   );

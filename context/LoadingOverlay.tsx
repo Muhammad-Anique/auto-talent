@@ -9,10 +9,9 @@ export default function LoadingOverlay() {
   if (!isLoading) return null;
 
   return (
-    <div className="fixed inset-0 bg-white bg-opacity-80 z-50 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-        <Loader2Icon className="h-12 w-12 text-[#38b6ff] animate-spin mb-4" />
-        <p className="text-gray-700 text-lg font-medium">Loading...</p>
+    <div className="fixed inset-0 backdrop-blur-md  z-50 flex items-center justify-center">
+      <div className="p-6 bg-white size-30 justify-center items-center rounded-full flex flex-col ">
+        <Loader2Icon className="size-12 text-[#5b6949] animate-spin " />
       </div>
     </div>
   );

@@ -35,7 +35,7 @@ export default function Header() {
   return (
     <div className='fixed top-0 left-0 w-full p-2'>
       <header className="rounded-full w-full px-6 py-4 bg-white shadow-md flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-[#38b6ff]">
+        <Link href="/" className="text-2xl font-bold text-[#5b6949]">
           autotalent
         </Link>
 
@@ -46,7 +46,7 @@ export default function Header() {
               <Link
                 onClick={() => setIsLoading(true)}
                 href="/dashboard"
-                className="px-4 py-2 bg-[#38b6ff] rounded-full text-white text-sm"
+                className="px-4 py-2 bg-[#5b6949] rounded-full text-white text-sm"
               >
                 {isLoading ? (
                   <div className='flex items-center space-x-2'>
@@ -57,7 +57,7 @@ export default function Header() {
               </Link>
               <button
                 onClick={handleSignOut}
-                className="px-4 py-2 bg-[#38b6ff] rounded-full text-white text-sm"
+                className="px-4 py-2 bg-[#5b6949] rounded-full text-white text-sm"
               >
                 Sign Out
               </button>
@@ -66,13 +66,13 @@ export default function Header() {
             <div className='flex items-center space-x-2'>
               <Link
                 href="/signin"
-                className="px-4 py-2 bg-[#38b6ff] rounded-full hover:bg-blue-600 text-white text-sm"
+                className="px-4 py-2 bg-[#5b6949] rounded-full hover:bg-blue-600 text-white text-sm"
               >
                 Sign In
               </Link>
               <Link
                 href="/signup"
-                className="px-4 py-2 border border-[#38b6ff] rounded-full hover:bg-blue-500 hover:text-white text-[#38b6ff] text-sm"
+                className="px-4 py-2 border border-[#5b6949] rounded-full hover:bg-[#5b6949]/90 hover:text-white text-[#5b6949] text-sm"
               >
                 Sign Up
               </Link>

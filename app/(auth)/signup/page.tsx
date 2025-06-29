@@ -76,7 +76,7 @@ export default function SignUp() {
     
 
     return (
-        <main className="min-h-screen flex flex-col items-center bg-gradient-to-b from-[#38b6ff] via-blue-300 to-blue-500">
+        <main className="min-h-screen flex flex-col items-center bg-gradient-to-b from-[#5b6949] via-blue-300 to-[#5b6949]/90">
             <Header />
             <div className="max-w-md flex flex-col h-full my-auto items-center justify-center mx-auto  bg-white p-8 rounded shadow">
                 <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">

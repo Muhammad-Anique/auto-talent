@@ -43,7 +43,7 @@ export function HeroVideoSection() {
                 
                 {/* Enhanced Gradient Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 via-transparent to-[#38b6ff]/20 mix-blend-overlay" />
+                <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 via-transparent to-[#5b6949]/20 mix-blend-overlay" />
                 
                 {/* Improved Play Button */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
@@ -56,8 +56,8 @@ export function HeroVideoSection() {
             </div>
 
             {/* Decorative Elements */}
-            <div className="absolute -inset-1 bg-gradient-to-br from-violet-500/5 via-[#38b6ff]/5 to-violet-500/5 rounded-3xl -z-10" />
-            <div className="absolute -inset-2 bg-gradient-to-br from-violet-500/5 via-[#38b6ff]/5 to-violet-500/5 rounded-3xl -z-20" />
+            <div className="absolute -inset-1 bg-gradient-to-br from-violet-500/5 via-[#5b6949]/5 to-violet-500/5 rounded-3xl -z-10" />
+            <div className="absolute -inset-2 bg-gradient-to-br from-violet-500/5 via-[#5b6949]/5 to-violet-500/5 rounded-3xl -z-20" />
           </div>
         </DialogTrigger>
 

@@ -53,7 +53,7 @@ export function ProfileEducationForm({ education, onChange }: ProfileEducationFo
           <AccordionItem
             key={index}
             value={`education-${index}`}
-            className="bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#38b6ff]/5 backdrop-blur-md border border-indigo-500/30 hover:border-indigo-500/40 hover:shadow-lg transition-all duration-300 shadow-sm rounded-md overflow-hidden"
+            className="bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5 backdrop-blur-md border border-indigo-500/30 hover:border-indigo-500/40 hover:shadow-lg transition-all duration-300 shadow-sm rounded-md overflow-hidden"
           >
             <AccordionTrigger className="px-4 py-2 hover:no-underline">
               <div className="flex items-center justify-between gap-3 flex-1">
@@ -203,7 +203,7 @@ export function ProfileEducationForm({ education, onChange }: ProfileEducationFo
       <Button 
         variant="outline" 
         onClick={addEducation}
-        className="w-full bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#38b6ff]/5 hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#38b6ff]/10 border-dashed border-indigo-500/30 hover:border-indigo-500/40 text-indigo-700 hover:text-indigo-800 transition-all duration-300 h-8 text-sm"
+        className="w-full bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5 hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#5b6949]/10 border-dashed border-indigo-500/30 hover:border-indigo-500/40 text-indigo-700 hover:text-indigo-800 transition-all duration-300 h-8 text-sm"
       >
         <Plus className="h-3.5 w-3.5 mr-1.5" />
         Add Education

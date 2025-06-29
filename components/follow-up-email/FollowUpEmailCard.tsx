@@ -15,7 +15,7 @@ const FollowUpEmailCard: FC<FollowUpEmailCardProps> = ({ title, context, id }) =
       <p className="text-sm text-gray-600 mt-2">{context.slice(0, 100)}...</p>
       <Link
         href={`/dashboard/coverletter/${id}`}
-        className="text-blue-500 mt-4 inline-block"
+        className="text-[#5b6949]/90 mt-4 inline-block"
       >
         View Full Email
       </Link>

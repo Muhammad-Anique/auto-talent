@@ -146,7 +146,7 @@ export function ProfileEditForm({
       toast.success("Profile reset successfully", {
         position: "bottom-right",
         className:
-          "bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-none",
+          "bg-gradient-to-r from-[#5b6949]/90 to-indigo-500 text-white border-none",
       });
 
       // Force a server revalidation
@@ -490,7 +490,7 @@ export function ProfileEditForm({
                       <Button
                         onClick={handleFetchLinkedIn}
                         disabled={isFetching || !profile.linkedin_url?.trim()}
-                        className="whitespace-nowrap bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:opacity-90 transition-all duration-300 disabled:opacity-50"
+                        className="whitespace-nowrap bg-gradient-to-r from-blue-600 to-[#5b6949]/90 text-white hover:opacity-90 transition-all duration-300 disabled:opacity-50"
                       >
                         {isFetching ? (
                           <div className="flex items-center gap-1">
@@ -797,7 +797,7 @@ export function ProfileEditForm({
                 <TabsTrigger
                   value="experience"
                   className="group flex items-center gap-2.5 px-5 py-3 rounded-xl font-medium relative transition-all duration-300
-                    data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/10 data-[state=active]:to-blue-500/10
+                    data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/10 data-[state=active]:to-[#5b6949]/90/10
                     data-[state=active]:border-cyan-500/20 data-[state=active]:shadow-lg hover:bg-white/60
                     data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-900"
                 >
@@ -827,7 +827,7 @@ export function ProfileEditForm({
                 <TabsTrigger
                   value="education"
                   className="group flex items-center gap-2.5 px-5 py-3 rounded-xl font-medium relative transition-all duration-300
-                    data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500/10 data-[state=active]:to-blue-500/10
+                    data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500/10 data-[state=active]:to-[#5b6949]/90/10
                     data-[state=active]:border-indigo-500/20 data-[state=active]:shadow-lg hover:bg-white/60
                     data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-900"
                 >
@@ -885,7 +885,7 @@ export function ProfileEditForm({
                     className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500"
                   >
                     <Card className="bg-gradient-to-br from-white/50 via-white/40 to-white/50 backdrop-blur-xl border-white/40 shadow-2xl transition-all duration-500 hover:shadow-3xl rounded-2xl overflow-hidden group">
-                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-500/5 to-[#5b6949]/90/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                       <div className="relative p-8">
                         <ProfileWorkExperienceForm
                           experiences={profile.work_experience}
@@ -919,7 +919,7 @@ export function ProfileEditForm({
                     className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-500"
                   >
                     <Card className="bg-gradient-to-br from-white/50 via-white/40 to-white/50 backdrop-blur-xl border-white/40 shadow-2xl transition-all duration-500 hover:shadow-3xl rounded-2xl overflow-hidden group">
-                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/5 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/0 via-indigo-500/5 to-[#5b6949]/90/0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                       <div className="relative p-8">
                         <ProfileEducationForm
                           education={profile.education}

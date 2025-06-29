@@ -303,8 +303,8 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
               onClick={addExperience}
               className={cn(
                 "flex-1 h-9 min-w-[120px]",
-                "bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#38b6ff]/5",
-                "hover:from-cyan-500/10 hover:via-cyan-500/15 hover:to-[#38b6ff]/10",
+                "bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#5b6949]/5",
+                "hover:from-cyan-500/10 hover:via-cyan-500/15 hover:to-[#5b6949]/10",
                 "border-2 border-dashed border-cyan-500/30 hover:border-cyan-500/40",
                 "text-cyan-700 hover:text-cyan-800",
                 "transition-all duration-300",
@@ -333,7 +333,7 @@ export const WorkExperienceForm = memo(function WorkExperienceFormComponent({
             key={index} 
             className={cn(
               "relative group transition-all duration-300",
-              "bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#38b6ff]/5",
+              "bg-gradient-to-r from-cyan-500/5 via-cyan-500/10 to-[#5b6949]/5",
               "backdrop-blur-md border-2 border-cyan-500/30",
               "shadow-sm"
             )}

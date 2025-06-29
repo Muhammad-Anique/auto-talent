@@ -98,7 +98,7 @@ export function ResumeEditorTabs() {
         <TabsTrigger 
           value="work" 
           className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium relative transition-all duration-300
-            data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/10 data-[state=active]:to-[#38b6ff]/10
+            data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/10 data-[state=active]:to-[#5b6949]/10
             data-[state=active]:border-cyan-500/20 data-[state=active]:shadow-md hover:bg-white/60
             data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-900"
         >
@@ -132,7 +132,7 @@ export function ResumeEditorTabs() {
         <TabsTrigger 
           value="education" 
           className="group flex items-center gap-1.5 px-2 py-1 rounded-md font-medium relative transition-all duration-300
-            data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500/10 data-[state=active]:to-[#38b6ff]/10
+            data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500/10 data-[state=active]:to-[#5b6949]/10
             data-[state=active]:border-indigo-500/20 data-[state=active]:shadow-md hover:bg-white/60
             data-[state=inactive]:text-gray-500 data-[state=inactive]:hover:text-gray-900"
         >
