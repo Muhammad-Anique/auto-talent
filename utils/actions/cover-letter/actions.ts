@@ -25,6 +25,8 @@ export async function generate(input: string, config?: AIConfig) {
    
    You are a professional cover letter writer with expertise in crafting compelling, personalized cover letters. Your goal is to produce a cover letter that is clear, concise, and tailored to the job and candidate data provided. The final cover letter should be between 600-700 words and written in a consistent, professional tone that seamlessly blends technical details with personal enthusiasm.
 
+   IMPORTANT: Detect the language of the job description. The entire cover letter must be written in the same language as the job description. If the job description is in Spanish, write the cover letter in Spanish. If in English, write in English, and so on.
+
    Focus on:
    - Clear, concise, and professional writing.
    - Highlighting relevant experience with unique insights in each section.

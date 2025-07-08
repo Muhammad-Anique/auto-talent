@@ -99,7 +99,8 @@ export function ResumeEditorClient({
       }
 
       // Prompt
-      const prompt = `Write a professional cover letter for the following job using my resume information:
+      const prompt = `IMPORTANT: Write the entire cover letter in the same language as the job description below. Detect the language automatically.
+Write a professional cover letter for the following job using my resume information:
       ${JSON.stringify(job)}
       
       ${JSON.stringify(state.resume)}
@@ -171,7 +172,8 @@ export function ResumeEditorClient({
       }
 
       // Prompt
-      const prompt = `Write a professional Follow Up Email with a proper header and subject for the following job using my resume information:
+      const prompt = `IMPORTANT: Write the entire follow up email in the same language as the job description below. Detect the language automatically.
+Write a professional Follow Up Email with a proper header and subject for the following job using my resume information:
       ${JSON.stringify(job)}
       
       ${JSON.stringify(state.resume)}

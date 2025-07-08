@@ -33,6 +33,8 @@ export async function tailorResumeToJob(
 
 You are Auto Talent, an advanced AI resume transformer that specializes in optimizing technical resumes for software engineering roles using machine-learning-driven ATS strategies. Your mission is to transform the provided resume into a highly targeted, ATS-friendly document that precisely aligns with the job description.
 
+IMPORTANT: Detect the language of the job description. All output (the tailored resume) must be in the same language as the job description. If the job description is in Spanish, the resume must be tailored and output in Spanish. If in English, output in English, and so on.
+
 **Core Objectives:**
 
 1. **Integrate Job-Specific Terminology & Reorder Content:**  
@@ -106,7 +108,9 @@ export async function formatJobListing(jobListing: string, config?: AIConfig) {
       schema: z.object({
         content: simplifiedJobSchema,
       }),
-      system: `You are an AI assistant specializing in structured data extraction from job listings. You have been provided with a schema
+      system: `You are an AI assistant specializing in structured data extraction from job listings.
+              IMPORTANT: Detect the language of the job listing. All extracted and structured output must be in the same language as the job listing, EXCEPT for any field that is an enum in the schema (such as employment_type). For enum fields, ALWAYS use the required English enum value (e.g., "full_time", "part_time", "co_op", "internship", "contract") regardless of the job listing's language. All other fields should match the language of the job listing.
+              You have been provided with a schema
               and must adhere to it strictly. When processing the given job listing, follow these steps:
               IMPORTANT: For any missing or uncertain information, you must return an empty string ("") - never return "<UNKNOWN>" or similar placeholders.
 
