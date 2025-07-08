@@ -21,10 +21,12 @@ export function PreviewPanel({
   // onResumeChange,
   width,
 }: PreviewPanelProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<'basic' | 'modern' | 'professional'>('basic');
+  const [selectedTemplate, setSelectedTemplate] = useState<
+    "basic" | "modern" | "professional" | "default"
+  >("basic");
 
   // Debug log when template changes
-  console.log('PreviewPanel - Selected template:', selectedTemplate);
+  console.log("PreviewPanel - Selected template:", selectedTemplate);
 
   return (
     <ScrollArea
@@ -66,6 +68,16 @@ export function PreviewPanel({
             onClick={() => setSelectedTemplate("professional")}
           >
             Patterned Header
+          </button>
+          <button
+            className={`px-4 py-2 rounded ${
+              selectedTemplate === "default"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200"
+            }`}
+            onClick={() => setSelectedTemplate("default")}
+          >
+            Default
           </button>
         </div>
 
