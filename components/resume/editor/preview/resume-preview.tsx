@@ -20,6 +20,7 @@ import { useCallback } from 'react';
 import 'react-pdf/dist/Page/TextLayer.css';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 
+
 // Configure PDF.js worker
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -39,7 +40,7 @@ const CACHE_EXPIRATION_TIME = 30 * 60 * 1000;
  * Generate a simple hash from the resume content
  * This is used as a cache key for PDF generation
  */
-function generateResumeHash(resume: Resume): string {
+function generateResumeHash(resume: Resume, template?: string, design?: string): string {
   const content = JSON.stringify({
     basic: {
       name: `${resume.first_name} ${resume.last_name}`,
@@ -52,6 +53,8 @@ function generateResumeHash(resume: Resume): string {
       education: resume.education,
     },
     settings: resume.document_settings,
+    template: template,
+    design: design,
   });
   
   // Simple hash function
@@ -101,6 +104,8 @@ interface ResumePreviewProps {
   resume: Resume;
   variant?: 'base' | 'tailored';
   containerWidth: number;  // This is now expected to be a percentage (0-100)
+  template?: 'basic' | 'modern' | 'professional';
+  design?: 'classic' | 'left-aligned' | 'compact' | 'sidebar' | 'minimal' | 'executive' | 'corporate';
 }
 
 /**
@@ -109,8 +114,10 @@ interface ResumePreviewProps {
  * Displays a PDF preview of the resume using react-pdf.
  * Handles PDF generation and responsive display.
  */
-export const ResumePreview = memo(function ResumePreview({ resume, variant = 'base', containerWidth }: ResumePreviewProps) {
-  console.log(containerWidth);
+export const ResumePreview = memo(function ResumePreview({ resume, variant = 'base', containerWidth, template, design = 'classic'}: ResumePreviewProps) {
+  console.log('ResumePreview - Template received:', template);
+  console.log('ResumePreview - Design received:', design);
+  console.log('ResumePreview - Container width:', containerWidth);
   const [url, setUrl] = useState<string | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const debouncedWidth = useDebouncedValue(containerWidth, 1000);
@@ -124,7 +131,7 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   }, [debouncedWidth]);
 
   // Generate resume hash for caching
-  const resumeHash = useMemo(() => generateResumeHash(resume), [resume]);
+  const resumeHash = useMemo(() => generateResumeHash(resume, template, design), [resume, template, design]);
 
   // Add styles to document head
   useEffect(() => {
@@ -144,14 +151,18 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
       // Check cache first
       const cached = pdfCache.get(resumeHash);
       if (cached) {
+        console.log('Using cached PDF for hash:', resumeHash);
         currentUrl = cached.url;
         setUrl(cached.url);
         return;
       }
 
+      console.log('Generating new PDF for hash:', resumeHash, 'Template:', template, 'Design:', design);
+
       // Generate new PDF if not in cache
-      const blob = await pdf(<ResumePDFDocument resume={resume} variant={variant} />).toBlob();
+      const blob = await pdf(<ResumePDFDocument resume={resume} variant={variant} template={template} />).toBlob();
       const newUrl = URL.createObjectURL(blob);
+      console.log('Generated new PDF URL:', newUrl);
       currentUrl = newUrl;
       
       // Store in cache with timestamp
@@ -167,7 +178,7 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
         URL.revokeObjectURL(currentUrl);
       }
     };
-  }, [resumeHash, variant, resume]);
+  }, [resumeHash, variant, resume, template, design]);
 
   // Cleanup on component unmount
   useEffect(() => {
@@ -193,6 +204,16 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   useEffect(() => {
     setShouldRenderTextLayer(false);
   }, [resumeHash, variant]);
+
+  // Clear cache when template or design changes
+  useEffect(() => {
+    console.log('Template or design changed, clearing cache for old entries');
+    // Clear all cache entries to force regeneration
+    for (const [hash, { url }] of pdfCache.entries()) {
+      URL.revokeObjectURL(url);
+    }
+    pdfCache.clear();
+  }, [template, design]);
 
   // Show loading state while PDF is being generated
   if (!url) {
@@ -339,6 +360,8 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
   return (
     prevProps.resume === nextProps.resume &&
     prevProps.variant === nextProps.variant &&
-    prevProps.containerWidth === nextProps.containerWidth
+    prevProps.containerWidth === nextProps.containerWidth &&
+    prevProps.template === nextProps.template &&
+    prevProps.design === nextProps.design
   );
 }); 
