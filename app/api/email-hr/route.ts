@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
 
   const prompt = `Write a polite and professional follow-up email to HR after applying for a job titled "${title}". 
 The job description is: "${jobDescription}".
-Make the email show genuine interest and ask for a response.`
+Make the email show genuine interest and ask for a response.
+Write the email in the same language as the job description.`
 
   const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',

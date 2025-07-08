@@ -33,6 +33,7 @@ You are a skilled career assistant. Generate a high-quality, professional cover 
 - Use today's date: ${new Date().toLocaleDateString()}.
 - Start with "Dear Hiring Manager" and avoid generic filler.
 - Focus on why the applicant is a great fit.
+- Write the cover letter in the same language as the job description.
 
 Job Description:
 ${jobDescription}

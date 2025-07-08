@@ -104,7 +104,7 @@ interface ResumePreviewProps {
   resume: Resume;
   variant?: 'base' | 'tailored';
   containerWidth: number;  // This is now expected to be a percentage (0-100)
-  template?: 'basic' | 'modern' | 'professional';
+  template?: 'basic' | 'modern' | 'professional' | 'default';
   design?: 'classic' | 'left-aligned' | 'compact' | 'sidebar' | 'minimal' | 'executive' | 'corporate';
 }
 
