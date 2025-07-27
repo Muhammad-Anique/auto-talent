@@ -30,7 +30,8 @@ export default function AutoApplyForm() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     // Personal Information
-    fullName: "",
+    firstName: "",
+    lastName: "",
     phone: "",
     email: "",
     address: "",
@@ -302,7 +303,8 @@ export default function AutoApplyForm() {
         // Only fill fields that are empty
         setForm(prev => ({
           ...prev,
-          fullName: prev.fullName || `${latestResume.first_name || ""} ${latestResume.last_name || ""}`.trim(),
+          firstName: prev.firstName|| "",
+          lastName: prev.lastName || "",
           phone: prev.phone || latestResume.phone_number || "",
           email: prev.email || latestResume.email || "",
           address: prev.address || latestResume.location || "",
@@ -405,7 +407,8 @@ export default function AutoApplyForm() {
       const formData = {
         user_id: user.id,
         form_id: crypto.randomUUID(), // Generate unique form ID
-        full_name: form.fullName,
+        first_name: form.firstName,
+        last_name: form.lastName,
         phone: form.phone,
         email: form.email,
         address: form.address,
@@ -518,8 +521,12 @@ export default function AutoApplyForm() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="fullName">Full Name *</Label>
-                <Input id="fullName" name="fullName" value={form.fullName} onChange={handleChange} required />
+                <Label htmlFor="firstName">First Name *</Label>
+                <Input id="firstName" name="firstName" value={form.firstName} onChange={handleChange} required />
+              </div>
+              <div>
+                <Label htmlFor="lastName">Last Name *</Label>
+                <Input id="lastName" name="lastName" value={form.lastName} onChange={handleChange} required />
               </div>
               <div>
                 <Label htmlFor="phone">Phone Number *</Label>
@@ -1168,7 +1175,7 @@ export default function AutoApplyForm() {
             
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><strong>Name:</strong> {form.fullName}</div>
+                <div><strong>Name:</strong> {form.firstName} {form.lastName}</div>
                 <div><strong>Email:</strong> {form.email}</div>
                 <div><strong>Location:</strong> {form.searchLocation}</div>
                 <div><strong>Job Terms:</strong> {form.searchTerms}</div>
