@@ -278,7 +278,7 @@ export default function AutoApplyDashboard() {
                       <th className="px-2 py-1 text-left">Status</th>
                       <th className="px-2 py-1 text-left">Applied At</th>
                       <th className="px-2 py-1 text-left">Job URL</th>
-                      <th className="px-2 py-1 text-left">Notes/Error</th>
+                      {/* <th className="px-2 py-1 text-left">Notes/Error</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -302,6 +302,7 @@ export default function AutoApplyDashboard() {
                             View
                           </a>
                         </td>
+                        {/*
                         <td className="px-2 py-1">
                           {job.status === 'error' && job.error_message ? (
                             <span className="text-red-600">{job.error_message}</span>
@@ -311,6 +312,7 @@ export default function AutoApplyDashboard() {
                             <span className="text-gray-400">-</span>
                           )}
                         </td>
+                        */}
                       </tr>
                     ))}
                   </tbody>
