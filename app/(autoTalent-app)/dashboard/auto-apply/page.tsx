@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useLoading } from "@/context/LoadingContext";
 import { createClient } from "@/utils/supabase/client";
-import { Edit, Trash2, Eye, Calendar, User, FileText } from "lucide-react";
+import { Edit, Trash2, Eye, Calendar, User, FileText, Plus, Coins, Settings } from "lucide-react";
 
 export default function AutoApplyDashboard() {
   const { setIsLoading } = useLoading();
@@ -16,6 +16,10 @@ export default function AutoApplyDashboard() {
   const [supabaseClient, setSupabaseClient] = useState<any>(null);
   const [appliedJobs, setAppliedJobs] = useState<any[]>([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
+  const [credits, setCredits] = useState(0);
+  const [loadingCredits, setLoadingCredits] = useState(true);
+  const [autoApplyEnabled, setAutoApplyEnabled] = useState(false);
+  const [loadingAutoApply, setLoadingAutoApply] = useState(true);
 
   useEffect(() => {
     setIsLoading(false);
@@ -29,6 +33,150 @@ export default function AutoApplyDashboard() {
     };
     initSupabase();
   }, []);
+
+  // Load user credits and Auto-Apply status
+  const loadUserData = async () => {
+    if (!supabaseClient) return;
+    setLoadingCredits(true);
+    setLoadingAutoApply(true);
+    try {
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      if (authError || !user) {
+        console.error('Auth error:', authError);
+        return;
+      }
+      
+      // Check if user has a user record
+      const { data: userData, error: userError } = await supabaseClient
+        .from('users')
+        .select('credits, "Auto-Apply"')
+        .eq('id', user.id)
+        .single();
+      
+      if (userError && userError.code !== 'PGRST116') { // PGRST116 is "not found"
+        console.error('Error fetching user data:', userError);
+        return;
+      }
+      
+      setCredits(userData?.credits || 0);
+      setAutoApplyEnabled(userData?.["Auto-Apply"] || false);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    } finally {
+      setLoadingCredits(false);
+      setLoadingAutoApply(false);
+    }
+  };
+
+  // Add test credits (10 credits)
+  const addTestCredits = async () => {
+    if (!supabaseClient) return;
+    try {
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      if (authError || !user) {
+        console.error('Auth error:', authError);
+        return;
+      }
+
+      // First, try to get existing user record
+      const { data: existingUser, error: fetchError } = await supabaseClient
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('Error fetching user:', fetchError);
+        return;
+      }
+
+      // Upsert user record with credits
+      const { error: upsertError } = await supabaseClient
+        .from('users')
+        .upsert({
+          id: user.id,
+          email: user.email,
+          username: existingUser?.username || null,
+          plan_sub: existingUser?.plan_sub || null,
+          "Auto-Apply": existingUser?.["Auto-Apply"] || null,
+          last_auto_applied: existingUser?.last_auto_applied || null,
+          credits: (existingUser?.credits || 0) + 10,
+          created_at: existingUser?.created_at || new Date().toISOString()
+        }, {
+          onConflict: 'id'
+        });
+
+      if (upsertError) {
+        console.error('Error adding credits:', upsertError);
+        return;
+      }
+
+      setCredits(prev => prev + 10);
+      alert('Added 10 test credits!');
+    } catch (error) {
+      console.error('Error adding test credits:', error);
+      alert('Failed to add test credits');
+    }
+  };
+
+  // Activate Auto-Apply (consumes 10 credits)
+  const activateAutoApply = async () => {
+    if (!supabaseClient) return;
+    
+    if (credits < 10) {
+      alert('You need at least 10 credits to activate Auto-Apply!');
+      return;
+    }
+
+    try {
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      if (authError || !user) {
+        console.error('Auth error:', authError);
+        return;
+      }
+
+      // First, try to get existing user record
+      const { data: existingUser, error: fetchError } = await supabaseClient
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        console.error('Error fetching user:', fetchError);
+        return;
+      }
+
+      // Update user record: consume 10 credits and set Auto-Apply to true
+      const { error: updateError } = await supabaseClient
+        .from('users')
+        .upsert({
+          id: user.id,
+          email: user.email,
+          username: existingUser?.username || null,
+          plan_sub: existingUser?.plan_sub || null,
+          "Auto-Apply": true,
+          last_auto_applied: existingUser?.last_auto_applied || null,
+          credits: (existingUser?.credits || 0) - 10,
+          created_at: existingUser?.created_at || new Date().toISOString()
+        }, {
+          onConflict: 'id'
+        });
+
+      if (updateError) {
+        console.error('Error activating Auto-Apply:', updateError);
+        alert('Failed to activate Auto-Apply');
+        return;
+      }
+
+      setCredits(prev => prev - 10);
+      setAutoApplyEnabled(true);
+      alert('Auto-Apply activated successfully! 10 credits consumed.');
+    } catch (error) {
+      console.error('Error activating Auto-Apply:', error);
+      alert('Failed to activate Auto-Apply');
+    }
+  };
 
   // Load submitted forms
   const loadSubmittedForms = async () => {
@@ -88,6 +236,7 @@ export default function AutoApplyDashboard() {
     if (supabaseClient) {
       loadSubmittedForms();
       loadAppliedJobs();
+      loadUserData();
     }
   }, [supabaseClient]);
 
@@ -115,8 +264,10 @@ export default function AutoApplyDashboard() {
     }
   };
 
+  // Check if user can create new form (only one allowed)
+  const canCreateNewForm = submittedForms.length === 0;
+
   // Placeholder data
-  const credits = 10;
   const jobsProgress = 0;
   const jobsTotal = 10;
   const lastUpdate = "1min ago";
@@ -126,7 +277,7 @@ export default function AutoApplyDashboard() {
     <div className="min-h-screen bg-gray-50 py-8 px-2 md:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="text-center">
             <CardHeader>
               <CardDescription>Status</CardDescription>
@@ -142,29 +293,60 @@ export default function AutoApplyDashboard() {
           </Card>
           <Card className="text-center">
             <CardHeader>
-              <CardDescription>Last Update</CardDescription>
-              <CardTitle className="text-2xl mt-2">{lastUpdate}</CardTitle>
+              <CardDescription>Available Credits</CardDescription>
+              <CardTitle className="text-2xl mt-2 flex items-center justify-center gap-2">
+                <Coins className="w-5 h-5" />
+                {loadingCredits ? '...' : credits}
+              </CardTitle>
+              <div className="text-xs text-muted-foreground mt-1">
+                {credits >= 10 ? 'Ready to apply' : 'Need 10 credits to apply'}
+              </div>
+            </CardHeader>
+          </Card>
+          <Card className="text-center">
+            <CardHeader>
+              <CardDescription>Auto-Apply Status</CardDescription>
+              <CardTitle className="text-2xl mt-2 flex items-center justify-center gap-2">
+                <Settings className="w-5 h-5" />
+                {loadingAutoApply ? '...' : (autoApplyEnabled ? 'Active' : 'Inactive')}
+              </CardTitle>
+              <div className="text-xs text-muted-foreground mt-1">
+                {autoApplyEnabled ? 'Auto-applying enabled' : 'Manual mode'}
+              </div>
             </CardHeader>
           </Card>
         </div>
 
-        {/* Login Credentials */}
+        {/* Test Credits and Auto-Apply Buttons */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base font-medium">Login Credentials</CardTitle>
+            <CardTitle className="text-base font-medium">Test Functions</CardTitle>
+            <CardDescription>Development tools for testing credits and Auto-Apply functionality</CardDescription>
           </CardHeader>
-          <CardContent>
-            <div className="flex flex-col items-center justify-center py-6">
-              <div className="rounded-full bg-gray-100 p-6 mb-2">
-                <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="text-gray-400">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14v7m0 0H9m3 0h3" />
-                </svg>
-              </div>
-              <div className="text-gray-500 text-sm text-center max-w-xs">
-                You will be assigned a new email address in the next 72 hours to track follow-ups on applications.
-              </div>
-            </div>
+          <CardContent className="space-y-3">
+            <Button onClick={addTestCredits} variant="outline" className="w-full">
+              <Plus className="w-4 h-4 mr-2" />
+              Add 10 Test Credits
+            </Button>
+            <Button 
+              onClick={activateAutoApply} 
+              variant="default" 
+              className="w-full"
+              disabled={credits < 10 || autoApplyEnabled || loadingAutoApply}
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              {autoApplyEnabled ? 'Auto-Apply Already Active' : 'Activate Auto-Apply (10 credits)'}
+            </Button>
+            {credits < 10 && !autoApplyEnabled && (
+              <p className="text-xs text-red-600 text-center">
+                Need at least 10 credits to activate Auto-Apply
+              </p>
+            )}
+            {autoApplyEnabled && (
+              <p className="text-xs text-green-600 text-center">
+                ✓ Auto-Apply is already active
+              </p>
+            )}
           </CardContent>
         </Card>
 
@@ -173,10 +355,19 @@ export default function AutoApplyDashboard() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="text-base font-medium">Submitted Configurations</CardTitle>
-              <Button onClick={() => router.push("/dashboard/auto-apply/form")} size="sm">
+              <Button 
+                onClick={() => router.push("/dashboard/auto-apply/form")} 
+                size="sm"
+                disabled={!canCreateNewForm}
+              >
                 + New Configuration
               </Button>
             </div>
+            {!canCreateNewForm && (
+              <CardDescription className="text-red-600">
+                You can only have one configuration at a time. Please delete the existing one to create a new one.
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -201,7 +392,7 @@ export default function AutoApplyDashboard() {
                           <User className="w-5 h-5 text-primary" />
                         </div>
                         <div>
-                          <h3 className="font-medium">{form.full_name || 'Unnamed Configuration'}</h3>
+                          <h3 className="font-medium">{form.first_name && form.last_name ? `${form.first_name} ${form.last_name}` : 'Unnamed Configuration'}</h3>
                           <p className="text-sm text-muted-foreground">{form.email}</p>
                         </div>
                       </div>
@@ -278,7 +469,6 @@ export default function AutoApplyDashboard() {
                       <th className="px-2 py-1 text-left">Status</th>
                       <th className="px-2 py-1 text-left">Applied At</th>
                       <th className="px-2 py-1 text-left">Job URL</th>
-                      {/* <th className="px-2 py-1 text-left">Notes/Error</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -302,17 +492,6 @@ export default function AutoApplyDashboard() {
                             View
                           </a>
                         </td>
-                        {/*
-                        <td className="px-2 py-1">
-                          {job.status === 'error' && job.error_message ? (
-                            <span className="text-red-600">{job.error_message}</span>
-                          ) : job.notes ? (
-                            <span>{job.notes}</span>
-                          ) : (
-                            <span className="text-gray-400">-</span>
-                          )}
-                        </td>
-                        */}
                       </tr>
                     ))}
                   </tbody>

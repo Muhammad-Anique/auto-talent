@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { CheckCircle2, Info, Linkedin, User, FileText, UploadCloud, Settings, Search, Shield, Monitor } from "lucide-react";
+import { CheckCircle2, Info, Linkedin, User, FileText, UploadCloud, Settings, Search, Shield, Monitor, Coins } from "lucide-react";
 
 const stepLabels = [
   "Welcome",
@@ -123,7 +123,12 @@ export default function AutoApplyForm() {
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [loadingResumes, setLoadingResumes] = useState(false);
   const [userResumes, setUserResumes] = useState<any[]>([]);
+  const [credits, setCredits] = useState(0);
+  const [loadingCredits, setLoadingCredits] = useState(true);
+  const [existingForm, setExistingForm] = useState<any>(null);
+  const [loadingExistingForm, setLoadingExistingForm] = useState(true);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [supabaseClient, setSupabaseClient] = useState<any>(null);
 
   // Initialize Supabase client
@@ -134,6 +139,134 @@ export default function AutoApplyForm() {
     };
     initSupabase();
   }, []);
+
+  // Load user credits
+  const loadCredits = async () => {
+    if (!supabaseClient) return;
+    setLoadingCredits(true);
+    try {
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      if (authError || !user) {
+        console.error('Auth error:', authError);
+        return;
+      }
+      
+      // Check if user has a user record
+      const { data: userData, error: userError } = await supabaseClient
+        .from('users')
+        .select('credits')
+        .eq('id', user.id)
+        .single();
+      
+      if (userError && userError.code !== 'PGRST116') { // PGRST116 is "not found"
+        console.error('Error fetching credits:', userError);
+        return;
+      }
+      
+      setCredits(userData?.credits || 0);
+    } catch (error) {
+      console.error('Error loading credits:', error);
+    } finally {
+      setLoadingCredits(false);
+    }
+  };
+
+  // Check for existing form
+  const checkExistingForm = async () => {
+    if (!supabaseClient) return;
+    setLoadingExistingForm(true);
+    try {
+      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      if (authError || !user) {
+        console.error('Auth error:', authError);
+        return;
+      }
+      
+      const { data: forms, error } = await supabaseClient
+        .from('auto_apply_configs')
+        .select('*')
+        .eq('user_id', user.id)
+        .limit(1);
+      
+      if (error) {
+        console.error('Error checking existing forms:', error);
+        return;
+      }
+      
+             if (forms && forms.length > 0) {
+         setExistingForm(forms[0]);
+         // If editing, populate form with existing data
+         if (searchParams.get('edit')) {
+           populateFormWithExistingData(forms[0]);
+         }
+       }
+    } catch (error) {
+      console.error('Error checking existing form:', error);
+    } finally {
+      setLoadingExistingForm(false);
+    }
+  };
+
+  // Populate form with existing data
+  const populateFormWithExistingData = (existingData: any) => {
+    setForm(prev => ({
+      ...prev,
+      firstName: existingData.first_name || "",
+      lastName: existingData.last_name || "",
+      phone: existingData.phone || "",
+      email: existingData.email || "",
+      address: existingData.address || "",
+      city: existingData.city || "",
+      state: existingData.state || "",
+      country: existingData.country || "",
+      zipCode: existingData.zip_code || "",
+      currentJobTitle: existingData.current_job_title || "",
+      currentCompany: existingData.current_company || "",
+      currentSalary: existingData.current_salary || "",
+      desiredSalary: existingData.desired_salary || "",
+      noticePeriod: existingData.notice_period || "",
+      workAuth: existingData.work_auth || "",
+      fieldOfStudy: existingData.field_of_study || "",
+      graduationYear: existingData.graduation_year || "",
+      linkedinUrl: existingData.linkedin_url || "",
+      website: existingData.website || "",
+      githubUrl: existingData.github_url || "",
+      selectedResumeId: existingData.selected_resume_id || "",
+      legallyAuthorized: existingData.legally_authorized || "",
+      requireSponsorship: existingData.require_sponsorship || "",
+      currentLocation: existingData.current_location || "",
+      yearsExperience: existingData.years_experience || "",
+      expectedSalary: existingData.expected_salary || "",
+      startDate: existingData.start_date || "",
+      interestReason: existingData.interest_reason || "",
+      keySkills: existingData.key_skills || "",
+      disabilities: existingData.disabilities || "",
+      gender: existingData.gender || "",
+      race: existingData.race || "",
+      veteran: existingData.veteran || "",
+      searchTerms: existingData.search_terms || "",
+      randomizeSearch: existingData.randomize_search || false,
+      searchLocation: existingData.search_location || "",
+      experienceLevel: existingData.experience_level || "",
+      salaryRange: existingData.salary_range || "",
+      targetExperience: existingData.target_experience || "",
+      preferredJobTypes: existingData.preferred_job_types || [],
+      industries: existingData.industries || "",
+      blacklistedCompanies: existingData.blacklisted_companies || "",
+      whitelistedCompanies: existingData.whitelisted_companies || "",
+      skipKeywords: existingData.skip_keywords || "",
+      prioritizeKeywords: existingData.prioritize_keywords || "",
+      skipSecurityClearance: existingData.skip_security_clearance || false,
+      followCompanies: existingData.follow_companies || false,
+      resumeReady: existingData.resume_ready || false,
+      useWebUI: existingData.use_web_ui !== undefined ? existingData.use_web_ui : true,
+      skills: existingData.skills || [],
+      workExperience: existingData.work_experience || [],
+      education: existingData.education || [],
+      projects: existingData.projects || "",
+      certifications: existingData.certifications || "",
+    }));
+  };
 
   // Auto-fill personal information from all tables
   const loadProfileData = async () => {
@@ -334,6 +467,8 @@ export default function AutoApplyForm() {
     if (supabaseClient) {
       loadProfileData();
       loadUserResumes();
+      loadCredits();
+      checkExistingForm();
     }
   }, [supabaseClient]);
 
@@ -403,10 +538,20 @@ export default function AutoApplyForm() {
         throw new Error("User not authenticated");
       }
 
+      // Check credits (need 10 credits to submit)
+      if (credits < 10) {
+        throw new Error("You need at least 10 credits to submit a configuration. Current credits: " + credits);
+      }
+
+      // Check if user already has a form (only one allowed)
+      if (existingForm && !searchParams.get('edit')) {
+        throw new Error("You can only have one configuration at a time. Please edit your existing configuration or delete it first.");
+      }
+
       // Prepare form data for database
       const formData = {
         user_id: user.id,
-        form_id: crypto.randomUUID(), // Generate unique form ID
+        form_id: existingForm?.form_id || crypto.randomUUID(), // Use existing form_id if editing
         first_name: form.firstName,
         last_name: form.lastName,
         phone: form.phone,
@@ -466,14 +611,62 @@ export default function AutoApplyForm() {
 
       console.log('Submitting form data:', formData);
 
-      // Insert into database
-      const { error: dbErr } = await supabaseClient
-        .from("auto_apply_configs")
-        .insert([formData]);
+      let dbErr;
+      if (existingForm && searchParams.get('edit')) {
+        // Update existing form
+        const { error } = await supabaseClient
+          .from("auto_apply_configs")
+          .update(formData)
+          .eq('form_id', existingForm.form_id);
+        dbErr = error;
+      } else {
+        // Insert new form
+        const { error } = await supabaseClient
+          .from("auto_apply_configs")
+          .insert([formData]);
+        dbErr = error;
+      }
 
       if (dbErr) {
         console.error('Database error:', dbErr);
         throw dbErr;
+      }
+
+      // Deduct 10 credits for new form submission (not for edits)
+      if (!existingForm || !searchParams.get('edit')) {
+        // First, get current user record to preserve existing data
+        const { data: currentUser, error: fetchError } = await supabaseClient
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') {
+          console.error('Error fetching user for credit deduction:', fetchError);
+        } else {
+          // Update user with reduced credits
+          const { error: creditError } = await supabaseClient
+            .from('users')
+            .upsert({
+              id: user.id,
+              email: user.email,
+              username: currentUser?.username || null,
+              plan_sub: currentUser?.plan_sub || null,
+              "Auto-Apply": currentUser?.["Auto-Apply"] || null,
+              last_auto_applied: currentUser?.last_auto_applied || null,
+              credits: credits - 10,
+              created_at: currentUser?.created_at || new Date().toISOString()
+            }, {
+              onConflict: 'id'
+            });
+
+          if (creditError) {
+            console.error('Error deducting credits:', creditError);
+            // Don't throw error here as form was saved successfully
+          } else {
+            setCredits(prev => prev - 10);
+          }
+        }
       }
 
       setSuccess("Configuration saved successfully!");
@@ -499,7 +692,47 @@ export default function AutoApplyForm() {
               We'll guide you through configuring your automated job application system. 
               This will take about 10-15 minutes to complete all sections.
             </p>
-            <Button onClick={handleNext} size="lg">Get Started</Button>
+            
+            {/* Credits Information */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Coins className="w-5 h-5 text-blue-600" />
+                <span className="font-semibold text-blue-800">Available Credits: {loadingCredits ? '...' : credits}</span>
+              </div>
+              <p className="text-sm text-blue-700">
+                {credits >= 10 ? 
+                  '✓ You have enough credits to submit this configuration (10 credits required)' : 
+                  '⚠ You need at least 10 credits to submit this configuration'
+                }
+              </p>
+              {credits < 10 && (
+                <p className="text-xs text-blue-600 mt-1">
+                  Please add more credits from the dashboard to continue.
+                </p>
+              )}
+            </div>
+
+            {/* Existing Form Warning */}
+            {existingForm && !searchParams.get('edit') && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <Info className="w-5 h-5 text-yellow-600" />
+                  <span className="font-semibold text-yellow-800">Existing Configuration Found</span>
+                </div>
+                <p className="text-sm text-yellow-700">
+                  You already have a configuration. You can only have one at a time. 
+                  Please edit your existing configuration or delete it first.
+                </p>
+              </div>
+            )}
+
+            <Button 
+              onClick={handleNext} 
+              size="lg"
+              disabled={credits < 10 || (existingForm && !searchParams.get('edit'))}
+            >
+              Get Started
+            </Button>
           </div>
         );
 
