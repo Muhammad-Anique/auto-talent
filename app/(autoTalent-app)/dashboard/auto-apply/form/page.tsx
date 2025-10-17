@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -8,7 +14,26 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { CheckCircle2, Info, Linkedin, User, FileText, UploadCloud, Settings, Search, Shield, Monitor, Coins } from "lucide-react";
+import {
+  CheckCircle2,
+  Info,
+  Linkedin,
+  User,
+  FileText,
+  UploadCloud,
+  Settings,
+  Search,
+  Shield,
+  Monitor,
+  Coins,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { ValidationHelper, FileValidator } from "@/lib/auto-apply-validation";
+import {
+  AutoApplyErrorHandler,
+  AutoApplyErrorCode,
+} from "@/lib/auto-apply-errors";
+import { AutoApplyNotificationManager } from "@/lib/auto-apply-notifications";
 
 const stepLabels = [
   "Welcome",
@@ -16,17 +41,36 @@ const stepLabels = [
   "Resume Selection",
   "Application Questions",
   "Search Preferences",
-  "Review & Submit"
+  "Review & Submit",
 ];
 
 const operatingSystems = ["Windows", "Linux", "macOS"];
-const workAuthOptions = ["US Citizen", "Permanent Resident", "Visa Holder", "Other"];
-const educationLevels = ["High School", "Associate", "Bachelor", "Master", "Doctorate", "Other"];
+const workAuthOptions = [
+  "US Citizen",
+  "Permanent Resident",
+  "Visa Holder",
+  "Other",
+];
+const educationLevels = [
+  "High School",
+  "Associate",
+  "Bachelor",
+  "Master",
+  "Doctorate",
+  "Other",
+];
 const experienceLevels = ["Entry", "Mid", "Senior", "Executive"];
-const jobTypes = ["Full-time", "Part-time", "Contract", "Internship", "Freelance"];
+const jobTypes = [
+  "Full-time",
+  "Part-time",
+  "Contract",
+  "Internship",
+  "Freelance",
+];
 const yesNoOptions = ["Yes", "No"];
 
 export default function AutoApplyForm() {
+  const { toast } = useToast();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState({
     // Personal Information
@@ -74,11 +118,11 @@ export default function AutoApplyForm() {
     }>,
     projects: "",
     certifications: "",
-    
+
     // Resume Selection
     selectedResumeId: "",
     uploadedResume: null as File | null,
-    
+
     // Application Questions
     resumePath: "",
     legallyAuthorized: "",
@@ -94,7 +138,7 @@ export default function AutoApplyForm() {
     race: "",
     veteran: "",
     useAI: false,
-    
+
     // Search Preferences
     searchTerms: "",
     randomizeSearch: false,
@@ -111,12 +155,12 @@ export default function AutoApplyForm() {
     prioritizeKeywords: "",
     skipSecurityClearance: false,
     followCompanies: false,
-    
+
     // Additional
     resumeReady: false,
     useWebUI: true,
   });
-  
+
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -127,6 +171,9 @@ export default function AutoApplyForm() {
   const [loadingCredits, setLoadingCredits] = useState(true);
   const [existingForm, setExistingForm] = useState<any>(null);
   const [loadingExistingForm, setLoadingExistingForm] = useState(true);
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
   const router = useRouter();
   const searchParams = useSearchParams();
   const [supabaseClient, setSupabaseClient] = useState<any>(null);
@@ -145,27 +192,31 @@ export default function AutoApplyForm() {
     if (!supabaseClient) return;
     setLoadingCredits(true);
     try {
-      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabaseClient.auth.getUser();
       if (authError || !user) {
-        console.error('Auth error:', authError);
+        console.error("Auth error:", authError);
         return;
       }
-      
+
       // Check if user has a user record
       const { data: userData, error: userError } = await supabaseClient
-        .from('users')
-        .select('credits')
-        .eq('id', user.id)
+        .from("users")
+        .select("credits")
+        .eq("id", user.id)
         .single();
-      
-      if (userError && userError.code !== 'PGRST116') { // PGRST116 is "not found"
-        console.error('Error fetching credits:', userError);
+
+      if (userError && userError.code !== "PGRST116") {
+        // PGRST116 is "not found"
+        console.error("Error fetching credits:", userError);
         return;
       }
-      
+
       setCredits(userData?.credits || 0);
     } catch (error) {
-      console.error('Error loading credits:', error);
+      console.error("Error loading credits:", error);
     } finally {
       setLoadingCredits(false);
     }
@@ -176,32 +227,35 @@ export default function AutoApplyForm() {
     if (!supabaseClient) return;
     setLoadingExistingForm(true);
     try {
-      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabaseClient.auth.getUser();
       if (authError || !user) {
-        console.error('Auth error:', authError);
+        console.error("Auth error:", authError);
         return;
       }
-      
+
       const { data: forms, error } = await supabaseClient
-        .from('auto_apply_configs')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("auto_apply_configs")
+        .select("*")
+        .eq("user_id", user.id)
         .limit(1);
-      
+
       if (error) {
-        console.error('Error checking existing forms:', error);
+        console.error("Error checking existing forms:", error);
         return;
       }
-      
-             if (forms && forms.length > 0) {
-         setExistingForm(forms[0]);
-         // If editing, populate form with existing data
-         if (searchParams.get('edit')) {
-           populateFormWithExistingData(forms[0]);
-         }
-       }
+
+      if (forms && forms.length > 0) {
+        setExistingForm(forms[0]);
+        // If editing, populate form with existing data
+        if (searchParams.get("edit")) {
+          populateFormWithExistingData(forms[0]);
+        }
+      }
     } catch (error) {
-      console.error('Error checking existing form:', error);
+      console.error("Error checking existing form:", error);
     } finally {
       setLoadingExistingForm(false);
     }
@@ -209,7 +263,7 @@ export default function AutoApplyForm() {
 
   // Populate form with existing data
   const populateFormWithExistingData = (existingData: any) => {
-    setForm(prev => ({
+    setForm((prev) => ({
       ...prev,
       firstName: existingData.first_name || "",
       lastName: existingData.last_name || "",
@@ -259,7 +313,8 @@ export default function AutoApplyForm() {
       skipSecurityClearance: existingData.skip_security_clearance || false,
       followCompanies: existingData.follow_companies || false,
       resumeReady: existingData.resume_ready || false,
-      useWebUI: existingData.use_web_ui !== undefined ? existingData.use_web_ui : true,
+      useWebUI:
+        existingData.use_web_ui !== undefined ? existingData.use_web_ui : true,
       skills: existingData.skills || [],
       workExperience: existingData.work_experience || [],
       education: existingData.education || [],
@@ -271,7 +326,7 @@ export default function AutoApplyForm() {
   // Auto-fill personal information from all tables
   const loadProfileData = async () => {
     if (!supabaseClient) {
-      console.log('Supabase client not ready');
+      console.log("Supabase client not ready");
       return;
     }
 
@@ -284,42 +339,42 @@ export default function AutoApplyForm() {
       } = await supabaseClient.auth.getUser();
 
       if (error) {
-        console.error('Auth error:', error);
+        console.error("Auth error:", error);
         return;
       }
 
       if (!user) {
-        console.log('No authenticated user found');
+        console.log("No authenticated user found");
         return;
       }
 
-      console.log('Current user ID:', user.id);
-      console.log('Current user email:', user.email);
+      console.log("Current user ID:", user.id);
+      console.log("Current user email:", user.email);
 
       // Fetch data from profiles table using user ID
       const { data: profile, error: profileError } = await supabaseClient
-        .from('profiles')
-        .select('*')
-        .eq('user_id', user.id)
+        .from("profiles")
+        .select("*")
+        .eq("user_id", user.id)
         .single();
 
       if (profileError) {
-        console.error('Profile fetch error:', profileError);
+        console.error("Profile fetch error:", profileError);
       } else {
-        console.log('Profile data found:', profile);
+        console.log("Profile data found:", profile);
       }
 
       // Fetch data from users table using user ID
       const { data: userData, error: userError } = await supabaseClient
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
+        .from("users")
+        .select("*")
+        .eq("id", user.id)
         .single();
 
       if (userError) {
-        console.error('User fetch error:', userError);
+        console.error("User fetch error:", userError);
       } else {
-        console.log('User data found:', userData);
+        console.log("User data found:", userData);
       }
 
       // Build form data starting with auth user email
@@ -331,7 +386,9 @@ export default function AutoApplyForm() {
       if (profile) {
         formData = {
           ...formData,
-          fullName: `${profile.first_name || ""} ${profile.last_name || ""}`.trim(),
+          fullName: `${profile.first_name || ""} ${
+            profile.last_name || ""
+          }`.trim(),
           phone: profile.phone_number || "",
           email: profile.email || formData.email,
           address: profile.location || "",
@@ -351,9 +408,21 @@ export default function AutoApplyForm() {
           linkedinUrl: profile.linkedin_url || "",
           website: profile.website || "",
           githubUrl: profile.github_url || "",
-          skills: Array.isArray(profile.skills) ? profile.skills : (profile.skills ? [profile.skills] : []),
-          workExperience: Array.isArray(profile.work_experience) ? profile.work_experience : (profile.work_experience ? [profile.work_experience] : []),
-          education: Array.isArray(profile.education) ? profile.education : (profile.education ? [profile.education] : []),
+          skills: Array.isArray(profile.skills)
+            ? profile.skills
+            : profile.skills
+            ? [profile.skills]
+            : [],
+          workExperience: Array.isArray(profile.work_experience)
+            ? profile.work_experience
+            : profile.work_experience
+            ? [profile.work_experience]
+            : [],
+          education: Array.isArray(profile.education)
+            ? profile.education
+            : profile.education
+            ? [profile.education]
+            : [],
           projects: profile.projects || "",
           certifications: profile.certifications || "",
         };
@@ -367,17 +436,16 @@ export default function AutoApplyForm() {
         };
       }
 
-      console.log('Final form data to be set:', formData);
+      console.log("Final form data to be set:", formData);
 
       // Update form state
-      setForm(prev => {
+      setForm((prev) => {
         const newForm = { ...prev, ...formData };
-        console.log('Updated form state:', newForm);
+        console.log("Updated form state:", newForm);
         return newForm;
       });
-      
     } catch (error) {
-      console.error('Error loading profile:', error);
+      console.error("Error loading profile:", error);
     } finally {
       setLoadingProfile(false);
     }
@@ -386,7 +454,7 @@ export default function AutoApplyForm() {
   // Load user resumes with enhanced data from resumes table
   const loadUserResumes = async () => {
     if (!supabaseClient) {
-      console.log('Supabase client not ready');
+      console.log("Supabase client not ready");
       return;
     }
 
@@ -399,44 +467,45 @@ export default function AutoApplyForm() {
       } = await supabaseClient.auth.getUser();
 
       if (error) {
-        console.error('Auth error in resume loading:', error);
+        console.error("Auth error in resume loading:", error);
         return;
       }
 
       if (!user) {
-        console.log('No authenticated user found for resume loading');
+        console.log("No authenticated user found for resume loading");
         return;
       }
 
-      console.log('Loading resumes for user ID:', user.id);
+      console.log("Loading resumes for user ID:", user.id);
 
       // Fetch resumes using user ID
       const { data: resumes, error: resumeError } = await supabaseClient
-        .from('resumes')
-        .select('*')
-        .eq('user_id', user.id);
-      
+        .from("resumes")
+        .select("*")
+        .eq("user_id", user.id);
+
       if (resumeError) {
-        console.error('Resume fetch error:', resumeError);
+        console.error("Resume fetch error:", resumeError);
         return;
       }
 
-      console.log('Resumes found:', resumes);
-      
+      console.log("Resumes found:", resumes);
+
       if (resumes && resumes.length > 0) {
         setUserResumes(resumes);
-        
+
         // Auto-fill form with data from the most recent resume
-        const latestResume = resumes.sort((a: any, b: any) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        const latestResume = resumes.sort(
+          (a: any, b: any) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         )[0];
-        
-        console.log('Latest resume:', latestResume);
-        
+
+        console.log("Latest resume:", latestResume);
+
         // Only fill fields that are empty
-        setForm(prev => ({
+        setForm((prev) => ({
           ...prev,
-          firstName: prev.firstName|| "",
+          firstName: prev.firstName || "",
           lastName: prev.lastName || "",
           phone: prev.phone || latestResume.phone_number || "",
           email: prev.email || latestResume.email || "",
@@ -445,18 +514,33 @@ export default function AutoApplyForm() {
           linkedinUrl: prev.linkedinUrl || latestResume.linkedin_url || "",
           website: prev.website || latestResume.website || "",
           githubUrl: prev.githubUrl || latestResume.github_url || "",
-          skills: prev.skills.length > 0 ? prev.skills : (Array.isArray(latestResume.skills) ? latestResume.skills : (latestResume.skills ? [latestResume.skills] : [])),
-          workExperience: prev.workExperience.length > 0 ? prev.workExperience : (Array.isArray(latestResume.work_experience) ? latestResume.work_experience : (latestResume.work_experience ? [latestResume.work_experience] : [])),
+          skills:
+            prev.skills.length > 0
+              ? prev.skills
+              : Array.isArray(latestResume.skills)
+              ? latestResume.skills
+              : latestResume.skills
+              ? [latestResume.skills]
+              : [],
+          workExperience:
+            prev.workExperience.length > 0
+              ? prev.workExperience
+              : Array.isArray(latestResume.work_experience)
+              ? latestResume.work_experience
+              : latestResume.work_experience
+              ? [latestResume.work_experience]
+              : [],
           education: prev.education || latestResume.education || "",
           projects: prev.projects || latestResume.projects || "",
-          certifications: prev.certifications || latestResume.certifications || "",
+          certifications:
+            prev.certifications || latestResume.certifications || "",
         }));
       } else {
-        console.log('No resumes found for user');
+        console.log("No resumes found for user");
         setUserResumes([]);
       }
     } catch (error) {
-      console.error('Error loading resumes:', error);
+      console.error("Error loading resumes:", error);
     } finally {
       setLoadingResumes(false);
     }
@@ -472,30 +556,35 @@ export default function AutoApplyForm() {
     }
   }, [supabaseClient]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value, type } = e.target;
-    if (type === 'checkbox') {
-      setForm(prev => ({ ...prev, [name]: (e.target as HTMLInputElement).checked }));
+    if (type === "checkbox") {
+      setForm((prev) => ({
+        ...prev,
+        [name]: (e.target as HTMLInputElement).checked,
+      }));
     } else {
-      setForm(prev => ({ ...prev, [name]: value }));
+      setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleRadioChange = (name: string, value: string) => {
-    setForm(prev => ({ ...prev, [name]: value === "Yes" }));
+    setForm((prev) => ({ ...prev, [name]: value === "Yes" }));
   };
 
   const handleMultiSelect = (name: keyof typeof form, value: string) => {
-    setForm(prev => {
+    setForm((prev) => {
       const current = prev[name] as string[];
       if (Array.isArray(current)) {
-        const updated = current.includes(value) 
-          ? current.filter(item => item !== value)
+        const updated = current.includes(value)
+          ? current.filter((item) => item !== value)
           : [...current, value];
         return { ...prev, [name]: updated };
       }
@@ -506,118 +595,186 @@ export default function AutoApplyForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, files } = e.target;
     if (files && files[0]) {
-      setForm(prev => ({ ...prev, [name]: files[0] }));
+      const file = files[0];
+
+      // Validate file
+      const validation = FileValidator.validateResumeFile(file);
+      if (!validation.isValid) {
+        const error = AutoApplyErrorHandler.createError(
+          AutoApplyErrorCode.INVALID_FORM_DATA,
+          validation.error || "Invalid file"
+        );
+        const notification =
+          AutoApplyNotificationManager.createErrorNotification(error);
+        AutoApplyNotificationManager.showNotification(notification, toast);
+        return;
+      }
+
+      setForm((prev) => ({ ...prev, [name]: file }));
     }
   };
 
   const handleNext = () => {
     setError("");
-    setStep(s => s + 1);
+    setStep((s) => s + 1);
   };
 
   const handleBack = () => {
     setError("");
-    setStep(s => s - 1);
+    setStep((s) => s - 1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!supabaseClient) {
-      setError("Supabase client not ready");
+      const error = AutoApplyErrorHandler.createError(
+        AutoApplyErrorCode.DATABASE_ERROR,
+        "System not ready. Please try again."
+      );
+      AutoApplyErrorHandler.logError(error);
+      setError(AutoApplyErrorHandler.getErrorMessage(error));
       return;
     }
 
     setSubmitting(true);
     setError("");
     setSuccess("");
-    
+    setValidationErrors({});
+
     try {
+      // Validate form data
+      const validation = ValidationHelper.validateFormData(form);
+      if (!validation.success) {
+        setValidationErrors(validation.errors);
+        const notification =
+          AutoApplyNotificationManager.createErrorNotification(
+            AutoApplyErrorHandler.createError(
+              AutoApplyErrorCode.INVALID_FORM_DATA,
+              "Please fix the validation errors below"
+            )
+          );
+        AutoApplyNotificationManager.showNotification(notification, toast);
+        return;
+      }
+
       // Get current user
-      const { data: { user }, error: authError } = await supabaseClient.auth.getUser();
+      const {
+        data: { user },
+        error: authError,
+      } = await supabaseClient.auth.getUser();
       if (authError || !user) {
-        throw new Error("User not authenticated");
+        const error = AutoApplyErrorHandler.createError(
+          AutoApplyErrorCode.AUTHENTICATION_ERROR,
+          "You must be logged in to submit a configuration"
+        );
+        AutoApplyErrorHandler.logError(error);
+        const notification =
+          AutoApplyNotificationManager.createErrorNotification(error);
+        AutoApplyNotificationManager.showNotification(notification, toast);
+        return;
       }
 
       // Check credits (need 10 credits to submit)
       if (credits < 10) {
-        throw new Error("You need at least 10 credits to submit a configuration. Current credits: " + credits);
+        const error = AutoApplyErrorHandler.createError(
+          AutoApplyErrorCode.INSUFFICIENT_CREDITS,
+          `You need at least 10 credits to submit a configuration. Current credits: ${credits}`
+        );
+        AutoApplyErrorHandler.logError(error);
+        const notification =
+          AutoApplyNotificationManager.createCreditsNotification(credits, 10);
+        AutoApplyNotificationManager.showNotification(notification, toast);
+        return;
       }
 
       // Check if user already has a form (only one allowed)
-      if (existingForm && !searchParams.get('edit')) {
-        throw new Error("You can only have one configuration at a time. Please edit your existing configuration or delete it first.");
+      if (existingForm && !searchParams.get("edit")) {
+        const error = AutoApplyErrorHandler.createError(
+          AutoApplyErrorCode.CONFIGURATION_INVALID,
+          "You can only have one configuration at a time. Please edit your existing configuration or delete it first."
+        );
+        AutoApplyErrorHandler.logError(error);
+        const notification =
+          AutoApplyNotificationManager.createErrorNotification(error);
+        AutoApplyNotificationManager.showNotification(notification, toast);
+        return;
       }
+
+      // Use sanitized data from validation
+      const sanitizedData = validation.sanitizedData!;
 
       // Prepare form data for database
       const formData = {
         user_id: user.id,
         form_id: existingForm?.form_id || crypto.randomUUID(), // Use existing form_id if editing
-        first_name: form.firstName,
-        last_name: form.lastName,
-        phone: form.phone,
-        email: form.email,
-        address: form.address,
-        city: form.city,
-        state: form.state,
-        country: form.country,
-        zip_code: form.zipCode,
-        current_job_title: form.currentJobTitle,
-        current_company: form.currentCompany,
-        current_salary: form.currentSalary,
-        desired_salary: form.desiredSalary,
-        notice_period: form.noticePeriod,
-        work_auth: form.workAuth,
-        field_of_study: form.fieldOfStudy,
-        graduation_year: form.graduationYear,
-        linkedin_url: form.linkedinUrl,
-        website: form.website,
-        github_url: form.githubUrl,
-        selected_resume_id: form.selectedResumeId || null,
-        uploaded_resume_path: form.uploadedResume ? form.uploadedResume.name : null,
-        legally_authorized: form.legallyAuthorized,
-        require_sponsorship: form.requireSponsorship,
-        current_location: form.currentLocation,
-        years_experience: form.yearsExperience,
-        expected_salary: form.expectedSalary,
-        start_date: form.startDate,
-        interest_reason: form.interestReason,
-        key_skills: form.keySkills,
-        disabilities: form.disabilities,
-        gender: form.gender,
-        race: form.race,
-        veteran: form.veteran,
-        search_terms: form.searchTerms,
-        randomize_search: form.randomizeSearch,
-        search_location: form.searchLocation,
-        experience_level: form.experienceLevel,
-        salary_range: form.salaryRange,
-        target_experience: form.targetExperience,
-        preferred_job_types: form.preferredJobTypes,
-        industries: form.industries,
-        blacklisted_companies: form.blacklistedCompanies,
-        whitelisted_companies: form.whitelistedCompanies,
-        skip_keywords: form.skipKeywords,
-        prioritize_keywords: form.prioritizeKeywords,
-        skip_security_clearance: form.skipSecurityClearance,
-        follow_companies: form.followCompanies,
-        resume_ready: form.resumeReady,
-        use_web_ui: form.useWebUI,
-        skills: form.skills,
-        work_experience: form.workExperience,
-        education: form.education,
-        projects: form.projects,
-        certifications: form.certifications
+        first_name: sanitizedData.firstName,
+        last_name: sanitizedData.lastName,
+        phone: sanitizedData.phone,
+        email: sanitizedData.email,
+        address: sanitizedData.address,
+        city: sanitizedData.city,
+        state: sanitizedData.state,
+        country: sanitizedData.country,
+        zip_code: sanitizedData.zipCode,
+        current_job_title: sanitizedData.currentJobTitle,
+        current_company: sanitizedData.currentCompany,
+        current_salary: sanitizedData.currentSalary,
+        desired_salary: sanitizedData.desiredSalary,
+        notice_period: sanitizedData.noticePeriod,
+        work_auth: sanitizedData.workAuth,
+        field_of_study: sanitizedData.fieldOfStudy,
+        graduation_year: sanitizedData.graduationYear,
+        linkedin_url: sanitizedData.linkedinUrl,
+        website: sanitizedData.website,
+        github_url: sanitizedData.githubUrl,
+        selected_resume_id: sanitizedData.selectedResumeId || null,
+        uploaded_resume_path: form.uploadedResume
+          ? form.uploadedResume.name
+          : null,
+        legally_authorized: sanitizedData.legallyAuthorized,
+        require_sponsorship: sanitizedData.requireSponsorship,
+        current_location: sanitizedData.currentLocation,
+        years_experience: sanitizedData.yearsExperience,
+        expected_salary: sanitizedData.expectedSalary,
+        start_date: sanitizedData.startDate,
+        interest_reason: sanitizedData.interestReason,
+        key_skills: sanitizedData.keySkills,
+        disabilities: sanitizedData.disabilities,
+        gender: sanitizedData.gender,
+        race: sanitizedData.race,
+        veteran: sanitizedData.veteran,
+        search_terms: sanitizedData.searchTerms,
+        randomize_search: sanitizedData.randomizeSearch,
+        search_location: sanitizedData.searchLocation,
+        experience_level: sanitizedData.experienceLevel,
+        salary_range: sanitizedData.salaryRange,
+        target_experience: sanitizedData.targetExperience,
+        preferred_job_types: sanitizedData.preferredJobTypes,
+        industries: sanitizedData.industries,
+        blacklisted_companies: sanitizedData.blacklistedCompanies,
+        whitelisted_companies: sanitizedData.whitelistedCompanies,
+        skip_keywords: sanitizedData.skipKeywords,
+        prioritize_keywords: sanitizedData.prioritizeKeywords,
+        skip_security_clearance: sanitizedData.skipSecurityClearance,
+        follow_companies: sanitizedData.followCompanies,
+        resume_ready: sanitizedData.resumeReady,
+        use_web_ui: sanitizedData.useWebUI,
+        skills: sanitizedData.skills,
+        work_experience: sanitizedData.workExperience,
+        education: sanitizedData.education,
+        projects: sanitizedData.projects,
+        certifications: sanitizedData.certifications,
       };
 
-      console.log('Submitting form data:', formData);
+      console.log("Submitting form data:", formData);
 
       let dbErr;
-      if (existingForm && searchParams.get('edit')) {
+      if (existingForm && searchParams.get("edit")) {
         // Update existing form
         const { error } = await supabaseClient
           .from("auto_apply_configs")
           .update(formData)
-          .eq('form_id', existingForm.form_id);
+          .eq("form_id", existingForm.form_id);
         dbErr = error;
       } else {
         // Insert new form
@@ -628,59 +785,79 @@ export default function AutoApplyForm() {
       }
 
       if (dbErr) {
-        console.error('Database error:', dbErr);
-        throw dbErr;
+        const error = AutoApplyErrorHandler.createError(
+          AutoApplyErrorCode.DATABASE_ERROR,
+          "Failed to save configuration"
+        );
+        AutoApplyErrorHandler.logError(error, { dbErr });
+        const notification =
+          AutoApplyNotificationManager.createErrorNotification(error);
+        AutoApplyNotificationManager.showNotification(notification, toast);
+        return;
       }
 
       // Deduct 10 credits for new form submission (not for edits)
-      if (!existingForm || !searchParams.get('edit')) {
+      if (!existingForm || !searchParams.get("edit")) {
         // First, get current user record to preserve existing data
         const { data: currentUser, error: fetchError } = await supabaseClient
-          .from('users')
-          .select('*')
-          .eq('id', user.id)
+          .from("users")
+          .select("*")
+          .eq("id", user.id)
           .single();
 
-        if (fetchError && fetchError.code !== 'PGRST116') {
-          console.error('Error fetching user for credit deduction:', fetchError);
+        if (fetchError && fetchError.code !== "PGRST116") {
+          console.error(
+            "Error fetching user for credit deduction:",
+            fetchError
+          );
         } else {
           // Update user with reduced credits
           const { error: creditError } = await supabaseClient
-            .from('users')
-            .upsert({
-              id: user.id,
-              email: user.email,
-              username: currentUser?.username || null,
-              plan_sub: currentUser?.plan_sub || null,
-              "Auto-Apply": currentUser?.["Auto-Apply"] || null,
-              last_auto_applied: currentUser?.last_auto_applied || null,
-              credits: credits - 10,
-              created_at: currentUser?.created_at || new Date().toISOString()
-            }, {
-              onConflict: 'id'
-            });
+            .from("users")
+            .upsert(
+              {
+                id: user.id,
+                email: user.email,
+                username: currentUser?.username || null,
+                plan_sub: currentUser?.plan_sub || null,
+                "Auto-Apply": currentUser?.["Auto-Apply"] || null,
+                last_auto_applied: currentUser?.last_auto_applied || null,
+                credits: credits - 10,
+                created_at: currentUser?.created_at || new Date().toISOString(),
+              },
+              {
+                onConflict: "id",
+              }
+            );
 
           if (creditError) {
-            console.error('Error deducting credits:', creditError);
+            console.error("Error deducting credits:", creditError);
             // Don't throw error here as form was saved successfully
           } else {
-            setCredits(prev => prev - 10);
+            setCredits((prev) => prev - 10);
           }
         }
       }
 
-      setSuccess("Configuration saved successfully!");
+      const notification =
+        AutoApplyNotificationManager.createConfigurationNotification(
+          !!existingForm
+        );
+      AutoApplyNotificationManager.showNotification(notification, toast);
       setTimeout(() => router.push("/dashboard/auto-apply"), 1500);
     } catch (err: any) {
-      console.error('Submit error:', err);
-      setError(err.message || "Submission failed.");
+      const autoApplyError = handleAutoApplyError(err);
+      AutoApplyErrorHandler.logError(autoApplyError);
+      const notification =
+        AutoApplyNotificationManager.createErrorNotification(autoApplyError);
+      AutoApplyNotificationManager.showNotification(notification, toast);
     } finally {
       setSubmitting(false);
     }
   };
 
   const renderStep = () => {
-    switch(step) {
+    switch (step) {
       case 0:
         return (
           <div className="text-center space-y-6">
@@ -689,21 +866,23 @@ export default function AutoApplyForm() {
             </div>
             <h2 className="text-2xl font-bold">Welcome to Auto-Apply Setup</h2>
             <p className="text-muted-foreground">
-              We'll guide you through configuring your automated job application system. 
-              This will take about 10-15 minutes to complete all sections.
+              We'll guide you through configuring your automated job application
+              system. This will take about 10-15 minutes to complete all
+              sections.
             </p>
-            
+
             {/* Credits Information */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Coins className="w-5 h-5 text-blue-600" />
-                <span className="font-semibold text-blue-800">Available Credits: {loadingCredits ? '...' : credits}</span>
+                <span className="font-semibold text-blue-800">
+                  Available Credits: {loadingCredits ? "..." : credits}
+                </span>
               </div>
               <p className="text-sm text-blue-700">
-                {credits >= 10 ? 
-                  '✓ You have enough credits to submit this configuration (10 credits required)' : 
-                  '⚠ You need at least 10 credits to submit this configuration'
-                }
+                {credits >= 10
+                  ? "✓ You have enough credits to submit this configuration (10 credits required)"
+                  : "⚠ You need at least 10 credits to submit this configuration"}
               </p>
               {credits < 10 && (
                 <p className="text-xs text-blue-600 mt-1">
@@ -713,23 +892,28 @@ export default function AutoApplyForm() {
             </div>
 
             {/* Existing Form Warning */}
-            {existingForm && !searchParams.get('edit') && (
+            {existingForm && !searchParams.get("edit") && (
               <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <Info className="w-5 h-5 text-yellow-600" />
-                  <span className="font-semibold text-yellow-800">Existing Configuration Found</span>
+                  <span className="font-semibold text-yellow-800">
+                    Existing Configuration Found
+                  </span>
                 </div>
                 <p className="text-sm text-yellow-700">
-                  You already have a configuration. You can only have one at a time. 
-                  Please edit your existing configuration or delete it first.
+                  You already have a configuration. You can only have one at a
+                  time. Please edit your existing configuration or delete it
+                  first.
                 </p>
               </div>
             )}
 
-            <Button 
-              onClick={handleNext} 
+            <Button
+              onClick={handleNext}
               size="lg"
-              disabled={credits < 10 || (existingForm && !searchParams.get('edit'))}
+              disabled={
+                credits < 10 || (existingForm && !searchParams.get("edit"))
+              }
             >
               Get Started
             </Button>
@@ -742,125 +926,284 @@ export default function AutoApplyForm() {
             <div className="flex items-center gap-2 mb-4">
               <User className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold">Personal Information</h3>
-              {loadingProfile && <span className="text-sm text-muted-foreground">Loading profile data...</span>}
+              {loadingProfile && (
+                <span className="text-sm text-muted-foreground">
+                  Loading profile data...
+                </span>
+              )}
               {!loadingProfile && (
                 <span className="text-sm text-green-600">
                   ✓ Data loaded from Supabase tables
                 </span>
               )}
             </div>
-            
 
-            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="firstName">First Name *</Label>
-                <Input id="firstName" name="firstName" value={form.firstName} onChange={handleChange} required />
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  value={form.firstName}
+                  onChange={handleChange}
+                  required
+                />
+                {validationErrors.firstName && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.firstName}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="lastName">Last Name *</Label>
-                <Input id="lastName" name="lastName" value={form.lastName} onChange={handleChange} required />
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  value={form.lastName}
+                  onChange={handleChange}
+                  required
+                />
+                {validationErrors.lastName && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.lastName}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="phone">Phone Number *</Label>
-                <Input id="phone" name="phone" value={form.phone} onChange={handleChange} required />
+                <Input
+                  id="phone"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  required
+                />
+                {validationErrors.phone && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.phone}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="email">Email Address *</Label>
-                <Input id="email" name="email" type="email" value={form.email} onChange={handleChange} required />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  required
+                />
+                {validationErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.email}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="linkedinUrl">LinkedIn Profile URL *</Label>
-                <Input id="linkedinUrl" name="linkedinUrl" value={form.linkedinUrl} onChange={handleChange} required />
+                <Input
+                  id="linkedinUrl"
+                  name="linkedinUrl"
+                  value={form.linkedinUrl}
+                  onChange={handleChange}
+                  required
+                />
+                {validationErrors.linkedinUrl && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {validationErrors.linkedinUrl}
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="website">Website</Label>
-                <Input id="website" name="website" value={form.website} onChange={handleChange} />
+                <Input
+                  id="website"
+                  name="website"
+                  value={form.website}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label htmlFor="githubUrl">GitHub URL</Label>
-                <Input id="githubUrl" name="githubUrl" value={form.githubUrl} onChange={handleChange} />
+                <Input
+                  id="githubUrl"
+                  name="githubUrl"
+                  value={form.githubUrl}
+                  onChange={handleChange}
+                />
               </div>
               <div className="md:col-span-2">
                 <Label htmlFor="address">Address *</Label>
-                <Input id="address" name="address" value={form.address} onChange={handleChange} required />
+                <Input
+                  id="address"
+                  name="address"
+                  value={form.address}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="city">City *</Label>
-                <Input id="city" name="city" value={form.city} onChange={handleChange} required />
+                <Input
+                  id="city"
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="state">State/Province *</Label>
-                <Input id="state" name="state" value={form.state} onChange={handleChange} required />
+                <Input
+                  id="state"
+                  name="state"
+                  value={form.state}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="country">Country *</Label>
-                <Input id="country" name="country" value={form.country} onChange={handleChange} required />
+                <Input
+                  id="country"
+                  name="country"
+                  value={form.country}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="zipCode">Zip/Postal Code *</Label>
-                <Input id="zipCode" name="zipCode" value={form.zipCode} onChange={handleChange} required />
+                <Input
+                  id="zipCode"
+                  name="zipCode"
+                  value={form.zipCode}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="currentJobTitle">Current Job Title</Label>
-                <Input id="currentJobTitle" name="currentJobTitle" value={form.currentJobTitle} onChange={handleChange} />
+                <Input
+                  id="currentJobTitle"
+                  name="currentJobTitle"
+                  value={form.currentJobTitle}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label htmlFor="currentCompany">Current Company</Label>
-                <Input id="currentCompany" name="currentCompany" value={form.currentCompany} onChange={handleChange} />
+                <Input
+                  id="currentCompany"
+                  name="currentCompany"
+                  value={form.currentCompany}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label htmlFor="currentSalary">Current Salary</Label>
-                <Input id="currentSalary" name="currentSalary" value={form.currentSalary} onChange={handleChange} />
+                <Input
+                  id="currentSalary"
+                  name="currentSalary"
+                  value={form.currentSalary}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label htmlFor="desiredSalary">Desired Salary *</Label>
-                <Input id="desiredSalary" name="desiredSalary" value={form.desiredSalary} onChange={handleChange} required />
+                <Input
+                  id="desiredSalary"
+                  name="desiredSalary"
+                  value={form.desiredSalary}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div>
                 <Label htmlFor="noticePeriod">Notice Period (days)</Label>
-                <Input id="noticePeriod" name="noticePeriod" value={form.noticePeriod} onChange={handleChange} />
+                <Input
+                  id="noticePeriod"
+                  name="noticePeriod"
+                  value={form.noticePeriod}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label htmlFor="workAuth">Work Authorization *</Label>
-                <select name="workAuth" value={form.workAuth} onChange={handleSelectChange} className="w-full p-2 border rounded" required>
+                <select
+                  name="workAuth"
+                  value={form.workAuth}
+                  onChange={handleSelectChange}
+                  className="w-full p-2 border rounded"
+                  required
+                >
                   <option value="">Select Status</option>
-                  {workAuthOptions.map(option => (
-                    <option key={option} value={option}>{option}</option>
+                  {workAuthOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
-                <Label htmlFor="educationLevel">Highest Education Level *</Label>
-                <select name="educationLevel" value={form.educationLevel} onChange={handleSelectChange} className="w-full p-2 border rounded" required>
+                <Label htmlFor="educationLevel">
+                  Highest Education Level *
+                </Label>
+                <select
+                  name="educationLevel"
+                  value={form.educationLevel}
+                  onChange={handleSelectChange}
+                  className="w-full p-2 border rounded"
+                  required
+                >
                   <option value="">Select Level</option>
-                  {educationLevels.map(level => (
-                    <option key={level} value={level}>{level}</option>
+                  {educationLevels.map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
                   ))}
                 </select>
               </div>
               <div>
                 <Label htmlFor="fieldOfStudy">Field of Study</Label>
-                <Input id="fieldOfStudy" name="fieldOfStudy" value={form.fieldOfStudy} onChange={handleChange} />
+                <Input
+                  id="fieldOfStudy"
+                  name="fieldOfStudy"
+                  value={form.fieldOfStudy}
+                  onChange={handleChange}
+                />
               </div>
               <div>
                 <Label htmlFor="graduationYear">Graduation Year</Label>
-                <Input id="graduationYear" name="graduationYear" value={form.graduationYear} onChange={handleChange} />
+                <Input
+                  id="graduationYear"
+                  name="graduationYear"
+                  value={form.graduationYear}
+                  onChange={handleChange}
+                />
               </div>
               <div className="md:col-span-2">
                 <Label>Skills</Label>
                 <div className="space-y-4">
                   {form.skills.map((skillGroup, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div
+                      key={index}
+                      className="border rounded-lg p-4 space-y-3"
+                    >
                       <div className="flex justify-between items-center">
-                        <h4 className="font-medium">Skill Category {index + 1}</h4>
+                        <h4 className="font-medium">
+                          Skill Category {index + 1}
+                        </h4>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const newSkills = form.skills.filter((_, i) => i !== index);
-                            setForm(prev => ({ ...prev, skills: newSkills }));
+                            const newSkills = form.skills.filter(
+                              (_, i) => i !== index
+                            );
+                            setForm((prev) => ({ ...prev, skills: newSkills }));
                           }}
                         >
                           Remove
@@ -873,8 +1216,14 @@ export default function AutoApplyForm() {
                             value={skillGroup.category || ""}
                             onChange={(e) => {
                               const newSkills = [...form.skills];
-                              newSkills[index] = { ...newSkills[index], category: e.target.value };
-                              setForm(prev => ({ ...prev, skills: newSkills }));
+                              newSkills[index] = {
+                                ...newSkills[index],
+                                category: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                skills: newSkills,
+                              }));
                             }}
                             placeholder="Technical Skills"
                           />
@@ -885,11 +1234,17 @@ export default function AutoApplyForm() {
                             value={skillGroup.items?.join(", ") || ""}
                             onChange={(e) => {
                               const newSkills = [...form.skills];
-                              newSkills[index] = { 
-                                ...newSkills[index], 
-                                items: e.target.value.split(",").map(s => s.trim()).filter(s => s)
+                              newSkills[index] = {
+                                ...newSkills[index],
+                                items: e.target.value
+                                  .split(",")
+                                  .map((s) => s.trim())
+                                  .filter((s) => s),
                               };
-                              setForm(prev => ({ ...prev, skills: newSkills }));
+                              setForm((prev) => ({
+                                ...prev,
+                                skills: newSkills,
+                              }));
                             }}
                             placeholder="JavaScript, React, Node.js"
                           />
@@ -901,9 +1256,9 @@ export default function AutoApplyForm() {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setForm(prev => ({
+                      setForm((prev) => ({
                         ...prev,
-                        skills: [...prev.skills, { items: [], category: "" }]
+                        skills: [...prev.skills, { items: [], category: "" }],
                       }));
                     }}
                   >
@@ -911,12 +1266,15 @@ export default function AutoApplyForm() {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="md:col-span-2">
                 <Label>Work Experience</Label>
                 <div className="space-y-4">
                   {form.workExperience.map((exp, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div
+                      key={index}
+                      className="border rounded-lg p-4 space-y-3"
+                    >
                       <div className="flex justify-between items-center">
                         <h4 className="font-medium">Experience {index + 1}</h4>
                         <Button
@@ -924,8 +1282,13 @@ export default function AutoApplyForm() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const newExp = form.workExperience.filter((_, i) => i !== index);
-                            setForm(prev => ({ ...prev, workExperience: newExp }));
+                            const newExp = form.workExperience.filter(
+                              (_, i) => i !== index
+                            );
+                            setForm((prev) => ({
+                              ...prev,
+                              workExperience: newExp,
+                            }));
                           }}
                         >
                           Remove
@@ -938,8 +1301,14 @@ export default function AutoApplyForm() {
                             value={exp.position || ""}
                             onChange={(e) => {
                               const newExp = [...form.workExperience];
-                              newExp[index] = { ...newExp[index], position: e.target.value };
-                              setForm(prev => ({ ...prev, workExperience: newExp }));
+                              newExp[index] = {
+                                ...newExp[index],
+                                position: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                workExperience: newExp,
+                              }));
                             }}
                             placeholder="Software Engineer"
                           />
@@ -950,8 +1319,14 @@ export default function AutoApplyForm() {
                             value={exp.company || ""}
                             onChange={(e) => {
                               const newExp = [...form.workExperience];
-                              newExp[index] = { ...newExp[index], company: e.target.value };
-                              setForm(prev => ({ ...prev, workExperience: newExp }));
+                              newExp[index] = {
+                                ...newExp[index],
+                                company: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                workExperience: newExp,
+                              }));
                             }}
                             placeholder="Tech Corp"
                           />
@@ -962,8 +1337,14 @@ export default function AutoApplyForm() {
                             value={exp.date || ""}
                             onChange={(e) => {
                               const newExp = [...form.workExperience];
-                              newExp[index] = { ...newExp[index], date: e.target.value };
-                              setForm(prev => ({ ...prev, workExperience: newExp }));
+                              newExp[index] = {
+                                ...newExp[index],
+                                date: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                workExperience: newExp,
+                              }));
                             }}
                             placeholder="May 2025 - Present"
                           />
@@ -974,8 +1355,14 @@ export default function AutoApplyForm() {
                             value={exp.location || ""}
                             onChange={(e) => {
                               const newExp = [...form.workExperience];
-                              newExp[index] = { ...newExp[index], location: e.target.value };
-                              setForm(prev => ({ ...prev, workExperience: newExp }));
+                              newExp[index] = {
+                                ...newExp[index],
+                                location: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                workExperience: newExp,
+                              }));
                             }}
                             placeholder="Bangkok, Thailand"
                           />
@@ -986,11 +1373,16 @@ export default function AutoApplyForm() {
                             value={exp.description?.join("\n") || ""}
                             onChange={(e) => {
                               const newExp = [...form.workExperience];
-                              newExp[index] = { 
-                                ...newExp[index], 
-                                description: e.target.value.split("\n").filter(s => s.trim())
+                              newExp[index] = {
+                                ...newExp[index],
+                                description: e.target.value
+                                  .split("\n")
+                                  .filter((s) => s.trim()),
                               };
-                              setForm(prev => ({ ...prev, workExperience: newExp }));
+                              setForm((prev) => ({
+                                ...prev,
+                                workExperience: newExp,
+                              }));
                             }}
                             placeholder="Describe your role and achievements"
                           />
@@ -1001,11 +1393,17 @@ export default function AutoApplyForm() {
                             value={exp.technologies?.join(", ") || ""}
                             onChange={(e) => {
                               const newExp = [...form.workExperience];
-                              newExp[index] = { 
-                                ...newExp[index], 
-                                technologies: e.target.value.split(",").map(s => s.trim()).filter(s => s)
+                              newExp[index] = {
+                                ...newExp[index],
+                                technologies: e.target.value
+                                  .split(",")
+                                  .map((s) => s.trim())
+                                  .filter((s) => s),
                               };
-                              setForm(prev => ({ ...prev, workExperience: newExp }));
+                              setForm((prev) => ({
+                                ...prev,
+                                workExperience: newExp,
+                              }));
                             }}
                             placeholder="React, Node.js, TypeScript"
                           />
@@ -1017,12 +1415,19 @@ export default function AutoApplyForm() {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setForm(prev => ({
+                      setForm((prev) => ({
                         ...prev,
                         workExperience: [
                           ...prev.workExperience,
-                          { date: "", company: "", location: "", position: "", description: [], technologies: [] }
-                        ]
+                          {
+                            date: "",
+                            company: "",
+                            location: "",
+                            position: "",
+                            description: [],
+                            technologies: [],
+                          },
+                        ],
                       }));
                     }}
                   >
@@ -1030,12 +1435,15 @@ export default function AutoApplyForm() {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="md:col-span-2">
                 <Label>Education</Label>
                 <div className="space-y-4">
                   {form.education.map((edu, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-3">
+                    <div
+                      key={index}
+                      className="border rounded-lg p-4 space-y-3"
+                    >
                       <div className="flex justify-between items-center">
                         <h4 className="font-medium">Education {index + 1}</h4>
                         <Button
@@ -1043,8 +1451,10 @@ export default function AutoApplyForm() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            const newEdu = form.education.filter((_, i) => i !== index);
-                            setForm(prev => ({ ...prev, education: newEdu }));
+                            const newEdu = form.education.filter(
+                              (_, i) => i !== index
+                            );
+                            setForm((prev) => ({ ...prev, education: newEdu }));
                           }}
                         >
                           Remove
@@ -1057,8 +1467,14 @@ export default function AutoApplyForm() {
                             value={edu.degree || ""}
                             onChange={(e) => {
                               const newEdu = [...form.education];
-                              newEdu[index] = { ...newEdu[index], degree: e.target.value };
-                              setForm(prev => ({ ...prev, education: newEdu }));
+                              newEdu[index] = {
+                                ...newEdu[index],
+                                degree: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                education: newEdu,
+                              }));
                             }}
                             placeholder="Bachelor's degree"
                           />
@@ -1069,8 +1485,14 @@ export default function AutoApplyForm() {
                             value={edu.field || ""}
                             onChange={(e) => {
                               const newEdu = [...form.education];
-                              newEdu[index] = { ...newEdu[index], field: e.target.value };
-                              setForm(prev => ({ ...prev, education: newEdu }));
+                              newEdu[index] = {
+                                ...newEdu[index],
+                                field: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                education: newEdu,
+                              }));
                             }}
                             placeholder="Computer Science"
                           />
@@ -1081,8 +1503,14 @@ export default function AutoApplyForm() {
                             value={edu.school || ""}
                             onChange={(e) => {
                               const newEdu = [...form.education];
-                              newEdu[index] = { ...newEdu[index], school: e.target.value };
-                              setForm(prev => ({ ...prev, education: newEdu }));
+                              newEdu[index] = {
+                                ...newEdu[index],
+                                school: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                education: newEdu,
+                              }));
                             }}
                             placeholder="University Name"
                           />
@@ -1093,8 +1521,14 @@ export default function AutoApplyForm() {
                             value={edu.date || ""}
                             onChange={(e) => {
                               const newEdu = [...form.education];
-                              newEdu[index] = { ...newEdu[index], date: e.target.value };
-                              setForm(prev => ({ ...prev, education: newEdu }));
+                              newEdu[index] = {
+                                ...newEdu[index],
+                                date: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                education: newEdu,
+                              }));
                             }}
                             placeholder="2020 - 2024"
                           />
@@ -1107,8 +1541,14 @@ export default function AutoApplyForm() {
                             value={edu.gpa || ""}
                             onChange={(e) => {
                               const newEdu = [...form.education];
-                              newEdu[index] = { ...newEdu[index], gpa: parseFloat(e.target.value) || 0 };
-                              setForm(prev => ({ ...prev, education: newEdu }));
+                              newEdu[index] = {
+                                ...newEdu[index],
+                                gpa: parseFloat(e.target.value) || 0,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                education: newEdu,
+                              }));
                             }}
                             placeholder="3.78"
                           />
@@ -1119,8 +1559,14 @@ export default function AutoApplyForm() {
                             value={edu.location || ""}
                             onChange={(e) => {
                               const newEdu = [...form.education];
-                              newEdu[index] = { ...newEdu[index], location: e.target.value };
-                              setForm(prev => ({ ...prev, education: newEdu }));
+                              newEdu[index] = {
+                                ...newEdu[index],
+                                location: e.target.value,
+                              };
+                              setForm((prev) => ({
+                                ...prev,
+                                education: newEdu,
+                              }));
                             }}
                             placeholder="City, Country"
                           />
@@ -1131,11 +1577,16 @@ export default function AutoApplyForm() {
                             value={edu.achievements?.join("\n") || ""}
                             onChange={(e) => {
                               const newEdu = [...form.education];
-                              newEdu[index] = { 
-                                ...newEdu[index], 
-                                achievements: e.target.value.split("\n").filter(s => s.trim())
+                              newEdu[index] = {
+                                ...newEdu[index],
+                                achievements: e.target.value
+                                  .split("\n")
+                                  .filter((s) => s.trim()),
                               };
-                              setForm(prev => ({ ...prev, education: newEdu }));
+                              setForm((prev) => ({
+                                ...prev,
+                                education: newEdu,
+                              }));
                             }}
                             placeholder="Dean's List, Honor Society, etc."
                           />
@@ -1147,12 +1598,20 @@ export default function AutoApplyForm() {
                     type="button"
                     variant="outline"
                     onClick={() => {
-                      setForm(prev => ({
+                      setForm((prev) => ({
                         ...prev,
                         education: [
                           ...prev.education,
-                          { gpa: 0, date: "", field: "", degree: "", school: "", location: "", achievements: [] }
-                        ]
+                          {
+                            gpa: 0,
+                            date: "",
+                            field: "",
+                            degree: "",
+                            school: "",
+                            location: "",
+                            achievements: [],
+                          },
+                        ],
                       }));
                     }}
                   >
@@ -1160,14 +1619,24 @@ export default function AutoApplyForm() {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="md:col-span-2">
                 <Label htmlFor="projects">Projects</Label>
-                <Textarea id="projects" name="projects" value={form.projects} onChange={handleChange} />
+                <Textarea
+                  id="projects"
+                  name="projects"
+                  value={form.projects}
+                  onChange={handleChange}
+                />
               </div>
               <div className="md:col-span-2">
                 <Label htmlFor="certifications">Certifications</Label>
-                <Textarea id="certifications" name="certifications" value={form.certifications} onChange={handleChange} />
+                <Textarea
+                  id="certifications"
+                  name="certifications"
+                  value={form.certifications}
+                  onChange={handleChange}
+                />
               </div>
             </div>
           </div>
@@ -1179,32 +1648,52 @@ export default function AutoApplyForm() {
             <div className="flex items-center gap-2 mb-4">
               <FileText className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold">Resume Selection</h3>
-              {loadingResumes && <span className="text-sm text-muted-foreground">Loading resumes...</span>}
+              {loadingResumes && (
+                <span className="text-sm text-muted-foreground">
+                  Loading resumes...
+                </span>
+              )}
             </div>
-            
+
             <div className="space-y-6">
               {/* Existing Resumes */}
               <div>
-                <Label className="text-base font-medium mb-3 block">Select from your existing resumes:</Label>
+                <Label className="text-base font-medium mb-3 block">
+                  Select from your existing resumes:
+                </Label>
                 {userResumes.length > 0 ? (
                   <div className="space-y-3">
                     {userResumes.map((resume) => (
-                      <div key={resume.id} className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50">
+                      <div
+                        key={resume.id}
+                        className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50"
+                      >
                         <input
                           type="radio"
                           name="selectedResumeId"
                           value={resume.id}
                           checked={form.selectedResumeId === resume.id}
-                          onChange={() => setForm(prev => ({ ...prev, selectedResumeId: resume.id }))}
+                          onChange={() =>
+                            setForm((prev) => ({
+                              ...prev,
+                              selectedResumeId: resume.id,
+                            }))
+                          }
                         />
                         <div className="flex-1">
-                          <div className="font-medium">{resume.resume_title || resume.name || `Resume ${resume.id}`}</div>
+                          <div className="font-medium">
+                            {resume.resume_title ||
+                              resume.name ||
+                              `Resume ${resume.id}`}
+                          </div>
                           <div className="text-sm text-gray-500">
-                            {resume.target_role && `Target: ${resume.target_role}`}
+                            {resume.target_role &&
+                              `Target: ${resume.target_role}`}
                             {resume.is_base_resume && " (Base Resume)"}
                           </div>
                           <div className="text-xs text-gray-400">
-                            Created: {new Date(resume.created_at).toLocaleDateString()}
+                            Created:{" "}
+                            {new Date(resume.created_at).toLocaleDateString()}
                           </div>
                         </div>
                       </div>
@@ -1220,7 +1709,9 @@ export default function AutoApplyForm() {
 
               {/* Upload New Resume */}
               <div className="border-t pt-6">
-                <Label className="text-base font-medium mb-3 block">Or upload a new resume:</Label>
+                <Label className="text-base font-medium mb-3 block">
+                  Or upload a new resume:
+                </Label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                   <UploadCloud className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                   <input
@@ -1257,14 +1748,26 @@ export default function AutoApplyForm() {
               <FileText className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold">Application Questions</h3>
             </div>
-            
+
             <div className="space-y-4">
               <div>
-                <Label htmlFor="legallyAuthorized">Are you legally authorized to work?</Label>
+                <Label htmlFor="legallyAuthorized">
+                  Are you legally authorized to work?
+                </Label>
                 <div className="flex gap-4 mt-2">
-                  {yesNoOptions.map(option => (
+                  {yesNoOptions.map((option) => (
                     <label key={option} className="flex items-center gap-2">
-                      <input type="radio" name="legallyAuthorized" value={option} onChange={() => setForm(prev => ({ ...prev, legallyAuthorized: option }))} />
+                      <input
+                        type="radio"
+                        name="legallyAuthorized"
+                        value={option}
+                        onChange={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            legallyAuthorized: option,
+                          }))
+                        }
+                      />
                       {option}
                     </label>
                   ))}
@@ -1272,11 +1775,23 @@ export default function AutoApplyForm() {
               </div>
 
               <div>
-                <Label htmlFor="requireSponsorship">Do you require sponsorship?</Label>
+                <Label htmlFor="requireSponsorship">
+                  Do you require sponsorship?
+                </Label>
                 <div className="flex gap-4 mt-2">
-                  {yesNoOptions.map(option => (
+                  {yesNoOptions.map((option) => (
                     <label key={option} className="flex items-center gap-2">
-                      <input type="radio" name="requireSponsorship" value={option} onChange={() => setForm(prev => ({ ...prev, requireSponsorship: option }))} />
+                      <input
+                        type="radio"
+                        name="requireSponsorship"
+                        value={option}
+                        onChange={() =>
+                          setForm((prev) => ({
+                            ...prev,
+                            requireSponsorship: option,
+                          }))
+                        }
+                      />
                       {option}
                     </label>
                   ))}
@@ -1285,27 +1800,54 @@ export default function AutoApplyForm() {
 
               <div>
                 <Label htmlFor="yearsExperience">Years of experience</Label>
-                <Input id="yearsExperience" name="yearsExperience" value={form.yearsExperience} onChange={handleChange} />
+                <Input
+                  id="yearsExperience"
+                  name="yearsExperience"
+                  value={form.yearsExperience}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
                 <Label htmlFor="expectedSalary">Expected salary</Label>
-                <Input id="expectedSalary" name="expectedSalary" value={form.expectedSalary} onChange={handleChange} />
+                <Input
+                  id="expectedSalary"
+                  name="expectedSalary"
+                  value={form.expectedSalary}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
                 <Label htmlFor="startDate">When can you start?</Label>
-                <Input id="startDate" name="startDate" value={form.startDate} onChange={handleChange} />
+                <Input
+                  id="startDate"
+                  name="startDate"
+                  value={form.startDate}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
-                <Label htmlFor="interestReason">Why are you interested in this position?</Label>
-                <Textarea id="interestReason" name="interestReason" value={form.interestReason} onChange={handleChange} />
+                <Label htmlFor="interestReason">
+                  Why are you interested in this position?
+                </Label>
+                <Textarea
+                  id="interestReason"
+                  name="interestReason"
+                  value={form.interestReason}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
                 <Label htmlFor="keySkills">Key skills</Label>
-                <Textarea id="keySkills" name="keySkills" value={form.keySkills} onChange={handleChange} />
+                <Textarea
+                  id="keySkills"
+                  name="keySkills"
+                  value={form.keySkills}
+                  onChange={handleChange}
+                />
               </div>
             </div>
           </div>
@@ -1318,34 +1860,69 @@ export default function AutoApplyForm() {
               <Search className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold">Search Preferences</h3>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <Label htmlFor="searchTerms">Job search terms *</Label>
-                <Input id="searchTerms" name="searchTerms" value={form.searchTerms} onChange={handleChange} required />
+                <Input
+                  id="searchTerms"
+                  name="searchTerms"
+                  value={form.searchTerms}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div>
-                <Label htmlFor="searchLocation">Preferred search location *</Label>
-                <Input id="searchLocation" name="searchLocation" value={form.searchLocation} onChange={handleChange} required />
+                <Label htmlFor="searchLocation">
+                  Preferred search location *
+                </Label>
+                <Input
+                  id="searchLocation"
+                  name="searchLocation"
+                  value={form.searchLocation}
+                  onChange={handleChange}
+                  required
+                />
               </div>
 
               <div>
-                <Label htmlFor="experienceLevel">Current experience level (years)</Label>
-                <Input id="experienceLevel" name="experienceLevel" value={form.experienceLevel} onChange={handleChange} />
+                <Label htmlFor="experienceLevel">
+                  Current experience level (years)
+                </Label>
+                <Input
+                  id="experienceLevel"
+                  name="experienceLevel"
+                  value={form.experienceLevel}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
                 <Label htmlFor="salaryRange">Salary range</Label>
-                <Input id="salaryRange" name="salaryRange" value={form.salaryRange} onChange={handleChange} />
+                <Input
+                  id="salaryRange"
+                  name="salaryRange"
+                  value={form.salaryRange}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
-                <Label htmlFor="targetExperience">Target experience level</Label>
-                <select name="targetExperience" value={form.targetExperience} onChange={handleSelectChange} className="w-full p-2 border rounded">
+                <Label htmlFor="targetExperience">
+                  Target experience level
+                </Label>
+                <select
+                  name="targetExperience"
+                  value={form.targetExperience}
+                  onChange={handleSelectChange}
+                  className="w-full p-2 border rounded"
+                >
                   <option value="">Select Level</option>
-                  {experienceLevels.map(level => (
-                    <option key={level} value={level}>{level}</option>
+                  {experienceLevels.map((level) => (
+                    <option key={level} value={level}>
+                      {level}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -1353,12 +1930,14 @@ export default function AutoApplyForm() {
               <div>
                 <Label>Preferred job types</Label>
                 <div className="grid grid-cols-2 gap-2 mt-2">
-                  {jobTypes.map(type => (
+                  {jobTypes.map((type) => (
                     <label key={type} className="flex items-center gap-2">
-                      <input 
-                        type="checkbox" 
+                      <input
+                        type="checkbox"
                         checked={form.preferredJobTypes.includes(type)}
-                        onChange={() => handleMultiSelect('preferredJobTypes', type)}
+                        onChange={() =>
+                          handleMultiSelect("preferredJobTypes", type)
+                        }
                       />
                       {type}
                     </label>
@@ -1368,27 +1947,56 @@ export default function AutoApplyForm() {
 
               <div>
                 <Label htmlFor="industries">Industries of interest</Label>
-                <Textarea id="industries" name="industries" value={form.industries} onChange={handleChange} />
+                <Textarea
+                  id="industries"
+                  name="industries"
+                  value={form.industries}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
                 <Label htmlFor="blacklistedCompanies">Companies to avoid</Label>
-                <Textarea id="blacklistedCompanies" name="blacklistedCompanies" value={form.blacklistedCompanies} onChange={handleChange} />
+                <Textarea
+                  id="blacklistedCompanies"
+                  name="blacklistedCompanies"
+                  value={form.blacklistedCompanies}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
-                <Label htmlFor="whitelistedCompanies">Companies to prioritize</Label>
-                <Textarea id="whitelistedCompanies" name="whitelistedCompanies" value={form.whitelistedCompanies} onChange={handleChange} />
+                <Label htmlFor="whitelistedCompanies">
+                  Companies to prioritize
+                </Label>
+                <Textarea
+                  id="whitelistedCompanies"
+                  name="whitelistedCompanies"
+                  value={form.whitelistedCompanies}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
                 <Label htmlFor="skipKeywords">Keywords to skip jobs</Label>
-                <Textarea id="skipKeywords" name="skipKeywords" value={form.skipKeywords} onChange={handleChange} />
+                <Textarea
+                  id="skipKeywords"
+                  name="skipKeywords"
+                  value={form.skipKeywords}
+                  onChange={handleChange}
+                />
               </div>
 
               <div>
-                <Label htmlFor="prioritizeKeywords">Keywords to prioritize jobs</Label>
-                <Textarea id="prioritizeKeywords" name="prioritizeKeywords" value={form.prioritizeKeywords} onChange={handleChange} />
+                <Label htmlFor="prioritizeKeywords">
+                  Keywords to prioritize jobs
+                </Label>
+                <Textarea
+                  id="prioritizeKeywords"
+                  name="prioritizeKeywords"
+                  value={form.prioritizeKeywords}
+                  onChange={handleChange}
+                />
               </div>
             </div>
           </div>
@@ -1400,19 +2008,44 @@ export default function AutoApplyForm() {
             <div className="text-center">
               <CheckCircle2 className="w-12 h-12 mx-auto text-green-500 mb-4" />
               <h3 className="text-lg font-semibold">Review & Submit</h3>
-              <p className="text-muted-foreground">Please review your configuration before submitting.</p>
+              <p className="text-muted-foreground">
+                Please review your configuration before submitting.
+              </p>
             </div>
-            
-            {error && <div className="text-red-500 text-sm font-medium">{error}</div>}
-            {success && <div className="text-emerald-600 text-sm font-medium">{success}</div>}
-            
+
+            {error && (
+              <div className="text-red-500 text-sm font-medium">{error}</div>
+            )}
+            {success && (
+              <div className="text-emerald-600 text-sm font-medium">
+                {success}
+              </div>
+            )}
+
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><strong>Name:</strong> {form.firstName} {form.lastName}</div>
-                <div><strong>Email:</strong> {form.email}</div>
-                <div><strong>Location:</strong> {form.searchLocation}</div>
-                <div><strong>Job Terms:</strong> {form.searchTerms}</div>
-                <div><strong>Selected Resume:</strong> {form.selectedResumeId ? `Resume ${form.selectedResumeId}` : form.uploadedResume?.name || 'None'}</div>
+                <div>
+                  <strong>Name:</strong> {form.firstName} {form.lastName}
+                </div>
+                <div>
+                  <strong>Email:</strong> {form.email}
+                </div>
+                <div>
+                  <strong>Location:</strong> {form.searchLocation}
+                </div>
+                <div>
+                  <strong>Job Terms:</strong> {form.searchTerms}
+                </div>
+                <div>
+                  <strong>Selected Resume:</strong>{" "}
+                  {form.selectedResumeId
+                    ? userResumes.find((r) => r.id === form.selectedResumeId)
+                        ?.resume_title ||
+                      userResumes.find((r) => r.id === form.selectedResumeId)
+                        ?.name ||
+                      `Resume ${form.selectedResumeId}`
+                    : form.uploadedResume?.name || "None"}
+                </div>
               </div>
             </div>
           </div>
@@ -1429,22 +2062,24 @@ export default function AutoApplyForm() {
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium">Step {step + 1} of {stepLabels.length}</span>
-            <span className="text-sm text-muted-foreground">{stepLabels[step]}</span>
+            <span className="text-sm font-medium">
+              Step {step + 1} of {stepLabels.length}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {stepLabels[step]}
+            </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-primary h-2 rounded-full transition-all duration-300" 
+            <div
+              className="bg-primary h-2 rounded-full transition-all duration-300"
               style={{ width: `${((step + 1) / stepLabels.length) * 100}%` }}
             />
           </div>
         </div>
 
         <Card className="shadow-lg border-2 border-primary/10">
-          <CardContent className="p-8">
-            {renderStep()}
-          </CardContent>
-          
+          <CardContent className="p-8">{renderStep()}</CardContent>
+
           <CardFooter className="flex justify-between p-6 pt-0">
             {step > 0 && (
               <Button type="button" variant="outline" onClick={handleBack}>
@@ -1457,7 +2092,11 @@ export default function AutoApplyForm() {
                 Next
               </Button>
             ) : (
-              <Button type="submit" onClick={handleSubmit} disabled={submitting}>
+              <Button
+                type="submit"
+                onClick={handleSubmit}
+                disabled={submitting}
+              >
                 {submitting ? "Submitting..." : "Submit Configuration"}
               </Button>
             )}
@@ -1466,4 +2105,4 @@ export default function AutoApplyForm() {
       </div>
     </div>
   );
-} 
+}

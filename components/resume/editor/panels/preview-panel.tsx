@@ -7,7 +7,6 @@ import { ResumePreview } from "../preview/resume-preview";
 import CoverLetter from "@/components/cover-letter/cover-letter";
 import { ResumeContextMenu } from "../preview/resume-context-menu";
 import FollowUpEmail from "@/components/follow-up-email/follow-up-email";
-import { useState } from "react";
 
 interface PreviewPanelProps {
   resume: Resume;
@@ -21,13 +20,6 @@ export function PreviewPanel({
   // onResumeChange,
   width,
 }: PreviewPanelProps) {
-  const [selectedTemplate, setSelectedTemplate] = useState<
-    "basic" | "modern" | "professional" | "default"
-  >("basic");
-
-  // Debug log when template changes
-  console.log("PreviewPanel - Selected template:", selectedTemplate);
-
   return (
     <ScrollArea
       className={cn(
@@ -38,54 +30,11 @@ export function PreviewPanel({
       )}
     >
       <div className="">
-        <div className="flex gap-2 mb-4">
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedTemplate === "basic"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200"
-            }`}
-            onClick={() => setSelectedTemplate("basic")}
-          >
-            Sidebar Dark
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedTemplate === "modern"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200"
-            }`}
-            onClick={() => setSelectedTemplate("modern")}
-          >
-            Sidebar Accent
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedTemplate === "professional"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200"
-            }`}
-            onClick={() => setSelectedTemplate("professional")}
-          >
-            Patterned Header
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${
-              selectedTemplate === "default"
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200"
-            }`}
-            onClick={() => setSelectedTemplate("default")}
-          >
-            Default
-          </button>
-        </div>
-
         <ResumeContextMenu resume={resume}>
           <ResumePreview
             resume={resume}
             containerWidth={width}
-            template={selectedTemplate}
+            template="default"
           />
         </ResumeContextMenu>
       </div>

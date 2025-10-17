@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { SidebarProvider } from '@/context/SidebarContext';
-import DashboardClientLayout from './DashboardClientLayout';
+import { ReactNode } from "react";
+import { SidebarProvider } from "@/context/SidebarContext";
+import DashboardClientLayout from "./DashboardClientLayout";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (

@@ -12,9 +12,6 @@ import {
 } from "@react-pdf/renderer";
 import { memo, useMemo, useCallback } from "react";
 import type { ReactNode } from "react";
-import { SidebarDarkTemplate } from "./templates/Basic";
-import { SidebarAccentTemplate } from "./templates/Modern";
-import { PatternedHeaderTemplate } from "./templates/Professional";
 import { DefaultTemplate } from "./templates/Default";
 
 // Base styles that don't depend on resume settings
@@ -619,23 +616,15 @@ function createResumeStyles(
 interface ResumePDFDocumentProps {
   resume: Resume;
   variant?: "base" | "tailored";
-  template?: "basic" | "modern" | "professional" | "default";
+  template?: "default";
 }
 export const ResumePDFDocument = memo(
   function ResumePDFDocument({
     resume,
     variant = "base",
-    template = "basic",
+    template = "default",
   }: ResumePDFDocumentProps) {
-    if (template === "default") {
-      return <DefaultTemplate resume={resume} />;
-    }
-    if (template === "modern") {
-      return <SidebarAccentTemplate resume={resume} variant={variant as "base"} />;
-    } else if (template === "professional") {
-      return <PatternedHeaderTemplate resume={resume} variant={variant as "base"} />;
-    }
-    return <SidebarDarkTemplate resume={resume} variant={variant as "base"} />;
+    return <DefaultTemplate resume={resume} />;
   },
   (prevProps, nextProps) => {
     return (
