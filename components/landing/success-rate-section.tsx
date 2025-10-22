@@ -1,0 +1,104 @@
+"use client";
+
+import {
+  FileText,
+  Mail,
+  ClipboardList,
+  User,
+  Mic,
+  Languages,
+} from "lucide-react";
+
+const toolsData = [
+  {
+    id: 1,
+    icon: FileText,
+    title: "AI-Powered Resume Creator",
+    description:
+      "Streamline your job search with our AI-driven resume builder. It customizes your resume for each application.",
+  },
+  {
+    id: 2,
+    icon: Mail,
+    title: "Intelligent Cover Letter Generator",
+    description:
+      "Our AI generates personalized cover letters for each job application, helping you stand out and increasing your likelihood of landing interviews.",
+  },
+  {
+    id: 3,
+    icon: ClipboardList,
+    title: "Automated Job Applications",
+    description:
+      "Let our AI automatically apply to thousands of job opportunities for you. This saves you valuable time and speeds up the hiring process.",
+  },
+  {
+    id: 4,
+    icon: User,
+    title: "AI Interview Simulator",
+    description:
+      "Prepare for job interviews with AI-generated simulations that provide feedback and help you build confidence before the real thing.",
+  },
+  {
+    id: 5,
+    icon: Mic,
+    title: "Real-Time Interview Assistance",
+    description:
+      "Receive instant feedback and support during interviews with our AI-powered Interview Buddy, ensuring you answer questions effectively.",
+  },
+  {
+    id: 6,
+    icon: Languages,
+    title: "Resume Translator",
+    description:
+      "Automatically translate your resume into multiple languages, expanding your job search globally and improving your chances of landing a role.",
+  },
+];
+
+const sectionData = {
+  title: {
+    part1: "You are",
+    highlight: "80% More Likely",
+    part2: "to",
+    part3: "Secure a Job with Auto Apply",
+  },
+  description:
+    "Leverage Our Cutting-Edge AI Tools Designed Specifically for Job Seekers",
+};
+
+export function SuccessRateSection() {
+  return (
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-transparent">
+      <div className="max-w-7xl mx-auto text-center">
+        <h2 className="text-6xl font-bold text-gray-900 mb-4">
+          {sectionData.title.part1}{" "}
+          <span className="text-[#5b6949]">{sectionData.title.highlight}</span>{" "}
+          {sectionData.title.part2}
+        </h2>
+        <h2 className="text-6xl font-bold text-gray-900 mb-4">
+          {sectionData.title.part3}
+        </h2>
+        <p className="text-xl text-gray-600 mb-12">{sectionData.description}</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {toolsData.map((tool) => {
+            const IconComponent = tool.icon;
+            return (
+              <div
+                key={tool.id}
+                className="bg-white rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
+                  <IconComponent className="w-6 h-6 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  {tool.title}
+                </h3>
+                <p className="text-gray-700">{tool.description}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}

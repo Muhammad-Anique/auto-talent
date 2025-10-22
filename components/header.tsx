@@ -1,11 +1,11 @@
-'use client';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
-import { getCurrentUser } from '@/lib/supabase/getCurrentUser';
-import type { User } from '@supabase/supabase-js';
-import { Loader2Icon } from 'lucide-react';
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase/client";
+import { getCurrentUser } from "@/lib/supabase/getCurrentUser";
+import type { User } from "@supabase/supabase-js";
+import { Loader2Icon } from "lucide-react";
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
@@ -18,9 +18,11 @@ export default function Header() {
 
     fetchUser();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
 
     return () => {
       listener.subscription.unsubscribe();
@@ -29,52 +31,145 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    router.push("/landing");
     router.refresh();
   };
 
   return (
-    <div className='fixed top-0 left-0 w-full p-2'>
-      <header className="rounded-full w-full px-6 py-4 bg-white shadow-md flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-[#5b6949]">
-          autotalent
+    <div className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200">
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <Link href="/landing" className="text-2xl font-bold text-[#5b6949]">
+          AutoTalent
         </Link>
 
         <div className="flex items-center space-x-4">
+          <nav className="hidden md:flex items-center">
+            <div className="relative group">
+              <button className="text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1">
+                Tools
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              <div className="absolute top-full right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div className="py-2">
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    Auto Apply
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    Interview Buddy
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    AI Resume Builder
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    AI Cover Letter Builder
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    AI Mock Interview
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    AI Resume Scanner
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    Job Board
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    Resume Translator
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    LinkedIn to Resume
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    Resume Examples
+                  </Link>
+                  <Link
+                    href="/"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-50 hover:text-gray-900"
+                  >
+                    Cover Letter Examples
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </nav>
           {user ? (
             <>
               <span className="text-sm text-gray-600">Hello, {user.email}</span>
               <Link
                 onClick={() => setIsLoading(true)}
                 href="/dashboard"
-                className="px-4 py-2 bg-[#5b6949] rounded-full text-white text-sm"
+                className="px-4 py-2 bg-[#5b6949] rounded-lg text-white text-sm font-medium hover:bg-[#5b6949]/90 transition-colors"
               >
                 {isLoading ? (
-                  <div className='flex items-center space-x-2'>
-                  <span>Redirecting {" "}</span>
-                    <Loader2Icon className='w-4 h-4 animate-spin' />
+                  <div className="flex items-center space-x-2">
+                    <span>Redirecting </span>
+                    <Loader2Icon className="w-4 h-4 animate-spin" />
                   </div>
-                ): 'Dashboard'}
+                ) : (
+                  "Dashboard"
+                )}
               </Link>
               <button
                 onClick={handleSignOut}
-                className="px-4 py-2 bg-[#5b6949] rounded-full text-white text-sm"
+                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
               >
                 Sign Out
               </button>
             </>
           ) : (
-            <div className='flex items-center space-x-2'>
+            <div className="flex items-center space-x-3">
               <Link
                 href="/signin"
-                className="px-4 py-2 bg-[#5b6949] rounded-full hover:bg-blue-600 text-white text-sm"
+                className="px-4 py-2 text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
               >
-                Sign In
+                Log in
               </Link>
               <Link
                 href="/signup"
-                className="px-4 py-2 border border-[#5b6949] rounded-full hover:bg-[#5b6949]/90 hover:text-white text-[#5b6949] text-sm"
+                className="px-6 py-2 bg-[#5b6949] rounded-lg text-white text-sm font-medium hover:bg-[#5b6949]/90 transition-colors"
               >
-                Sign Up
+                Start now
               </Link>
             </div>
           )}
@@ -83,4 +178,4 @@ export default function Header() {
     </div>
   );
 }
-""
+("");

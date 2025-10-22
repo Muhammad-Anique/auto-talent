@@ -2,8 +2,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 const PUBLIC_PATHS = [
+  "/",
   "/signin",
   "/signup",
+  "/landing",
   "/favicon.ico",
   "/robots.txt",
   "/sitemap.xml",
@@ -49,6 +51,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next|api|public|favicon.ico|robots.txt|sitemap.xml|signin|signup).*)",
+    "/((?!_next|api|public|favicon.ico|robots.txt|sitemap.xml|signin|signup|landing).*)",
   ],
 };
