@@ -58,7 +58,7 @@ const footerData = {
 
 export function FooterSection() {
   return (
-    <footer className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Upper Content Area */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -66,8 +66,8 @@ export function FooterSection() {
           <div className="space-y-4">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <footerData.company.logo.icon className="w-5 h-5 text-purple-600" />
-              <span className="text-2xl font-bold text-purple-600">
+              <footerData.company.logo.icon className="w-5 h-5 text-[#5b6949]" />
+              <span className="text-2xl font-bold text-[#5b6949]">
                 {footerData.company.logo.text}
               </span>
             </div>

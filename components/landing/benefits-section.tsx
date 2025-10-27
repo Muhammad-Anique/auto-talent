@@ -1,100 +1,158 @@
 "use client";
 
-import { Clock, Target, Zap, Users } from "lucide-react";
+import {
+  Clock,
+  Target,
+  Zap,
+  Users,
+  CheckCircle,
+  ArrowRight,
+  Brain,
+  Search,
+  FileText,
+  MessageSquare,
+} from "lucide-react";
 
 const benefitsData = [
   {
     id: 1,
-    title: "Hassle-Free Job Applications",
+    title: "Intelligent Job Matching",
     description:
-      "Forget the tedious and time-consuming task of job hunting. With Auto Apply, we handle the job application process from start to finish in just one click. Just provide us with your preferences and credentials, and we'll do the rest, applying to tailored jobs per week that match your career aspirations.",
-    features: ["Time-Saving", "Stress Reduction", "Tailored Job Matches"],
-    image:
-      "https://gxvrkmueqemyudmnonji.supabase.co/storage/v1/object/sign/images/3.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kZjJjZDNkNS1jNjJmLTRiMjMtOGMwNS0zNDFlYWUyYzdlZjMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvMy53ZWJwIiwiaWF0IjoxNzYxMTM4OTYwLCJleHAiOjE5MTg4MTg5NjB9.tBhGGRuGyEdu47vqFwGjh6XUoOgWqRc98b3rp97dq-Y",
-    alt: "Hassle-Free Job Applications",
+      "Our AI-powered system analyzes your skills, experience, and preferences to find the perfect job matches. No more endless scrolling through irrelevant postings.",
+    features: ["Smart Algorithm", "Personalized Results", "Real-time Updates"],
+    icon: Search,
+    gradient: "from-[#5b6949] to-[#5b6949]",
+    bgColor: "bg-[#5b6949]/10",
+    textColor: "text-[#5b6949]",
   },
   {
     id: 2,
-    title: "Expert Market Scanning",
+    title: "Automated Applications",
     description:
-      "Our specialized algorithms scan job postings to find opportunities that best suit your skills and career goals. We ensure that no promising position passes you by, increasing your chances of landing your dream job faster.",
+      "Apply to hundreds of jobs with a single click. Our system handles the entire application process while you focus on preparing for interviews.",
     features: [
-      "Advanced Scanning Technology",
-      "Find More Jobs Suited to Your Needs",
-      "Boost Your Chances of Landing Your Ideal Position",
+      "One-Click Apply",
+      "Bulk Applications",
+      "Time-Saving Efficiency",
     ],
-    image:
-      "https://gxvrkmueqemyudmnonji.supabase.co/storage/v1/object/sign/images/4.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kZjJjZDNkNS1jNjJmLTRiMjMtOGMwNS0zNDFlYWUyYzdlZjMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvNC53ZWJwIiwiaWF0IjoxNzYxMTM4OTc4LCJleHAiOjE5MTg4MTg5Nzh9.X-nPZkdr_0dJwpthJdRVhfDEylqMsN4KmKLW6CPgd10",
-    alt: "Expert Market Scanning",
+    icon: Zap,
+    gradient: "from-yellow-500 to-yellow-600",
+    bgColor: "bg-yellow-50",
+    textColor: "text-yellow-600",
   },
   {
     id: 3,
-    title: "Enhanced Application Quality",
+    title: "Resume Optimization",
     description:
-      "We don't just apply for you, we optimize your applications. Our artificial intelligence technology can enhance your resume and cover letters to match the job description perfectly, boosting your chances of getting noticed by employers and passing through Applicant Tracking Systems (ATS).",
+      "Get your resume tailored for each application. Our AI ensures your resume passes ATS systems and stands out to hiring managers.",
     features: [
-      "Resume Optimization",
-      "Customized Cover Letter",
-      "ATS-Friendly Job Application",
+      "ATS Optimization",
+      "Custom Tailoring",
+      "Professional Formatting",
     ],
-    image:
-      "https://gxvrkmueqemyudmnonji.supabase.co/storage/v1/object/sign/images/1.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kZjJjZDNkNS1jNjJmLTRiMjMtOGMwNS0zNDFlYWUyYzdlZjMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvMS53ZWJwIiwiaWF0IjoxNzYxMTM4ODcyLCJleHAiOjE5MTg4MTg4NzJ9.2JOSY4Z_DkjNLpZ8cRO4nlTpTLqHWoTHraGuQGIBbVQ",
-    alt: "Enhanced Application Quality",
+    icon: FileText,
+    gradient: "from-[#5b6949] to-emerald-600",
+    bgColor: "bg-emerald-50",
+    textColor: "text-emerald-600",
   },
   {
     id: 4,
     title: "Interview Preparation",
     description:
-      "Once you've secured an interview, our AI Interview tool helps to ensure you excel no matter what you're faced with on the day. From mock interviews to question-specific guidance, we provide everything you need to make a good impression.",
-    features: [
-      "Mock Interviews",
-      "Question Preparation",
-      "Confidence Building",
-    ],
-    image:
-      "https://gxvrkmueqemyudmnonji.supabase.co/storage/v1/object/sign/images/2.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9kZjJjZDNkNS1jNjJmLTRiMjMtOGMwNS0zNDFlYWUyYzdlZjMiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJpbWFnZXMvMi53ZWJwIiwiaWF0IjoxNzYxMTM4OTY3LCJleHAiOjE5MTg4MTg5Njd9.K98fDuw1w2kTSX13u7RVmCERk9XKbsTenYVgO7SPNUA",
-    alt: "Interview Preparation",
+      "Ace your interviews with AI-powered mock sessions, personalized questions, and expert guidance tailored to your target role.",
+    features: ["Mock Interviews", "Question Bank", "Performance Analytics"],
+    icon: MessageSquare,
+    gradient: "from-yellow-500 to-orange-500",
+    bgColor: "bg-orange-50",
+    textColor: "text-orange-600",
   },
 ];
 
 export function BenefitsSection() {
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-transparent">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
+        {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-6xl font-black text-gray-900 mb-4">
-            Benefits of Auto Apply
+          <div className="inline-flex items-center gap-2 bg-[#5b6949]/10 text-[#5b6949] px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <CheckCircle className="w-4 h-4" />
+            Why Choose AutoTalent
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+            Everything you need to
+            <span className="bg-gradient-to-r from-[#5b6949] to-[#5b6949] bg-clip-text text-transparent">
+              {" "}
+              land your dream job
+            </span>
           </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Our comprehensive platform combines AI-powered automation with
+            expert insights to streamline your entire job search process.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {benefitsData.map((benefit) => (
-            <div
-              key={benefit.id}
-              className="bg-white rounded-xl p-6 shadow-2xl h-full"
-            >
-              <div className="flex flex-col h-full">
+        {/* Benefits Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {benefitsData.map((benefit) => {
+            const IconComponent = benefit.icon;
+            return (
+              <div
+                key={benefit.id}
+                className="group relative bg-white rounded-2xl p-8 border border-gray-100 hover:border-gray-200 transition-all duration-300 hover:shadow-xl hover:-translate-y-1"
+              >
+                {/* Icon */}
+                <div
+                  className={`inline-flex items-center justify-center w-16 h-16 ${benefit.bgColor} rounded-2xl mb-6 group-hover:scale-110 transition-transform duration-300`}
+                >
+                  <IconComponent className={`w-8 h-8 ${benefit.textColor}`} />
+                </div>
+
+                {/* Content */}
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
                     {benefit.title}
                   </h3>
-                  <p className="text-gray-600 mb-4">{benefit.description}</p>
-                  <ul className="space-y-2 text-sm text-gray-600">
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    {benefit.description}
+                  </p>
+
+                  {/* Features */}
+                  <ul className="space-y-3">
                     {benefit.features.map((feature, index) => (
-                      <li key={index}>• {feature}</li>
+                      <li key={index} className="flex items-center gap-3">
+                        <div
+                          className={`w-2 h-2 bg-gradient-to-r ${benefit.gradient} rounded-full`}
+                        ></div>
+                        <span className="text-sm text-gray-600">{feature}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
-                <div className="w-full h-80 rounded-3xl mt-auto relative overflow-hidden">
-                  <img
-                    src={benefit.image}
-                    alt={benefit.alt}
-                    className="rounded-3xl object-cover w-full h-full"
-                  />
-                </div>
+
+                {/* Hover Effect */}
+                <div
+                  className={`absolute inset-0 bg-gradient-to-r ${benefit.gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`}
+                ></div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center">
+          <div className="bg-[#5b6949] rounded-2xl p-12 border-2 border-[#5b6949]">
+            <h3 className="text-3xl font-bold text-white mb-4">
+              Ready to transform your job search?
+            </h3>
+            <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
+              Join thousands of professionals who have already automated their
+              job search and landed their dream roles.
+            </p>
+            <button className="bg-white text-[#5b6949] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 mx-auto shadow-xl hover:shadow-2xl hover:scale-105">
+              Get Started Free
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </div>
     </section>

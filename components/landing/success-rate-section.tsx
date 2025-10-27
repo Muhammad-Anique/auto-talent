@@ -80,15 +80,26 @@ export function SuccessRateSection() {
         <p className="text-xl text-gray-600 mb-12">{sectionData.description}</p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {toolsData.map((tool) => {
+          {toolsData.map((tool, index) => {
             const IconComponent = tool.icon;
+            const isEven = index % 2 === 0;
             return (
               <div
                 key={tool.id}
                 className="bg-white rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <IconComponent className="w-6 h-6 text-purple-600" />
+                <div
+                  className={`w-12 h-12 ${
+                    isEven
+                      ? "bg-gradient-to-r from-[#5b6949]/10 to-[#5b6949]/20"
+                      : "bg-gradient-to-r from-yellow-100 to-yellow-200"
+                  } rounded-lg flex items-center justify-center mb-4 mx-auto`}
+                >
+                  <IconComponent
+                    className={`w-6 h-6 ${
+                      isEven ? "text-[#5b6949]" : "text-yellow-600"
+                    }`}
+                  />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">
                   {tool.title}

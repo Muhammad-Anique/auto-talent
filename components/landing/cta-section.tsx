@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Star, ArrowRight } from "lucide-react";
+import { Star, ArrowRight, CheckCircle, Zap } from "lucide-react";
 
 const ctaData = {
-  title: "Do More Than Just Look for Work",
-  description: "Submit more applications in less time with AI Apply.",
+  title: "Ready to Land Your Dream Job?",
+  subTitle: "Join thousands of professionals who've automated their job search",
+  description:
+    "Stop wasting time on manual applications. Let AI handle the heavy lifting while you focus on what matters most.",
   button: {
-    text: "Auto Apply Now",
+    primary: "Start Free Trial",
+    secondary: "Watch Demo",
     href: "/signup",
   },
   trustpilot: {
@@ -16,66 +19,104 @@ const ctaData = {
     platform: "Trustpilot",
   },
   socialProof: {
-    userCount: "1,005,991 users",
+    userCount: "50,000+ professionals",
     stars: 5,
   },
+  features: ["No credit card required", "14-day free trial", "Cancel anytime"],
 };
 
 export function CTASection() {
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="max-w-4xl mx-auto">
-        {/* Main CTA Card */}
-        <div className="bg-[#5b6949] rounded-2xl p-12 text-center">
-          {/* Main Heading */}
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            {ctaData.title}
-          </h2>
+    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#5b6949] relative overflow-hidden">
+      {/* Banner Background Pattern */}
+      <div className="absolute inset-0">
+        {/* Diagonal stripes pattern */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-y-1"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/3 to-transparent transform skew-y-1"></div>
 
-          {/* Description */}
-          <p className="text-xl text-white/90 mb-8">{ctaData.description}</p>
+        {/* Corner accent elements */}
+        <div className="absolute top-0 left-0 w-32 h-32 bg-[#5b6949]/50 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
 
-          {/* CTA Button */}
-          <Link href={ctaData.button.href}>
-            <button className="bg-green-400 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-500 transition-colors flex items-center gap-2 mx-auto mb-8">
-              {ctaData.button.text}
-              <ArrowRight className="w-5 h-5" />
+        {/* Banner border effect */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="text-center">
+          {/* Main Content */}
+          <div className="mb-10">
+            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
+              {ctaData.title}
+            </h2>
+            <p className="text-lg text-white/95 mb-3 font-medium">
+              {ctaData.subTitle}
+            </p>
+            <p className="text-base text-white/85 max-w-2xl mx-auto leading-relaxed">
+              {ctaData.description}
+            </p>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+            <Link href={ctaData.button.href}>
+              <button className="bg-white text-[#5b6949] px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+                {ctaData.button.primary}
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </Link>
+            <button className="bg-white/20 backdrop-blur-sm text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white/30 transition-all duration-300 flex items-center gap-2 border border-white/30 shadow-lg">
+              {ctaData.button.secondary}
+              <Zap className="w-5 h-5" />
             </button>
-          </Link>
+          </div>
 
-          {/* Social Proof Section */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8">
+          {/* Features */}
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {ctaData.features.map((feature, index) => (
+              <div
+                key={index}
+                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full border border-white/25 shadow-md"
+              >
+                <CheckCircle className="w-4 h-4 text-white" />
+                <span className="text-white text-sm font-medium">
+                  {feature}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Social Proof */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             {/* Trustpilot Rating */}
-            <div className="flex items-center gap-2">
-              <span className="text-white font-medium">
+            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-5 py-2 rounded-full border border-white/25 shadow-md">
+              <span className="text-white font-medium text-sm">
                 {ctaData.trustpilot.rating}
               </span>
               <div className="flex items-center gap-1">
                 {[...Array(ctaData.trustpilot.stars)].map((_, i) => (
-                  <Star
-                    key={i}
-                    className="w-4 h-4 text-green-400 fill-current"
-                  />
+                  <Star key={i} className="w-3 h-3 text-white fill-current" />
                 ))}
               </div>
-              <span className="text-white text-sm">
+              <span className="text-white text-xs">
                 {ctaData.trustpilot.platform}
               </span>
             </div>
 
             {/* User Count */}
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full border-2 border-white"></div>
-                <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-green-600 rounded-full border-2 border-white"></div>
-                <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full border-2 border-white"></div>
+            <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-5 py-2 rounded-full border border-white/25 shadow-md">
+              <div className="flex -space-x-1">
+                <div className="w-6 h-6 bg-gradient-to-r from-white to-white/80 rounded-full border border-white/30"></div>
+                <div className="w-6 h-6 bg-gradient-to-r from-[#5b6949]/80 to-[#5b6949] rounded-full border border-white/30"></div>
+                <div className="w-6 h-6 bg-gradient-to-r from-white/60 to-white/40 rounded-full border border-white/30"></div>
               </div>
               <div className="flex items-center gap-1">
                 {[...Array(ctaData.socialProof.stars)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-white fill-current" />
+                  <Star key={i} className="w-3 h-3 text-white fill-current" />
                 ))}
-                <span className="text-white font-medium ml-2">
-                  Loved by {ctaData.socialProof.userCount}
+                <span className="text-white font-medium text-sm ml-1">
+                  Trusted by {ctaData.socialProof.userCount}
                 </span>
               </div>
             </div>

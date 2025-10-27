@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         "blue-primary": "#5b6949",
-        primary: "#00ff00",
+        primary: "#5b6949",
         secondary: "#5b6949",
       },
       animation: {
