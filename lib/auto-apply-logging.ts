@@ -370,23 +370,34 @@ export class AutoApplyMonitor {
     severity: "low" | "medium" | "high" | "critical",
     metadata?: Record<string, any>
   ): Promise<void> {
-    const level =
-      severity === "critical"
-        ? LogLevel.CRITICAL
-        : severity === "high"
-        ? LogLevel.ERROR
-        : severity === "medium"
-        ? LogLevel.WARN
-        : LogLevel.INFO;
+    const message = `Security event: ${event}`;
+    const combinedMetadata = { event, severity, ...metadata };
 
-    await this.logger.log({
-      timestamp: new Date().toISOString(),
-      level,
-      category: LogCategory.SECURITY,
-      message: `Security event: ${event}`,
-      userId,
-      metadata: { event, severity, ...metadata },
-    });
+    if (severity === "critical") {
+      await this.logger.critical(
+        message,
+        undefined,
+        LogCategory.SECURITY,
+        combinedMetadata,
+        { userId }
+      );
+    } else if (severity === "high") {
+      await this.logger.error(
+        message,
+        undefined,
+        LogCategory.SECURITY,
+        combinedMetadata,
+        { userId }
+      );
+    } else if (severity === "medium") {
+      await this.logger.warn(message, LogCategory.SECURITY, combinedMetadata, {
+        userId,
+      });
+    } else {
+      await this.logger.info(message, LogCategory.SECURITY, combinedMetadata, {
+        userId,
+      });
+    }
   }
 
   static async trackPerformance(

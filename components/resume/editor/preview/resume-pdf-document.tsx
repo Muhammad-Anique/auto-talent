@@ -616,7 +616,7 @@ function createResumeStyles(
 interface ResumePDFDocumentProps {
   resume: Resume;
   variant?: "base" | "tailored";
-  template?: "default";
+  template?: "basic" | "modern" | "professional" | "default";
 }
 export const ResumePDFDocument = memo(
   function ResumePDFDocument({
@@ -624,6 +624,8 @@ export const ResumePDFDocument = memo(
     variant = "base",
     template = "default",
   }: ResumePDFDocumentProps) {
+    // Currently only default template is implemented
+    // Other templates can be added later
     return <DefaultTemplate resume={resume} />;
   },
   (prevProps, nextProps) => {

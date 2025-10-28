@@ -846,7 +846,10 @@ export default function AutoApplyForm() {
       AutoApplyNotificationManager.showNotification(notification, toast);
       setTimeout(() => router.push("/dashboard/auto-apply"), 1500);
     } catch (err: any) {
-      const autoApplyError = handleAutoApplyError(err);
+      const autoApplyError = AutoApplyErrorHandler.createError(
+        AutoApplyErrorCode.UNKNOWN_ERROR,
+        err?.message || "An error occurred while submitting the form"
+      );
       AutoApplyErrorHandler.logError(autoApplyError);
       const notification =
         AutoApplyNotificationManager.createErrorNotification(autoApplyError);

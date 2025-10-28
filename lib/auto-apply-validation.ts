@@ -97,6 +97,7 @@ export const applicationQuestionsSchema = z.object({
   requireSponsorship: z.enum(["Yes", "No"], {
     required_error: "Please select an option",
   }),
+  currentLocation: optionalStringSchema,
   yearsExperience: optionalStringSchema,
   expectedSalary: optionalStringSchema,
   startDate: optionalStringSchema,
@@ -131,6 +132,7 @@ export const searchPreferencesSchema = z.object({
   prioritizeKeywords: optionalStringSchema,
   skipSecurityClearance: z.boolean(),
   followCompanies: z.boolean(),
+  randomizeSearch: z.boolean(),
 });
 
 // Complete Form Validation
@@ -267,6 +269,9 @@ export class ValidationHelper {
       githubUrl: InputSanitizer.sanitizeUrl(data.githubUrl || ""),
       searchTerms: InputSanitizer.sanitizeString(data.searchTerms || ""),
       searchLocation: InputSanitizer.sanitizeString(data.searchLocation || ""),
+      currentLocation: InputSanitizer.sanitizeString(
+        data.currentLocation || ""
+      ),
       projects: InputSanitizer.sanitizeTextArea(data.projects || ""),
       certifications: InputSanitizer.sanitizeTextArea(
         data.certifications || ""

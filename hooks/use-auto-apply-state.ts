@@ -86,7 +86,7 @@ export function useAutoApplyConfig(userId: string) {
         const { data, error } = await supabaseClient
           .from("auto_apply_configs")
           .update(updates)
-          .eq("id", config.id)
+          .eq("form_id", config.form_id)
           .select()
           .single();
 
@@ -126,7 +126,7 @@ export function useAutoApplyConfig(userId: string) {
       const { error } = await supabaseClient
         .from("auto_apply_configs")
         .delete()
-        .eq("id", config.id);
+        .eq("form_id", config.form_id);
 
       if (error) {
         throw new Error("Failed to delete configuration");
@@ -340,14 +340,13 @@ export function useAutoApplyStatus(userId: string) {
 
       const statusData: AutoApplyStatus = {
         isActive: data?.["Auto-Apply"] || false,
-        credits: data?.credits || 0,
-        lastAutoApplied: data?.last_auto_applied,
-        totalConfigs: configs?.length || 0,
+        lastRun: data?.last_auto_applied,
         totalApplications: jobs?.length || 0,
         successfulApplications:
-          jobs?.filter((j) => j.status === "applied").length || 0,
+          jobs?.filter((j: any) => j.status === "applied").length || 0,
         failedApplications:
-          jobs?.filter((j) => j.status === "error").length || 0,
+          jobs?.filter((j: any) => j.status === "error").length || 0,
+        creditsRemaining: data?.credits || 0,
       };
 
       setStatus(statusData);
@@ -368,10 +367,10 @@ export function useAutoApplyStatus(userId: string) {
   const activate = useCallback(async () => {
     if (!supabaseClient || !status) return;
 
-    if (status.credits < 10) {
+    if (status.creditsRemaining < 10) {
       const notification =
         AutoApplyNotificationManager.createCreditsNotification(
-          status.credits,
+          status.creditsRemaining,
           10
         );
       AutoApplyNotificationManager.showNotification(notification, toast);
@@ -383,7 +382,7 @@ export function useAutoApplyStatus(userId: string) {
         .from("users")
         .update({
           "Auto-Apply": true,
-          credits: status.credits - 10,
+          credits: status.creditsRemaining - 10,
         })
         .eq("id", userId);
 
@@ -395,7 +394,7 @@ export function useAutoApplyStatus(userId: string) {
       const updatedStatus = {
         ...status,
         isActive: true,
-        credits: status.credits - 10,
+        creditsRemaining: status.creditsRemaining - 10,
       };
       setStatus(updatedStatus);
       cacheManager.getStatusCache().setUserStatus(userId, updatedStatus);
