@@ -11,6 +11,10 @@ export async function GET(request: NextRequest) {
       request,
     });
 
+    // Store cookies with their options for later use
+    const cookiesToSet: Array<{ name: string; value: string; options?: any }> =
+      [];
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -19,14 +23,17 @@ export async function GET(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
-          setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              request.cookies.set(name, value)
-            );
+          setAll(cookiesToSetFromSupabase) {
+            // Store cookies with options
+            cookiesToSet.length = 0;
+            cookiesToSetFromSupabase.forEach(({ name, value, options }) => {
+              cookiesToSet.push({ name, value, options });
+              request.cookies.set(name, value);
+            });
             supabaseResponse = NextResponse.next({
               request,
             });
-            cookiesToSet.forEach(({ name, value, options }) =>
+            cookiesToSetFromSupabase.forEach(({ name, value, options }) =>
               supabaseResponse.cookies.set(name, value, options)
             );
           },
@@ -56,12 +63,24 @@ export async function GET(request: NextRequest) {
       // Create the redirect response with cookies
       const redirectResponse = NextResponse.redirect(redirectUrl);
 
-      // Copy all cookies from supabaseResponse to redirectResponse
-      supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
-        redirectResponse.cookies.set(name, value);
+      // Set all cookies with their options in the redirect response
+      cookiesToSet.forEach(({ name, value, options }) => {
+        redirectResponse.cookies.set(name, value, options || {});
       });
 
+      // Also copy any existing cookies from supabaseResponse
+      supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+        if (!cookiesToSet.some((c) => c.name === name)) {
+          redirectResponse.cookies.set(name, value);
+        }
+      });
+
+      console.log(`✅ Auth successful, redirecting to: ${redirectUrl}`);
+      console.log(`Cookies set: ${cookiesToSet.length} cookies`);
+
       return redirectResponse;
+    } else {
+      console.error(`❌ Auth error: ${error.message}`);
     }
   }
 
