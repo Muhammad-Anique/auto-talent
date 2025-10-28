@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import Header from "@/components/header";
 import { BrainCircuitIcon, Loader2Icon, ArrowLeft } from "lucide-react";
 
 export default function SignIn() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   // Redirect to dashboard if already signed in
   useEffect(() => {
@@ -23,28 +25,43 @@ export default function SignIn() {
     checkSession();
   }, [router]);
 
+  // Check for error from callback
+  useEffect(() => {
+    const errorParam = searchParams.get("error");
+    if (errorParam) {
+      setError(errorParam);
+    }
+  }, [searchParams]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess(false);
     setLoading(true);
     // Magic link sign in
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    const redirectTo = `${baseUrl}/auth/callback?next=/dashboard`;
+
     const { error: signInError } = await supabase.auth.signInWithOtp({
       email,
+      options: {
+        emailRedirectTo: redirectTo,
+      },
     });
     if (signInError) {
       setError(signInError.message);
       setLoading(false);
     } else {
-      // Optionally show a message to check email
+      // Show success message
+      setSuccess(true);
       setLoading(false);
-      router.push("/dashboard");
     }
   };
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const redirectTo = "http://localhost:3000";
+    const redirectTo = `${baseUrl}/auth/callback?next=/dashboard`;
     const { error: signInError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },
@@ -80,6 +97,11 @@ export default function SignIn() {
         <p className=" text-gray-500 mb-6">Enter your email to get started</p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm">
+              Check your email for the magic link!
+            </div>
+          )}
           <input
             type="email"
             name="email"

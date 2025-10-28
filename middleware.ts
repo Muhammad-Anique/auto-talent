@@ -6,6 +6,7 @@ const PUBLIC_PATHS = [
   "/signin",
   "/signup",
   "/landing",
+  "/auth",
   "/favicon.ico",
   "/robots.txt",
   "/sitemap.xml",
@@ -17,6 +18,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/_next") ||
     request.nextUrl.pathname.startsWith("/api") ||
     request.nextUrl.pathname.startsWith("/public") ||
+    request.nextUrl.pathname.startsWith("/auth") ||
     PUBLIC_PATHS.includes(request.nextUrl.pathname)
   ) {
     return NextResponse.next();
@@ -51,6 +53,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next|api|public|favicon.ico|robots.txt|sitemap.xml|signin|signup|landing).*)",
+    "/((?!_next|api|public|favicon.ico|robots.txt|sitemap.xml|signin|signup|landing|auth).*)",
   ],
 };
