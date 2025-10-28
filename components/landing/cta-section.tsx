@@ -46,41 +46,41 @@ export function CTASection() {
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center">
           {/* Main Content */}
-          <div className="mb-10">
-            <h2 className="text-3xl md:text-5xl font-bold text-white mb-4 leading-tight drop-shadow-lg">
+          <div className="mb-8 sm:mb-10 px-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight drop-shadow-lg">
               {ctaData.title}
             </h2>
-            <p className="text-lg text-white/95 mb-3 font-medium">
+            <p className="text-base sm:text-lg text-white/95 mb-2 sm:mb-3 font-medium">
               {ctaData.subTitle}
             </p>
-            <p className="text-base text-white/85 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base text-white/85 max-w-2xl mx-auto leading-relaxed">
               {ctaData.description}
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
-            <Link href={ctaData.button.href}>
-              <button className="bg-white text-[#5b6949] px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-10 px-4">
+            <Link href={ctaData.button.href} className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-white text-[#5b6949] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
                 {ctaData.button.primary}
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </Link>
-            <button className="bg-white/20 backdrop-blur-sm text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-white/30 transition-all duration-300 flex items-center gap-2 border border-white/30 shadow-lg">
+            <button className="w-full sm:w-auto bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2 border border-white/30 shadow-lg">
               {ctaData.button.secondary}
-              <Zap className="w-5 h-5" />
+              <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
           {/* Features */}
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8 px-4">
             {ctaData.features.map((feature, index) => (
               <div
                 key={index}
-                className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full border border-white/25 shadow-md"
+                className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/25 shadow-md"
               >
-                <CheckCircle className="w-4 h-4 text-white" />
-                <span className="text-white text-sm font-medium">
+                <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                <span className="text-white text-xs sm:text-sm font-medium">
                   {feature}
                 </span>
               </div>
@@ -88,15 +88,18 @@ export function CTASection() {
           </div>
 
           {/* Social Proof */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 px-4">
             {/* Trustpilot Rating */}
-            <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-5 py-2 rounded-full border border-white/25 shadow-md">
-              <span className="text-white font-medium text-sm">
+            <div className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm px-4 sm:px-5 py-1.5 sm:py-2 rounded-full border border-white/25 shadow-md">
+              <span className="text-white font-medium text-xs sm:text-sm">
                 {ctaData.trustpilot.rating}
               </span>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5 sm:gap-1">
                 {[...Array(ctaData.trustpilot.stars)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 text-white fill-current" />
+                  <Star
+                    key={i}
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white fill-current"
+                  />
                 ))}
               </div>
               <span className="text-white text-xs">
@@ -105,17 +108,20 @@ export function CTASection() {
             </div>
 
             {/* User Count */}
-            <div className="flex items-center gap-3 bg-white/15 backdrop-blur-sm px-5 py-2 rounded-full border border-white/25 shadow-md">
+            <div className="flex items-center gap-2 sm:gap-3 bg-white/15 backdrop-blur-sm px-4 sm:px-5 py-1.5 sm:py-2 rounded-full border border-white/25 shadow-md">
               <div className="flex -space-x-1">
-                <div className="w-6 h-6 bg-gradient-to-r from-white to-white/80 rounded-full border border-white/30"></div>
-                <div className="w-6 h-6 bg-gradient-to-r from-[#5b6949]/80 to-[#5b6949] rounded-full border border-white/30"></div>
-                <div className="w-6 h-6 bg-gradient-to-r from-white/60 to-white/40 rounded-full border border-white/30"></div>
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-white to-white/80 rounded-full border border-white/30"></div>
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-[#5b6949]/80 to-[#5b6949] rounded-full border border-white/30"></div>
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-white/60 to-white/40 rounded-full border border-white/30"></div>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5 sm:gap-1">
                 {[...Array(ctaData.socialProof.stars)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 text-white fill-current" />
+                  <Star
+                    key={i}
+                    className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white fill-current"
+                  />
                 ))}
-                <span className="text-white font-medium text-sm ml-1">
+                <span className="text-white font-medium text-xs sm:text-sm ml-0.5 sm:ml-1">
                   Trusted by {ctaData.socialProof.userCount}
                 </span>
               </div>

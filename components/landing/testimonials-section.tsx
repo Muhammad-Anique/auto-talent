@@ -179,10 +179,10 @@ export function TestimonialsSection() {
               Testimonials
             </span>
           </div>
-          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">
             Trusted by 1M+ job seekers
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto px-4">
             Join thousands who've transformed their careers with AIApply
           </p>
         </div>

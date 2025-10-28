@@ -73,21 +73,21 @@ export function PricingSection() {
           <div className="inline-flex items-center gap-2 bg-[#5b6949]/10 text-[#5b6949] px-4 py-2 rounded-full text-sm font-medium mb-6">
             💰 Simple, Transparent Pricing
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 px-4">
             Choose your
             <span className="bg-gradient-to-r from-[#5b6949] to-[#5b6949] bg-clip-text text-transparent">
               {" "}
               perfect plan
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
             Start free and scale as you grow. All plans include our core
             features with no hidden fees.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto px-4 sm:px-0">
           {tiers.map((tier) => (
             <div
               key={tier.name}
@@ -106,7 +106,7 @@ export function PricingSection() {
 
               <div
                 className={cn(
-                  "h-full rounded-2xl p-8 transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-2",
+                  "h-full rounded-2xl p-6 sm:p-8 transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-2",
                   tier.popular
                     ? "bg-white border-2 border-[#5b6949]/30 shadow-xl"
                     : "bg-white/80 backdrop-blur-sm border border-gray-200 hover:border-gray-300"
@@ -118,11 +118,13 @@ export function PricingSection() {
                     {tier.name}
                   </h3>
                   <div className="flex items-baseline justify-center mb-4">
-                    <span className="text-5xl font-bold text-gray-900">
+                    <span className="text-4xl sm:text-5xl font-bold text-gray-900">
                       {tier.price}
                     </span>
                     {tier.price !== "$0" && (
-                      <span className="text-gray-500 ml-2">/month</span>
+                      <span className="text-base sm:text-lg text-gray-500 ml-2">
+                        /month
+                      </span>
                     )}
                   </div>
                   <p className="text-gray-600">{tier.description}</p>

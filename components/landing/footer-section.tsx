@@ -58,10 +58,10 @@ const footerData = {
 
 export function FooterSection() {
   return (
-    <footer className="bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
+    <footer className="bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Upper Content Area */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
           {/* Left Column - Company Information */}
           <div className="space-y-4">
             {/* Logo */}
@@ -78,12 +78,12 @@ export function FooterSection() {
             </button>
 
             {/* Company Links */}
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {footerData.company.links.map((link, index) => (
                 <a
                   key={index}
                   href="#"
-                  className="block text-gray-700 hover:text-gray-900 transition-colors"
+                  className="block text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   {link}
                 </a>
@@ -104,16 +104,16 @@ export function FooterSection() {
           </div>
 
           {/* Middle Column - Tools */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-900 uppercase">
+          <div className="space-y-3 sm:space-y-4">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 uppercase">
               {footerData.tools.title}
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {footerData.tools.links.map((link, index) => (
                 <a
                   key={index}
                   href="#"
-                  className="block text-gray-700 hover:text-gray-900 transition-colors"
+                  className="block text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   {link}
                 </a>
@@ -122,16 +122,16 @@ export function FooterSection() {
           </div>
 
           {/* Right Column - Blog */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-gray-900 uppercase">
+          <div className="space-y-3 sm:space-y-4">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 uppercase">
               {footerData.blog.title}
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1.5 sm:space-y-2">
               {footerData.blog.links.map((link, index) => (
                 <a
                   key={index}
                   href="#"
-                  className="block text-gray-700 hover:text-gray-900 transition-colors"
+                  className="block text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   {link}
                 </a>
@@ -144,9 +144,11 @@ export function FooterSection() {
         <div className="border-t border-gray-300 mb-6"></div>
 
         {/* Lower Section - Copyright and Social Media */}
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
           {/* Copyright */}
-          <div className="text-gray-700 text-sm">{footerData.copyright}</div>
+          <div className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
+            {footerData.copyright}
+          </div>
 
           {/* Social Media Icons */}
           <div className="flex items-center gap-4">

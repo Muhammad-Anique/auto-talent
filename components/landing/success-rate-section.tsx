@@ -67,26 +67,28 @@ const sectionData = {
 
 export function SuccessRateSection() {
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 bg-transparent">
+    <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-transparent">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-6xl font-bold text-gray-900 mb-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight px-4">
           {sectionData.title.part1}{" "}
           <span className="text-[#5b6949]">{sectionData.title.highlight}</span>{" "}
           {sectionData.title.part2}
         </h2>
-        <h2 className="text-6xl font-bold text-gray-900 mb-4">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight px-4">
           {sectionData.title.part3}
         </h2>
-        <p className="text-xl text-gray-600 mb-12">{sectionData.description}</p>
+        <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-8 sm:mb-12 px-4">
+          {sectionData.description}
+        </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {toolsData.map((tool, index) => {
             const IconComponent = tool.icon;
             const isEven = index % 2 === 0;
             return (
               <div
                 key={tool.id}
-                className="bg-white rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow duration-300"
+                className="bg-white rounded-xl p-4 sm:p-6 shadow-lg border hover:shadow-xl transition-shadow duration-300"
               >
                 <div
                   className={`w-12 h-12 ${

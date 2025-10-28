@@ -37,12 +37,15 @@ export default function Header() {
 
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-white border-b border-gray-200">
-      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-        <Link href="/landing" className="text-2xl font-bold text-[#5b6949]">
+      <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
+        <Link
+          href="/landing"
+          className="text-xl sm:text-2xl font-bold text-[#5b6949]"
+        >
           AutoTalent
         </Link>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 sm:space-x-4">
           <nav className="hidden md:flex items-center">
             <div className="relative group">
               <button className="text-gray-600 hover:text-gray-900 font-medium flex items-center gap-1">
@@ -135,15 +138,17 @@ export default function Header() {
           </nav>
           {user ? (
             <>
-              <span className="text-sm text-gray-600">Hello, {user.email}</span>
+              <span className="hidden sm:inline text-sm text-gray-600">
+                Hello, {user.email}
+              </span>
               <Link
                 onClick={() => setIsLoading(true)}
                 href="/dashboard"
-                className="px-4 py-2 bg-[#5b6949] rounded-lg text-white text-sm font-medium hover:bg-[#5b6949]/90 transition-colors"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#5b6949] rounded-lg text-white text-xs sm:text-sm font-medium hover:bg-[#5b6949]/90 transition-colors"
               >
                 {isLoading ? (
                   <div className="flex items-center space-x-2">
-                    <span>Redirecting </span>
+                    <span className="hidden sm:inline">Redirecting </span>
                     <Loader2Icon className="w-4 h-4 animate-spin" />
                   </div>
                 ) : (
@@ -152,22 +157,22 @@ export default function Header() {
               </Link>
               <button
                 onClick={handleSignOut}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 border border-gray-300 rounded-lg text-gray-700 text-xs sm:text-sm font-medium hover:bg-gray-50 transition-colors"
               >
                 Sign Out
               </button>
             </>
           ) : (
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-3">
               <Link
                 href="/signin"
-                className="px-4 py-2 text-gray-700 text-sm font-medium hover:text-gray-900 transition-colors"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 text-gray-700 text-xs sm:text-sm font-medium hover:text-gray-900 transition-colors"
               >
                 Log in
               </Link>
               <Link
                 href="/signup"
-                className="px-6 py-2 bg-[#5b6949] rounded-lg text-white text-sm font-medium hover:bg-[#5b6949]/90 transition-colors"
+                className="px-4 sm:px-6 py-1.5 sm:py-2 bg-[#5b6949] rounded-lg text-white text-xs sm:text-sm font-medium hover:bg-[#5b6949]/90 transition-colors"
               >
                 Start now
               </Link>
@@ -178,4 +183,3 @@ export default function Header() {
     </div>
   );
 }
-("");

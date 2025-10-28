@@ -48,7 +48,7 @@ const heroData = {
 
 export function HeroSection() {
   return (
-    <section className="relative py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50">
+    <section className="relative py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#5b6949]/10 rounded-full blur-3xl"></div>
@@ -57,7 +57,7 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Left Column - Content */}
           <div className="text-left">
             {/* Trust Badge */}
@@ -76,7 +76,7 @@ export function HeroSection() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
               {heroData.headline.part1}
               <br />
               <span className="bg-[#5b6949] via-[#5b6949] bg-clip-text text-transparent">
@@ -85,24 +85,24 @@ export function HeroSection() {
             </h1>
 
             {/* Subheadline */}
-            <p className="text-xl text-[#5b6949] font-semibold mb-4">
+            <p className="text-lg sm:text-xl text-[#5b6949] font-semibold mb-3 sm:mb-4">
               {heroData.subheadline}
             </p>
 
             {/* Description */}
-            <p className="text-lg text-gray-600 mb-8 leading-relaxed max-w-2xl">
+            <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed max-w-2xl">
               {heroData.description}
             </p>
 
             {/* Feature Pills */}
-            <div className="flex flex-wrap gap-3 mb-8">
+            <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
               {heroData.features.map((feature, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-2 bg-white/60 backdrop-blur-sm px-4 py-2 rounded-full border border-[#5b6949]/20"
+                  className="flex items-center gap-1.5 sm:gap-2 bg-white/60 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#5b6949]/20"
                 >
-                  <CheckCircle className="w-4 h-4 text-[#5b6949]" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#5b6949]" />
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">
                     {feature}
                   </span>
                 </div>
@@ -110,34 +110,34 @@ export function HeroSection() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <Link href={heroData.cta.href}>
-                <button className="bg-gradient-to-r from-[#5b6949] to-[#5b6949] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-[#5b6949]/90 hover:to-[#5b6949]/90 transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
+              <Link href={heroData.cta.href} className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto bg-gradient-to-r from-[#5b6949] to-[#5b6949] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:from-[#5b6949]/90 hover:to-[#5b6949]/90 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
                   {heroData.cta.primary}
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </Link>
-              <button className="bg-white/80 backdrop-blur-sm text-[#5b6949] px-8 py-4 rounded-xl text-lg font-semibold hover:bg-white transition-all duration-300 flex items-center gap-2 border border-[#5b6949]/20 shadow-sm hover:shadow-md">
+              <button className="w-full sm:w-auto bg-white/80 backdrop-blur-sm text-[#5b6949] px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:bg-white transition-all duration-300 flex items-center justify-center gap-2 border border-[#5b6949]/20 shadow-sm hover:shadow-md">
                 {heroData.cta.secondary}
-                <Zap className="w-5 h-5" />
+                <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
             {/* Social Proof */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
               <div className="flex -space-x-2">
-                <div className="w-10 h-10 bg-gradient-to-r from-[#5b6949] to-[#5b6949] rounded-full border-2 border-white shadow-sm"></div>
-                <div className="w-10 h-10 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full border-2 border-white shadow-sm"></div>
-                <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full border-2 border-white shadow-sm"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-[#5b6949] to-[#5b6949] rounded-full border-2 border-white shadow-sm"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full border-2 border-white shadow-sm"></div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full border-2 border-white shadow-sm"></div>
               </div>
               <div className="flex items-center gap-1">
                 {[...Array(heroData.socialProof.stars)].map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 text-amber-500 fill-current"
+                    className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 fill-current"
                   />
                 ))}
-                <span className="text-black font-medium ml-2">
+                <span className="text-sm sm:text-base text-black font-medium ml-1 sm:ml-2">
                   Trusted by {heroData.socialProof.userCount}
                 </span>
               </div>
@@ -145,8 +145,8 @@ export function HeroSection() {
           </div>
 
           {/* Right Column - Visual */}
-          <div className="relative">
-            <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-2xl border border-white/30 relative overflow-hidden">
+          <div className="relative mt-8 lg:mt-0">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-4 sm:p-6 lg:p-8 shadow-2xl border border-white/30 relative overflow-hidden">
               {/* Background Pattern */}
               <div className="absolute inset-0 bg-gradient-to-br from-green-50/30 to-yellow-50/30 rounded-3xl"></div>
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-[#5b6949]/20 to-transparent rounded-full -translate-y-16 translate-x-16"></div>
@@ -309,13 +309,16 @@ export function HeroSection() {
         </div>
 
         {/* Partner Companies */}
-        <div className="mt-20 text-center">
-          <p className="text-sm text-gray-500 mb-8">
+        <div className="mt-12 sm:mt-16 lg:mt-20 text-center">
+          <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-8 px-4">
             {heroData.partners.title}
           </p>
-          <div className="flex items-center justify-center gap-8 opacity-60">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8 opacity-60 px-4">
             {heroData.partners.companies.map((company, index) => (
-              <div key={index} className="text-gray-400 font-semibold text-sm">
+              <div
+                key={index}
+                className="text-gray-400 font-semibold text-xs sm:text-sm"
+              >
                 {company}
               </div>
             ))}
