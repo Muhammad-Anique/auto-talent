@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import Header from "@/components/header";
 import { BrainCircuitIcon, Loader2Icon, ArrowLeft } from "lucide-react";
 
-export default function SignIn() {
+function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
@@ -171,5 +171,19 @@ export default function SignIn() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignIn() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex flex-col min-h-screen justify-center items-center bg-white">
+          <Loader2Icon className="h-8 w-8 animate-spin text-[#5b6949]" />
+        </div>
+      }
+    >
+      <SignInForm />
+    </Suspense>
   );
 }

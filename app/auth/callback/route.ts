@@ -57,8 +57,8 @@ export async function GET(request: NextRequest) {
       const redirectResponse = NextResponse.redirect(redirectUrl);
 
       // Copy all cookies from supabaseResponse to redirectResponse
-      supabaseResponse.cookies.getAll().forEach(({ name, value, options }) => {
-        redirectResponse.cookies.set(name, value, options);
+      supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+        redirectResponse.cookies.set(name, value);
       });
 
       return redirectResponse;
