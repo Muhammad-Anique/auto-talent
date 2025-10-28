@@ -40,14 +40,21 @@ export default function SignIn() {
     setLoading(true);
     // Magic link sign in
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+    // Ensure we have a full URL with protocol and correct callback path
     const redirectTo = `${baseUrl}/auth/callback?next=/dashboard`;
 
-    const { error: signInError } = await supabase.auth.signInWithOtp({
+    console.log("Magic link redirectTo:", redirectTo); // Debug log
+    console.log("Base URL:", baseUrl); // Debug log
+
+    const { error: signInError, data } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: redirectTo,
       },
     });
+
+    console.log("Sign in response:", { error: signInError, data }); // Debug log
+
     if (signInError) {
       setError(signInError.message);
       setLoading(false);
