@@ -167,29 +167,29 @@ export default function InterviewPage() {
   // Empty State Component
   const EmptyState = () => (
     <div className="flex flex-col items-center justify-center min-h-[60vh] py-12">
-      <div className="text-center space-y-6">
+        <div className="text-center space-y-6">
         {/* Simple Icon */}
         <div className="flex justify-center">
           <div className="p-4 rounded-full bg-gradient-to-br from-[#5b6949]/10 to-gray-500/10 border border-[#5b6949]/20">
             <MessageSquare className="w-12 h-12 text-[#5b6949]" />
+            </div>
           </div>
-        </div>
-        
+
         {/* Description */}
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold text-gray-900">
             No interview questions created yet
-          </h2>
+            </h2>
           <p className="text-gray-600 max-w-md">
             Generate AI-powered interview questions tailored to your job description
-          </p>
-        </div>
-        
+            </p>
+          </div>
+
         {/* Button */}
-        <Button
-          onClick={() => setShowModal(true)}
-          disabled={isLoading}
-          className={cn(
+          <Button
+            onClick={() => setShowModal(true)}
+            disabled={isLoading}
+            className={cn(
             "inline-flex items-center gap-2",
             "rounded-full text-base font-medium px-8 py-3",
             "transition-all duration-500",
@@ -200,8 +200,8 @@ export default function InterviewPage() {
         >
           <Plus className="w-5 h-5" />
           Generate Questions
-        </Button>
-      </div>
+          </Button>
+        </div>
     </div>
   );
 

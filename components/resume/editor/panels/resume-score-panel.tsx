@@ -164,9 +164,9 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
     return (
       <div className="max-w-3xl mx-auto space-y-4 p-6">
         <Card className="relative overflow-hidden bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-xl border-white/40">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-cyan-500/10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#5b6949]/10 via-transparent to-zinc-500/10" />
           <div className="relative p-8 flex flex-col items-center gap-6 text-center">
-            <h1 className="text-3xl font-semibold mb-2 bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-semibold mb-2 bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 bg-clip-text text-transparent">
               Resume Score Analysis
             </h1>
             <p className="text-muted-foreground text-lg">
@@ -176,7 +176,7 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
               onClick={handleRecalculate}
               disabled={isCalculating}
               size="lg"
-              className="bg-gradient-to-r from-teal-600 to-cyan-600 text-white hover:opacity-90"
+              className="bg-gradient-to-r from-[#5b6949] to-[#5b6949]/90 text-white hover:opacity-90"
             >
               <RefreshCw 
                 className={cn(
@@ -214,22 +214,22 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
 
       {/* Main Score Card */}
       <Card className="relative overflow-hidden bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-xl border-white/40">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-transparent to-cyan-500/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#5b6949]/10 via-transparent to-zinc-500/10" />
         <div className="relative p-8 flex flex-col sm:flex-row items-center gap-8">
           <div className="w-40 h-40 sm:w-32 sm:h-32">
             <CircularProgressbar
               value={scoreData.overallScore.score}
               text={`${scoreData.overallScore.score}%`}
               styles={buildStyles({
-                pathColor: `rgba(20, 184, 166, ${scoreData.overallScore.score / 100})`,
-                textColor: '#0F766E',
+                pathColor: `rgba(91, 105, 73, ${scoreData.overallScore.score / 100})`,
+                textColor: '#5b6949',
                 trailColor: '#E2E8F0',
                 pathTransitionDuration: 1
               })}
             />
           </div>
           <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-3xl font-semibold mb-2 bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl font-semibold mb-2 bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 bg-clip-text text-transparent">
               Resume Score Analysis
             </h1>
             <p className="text-muted-foreground text-lg">{scoreData.overallScore.reason}</p>
@@ -239,7 +239,7 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
 
       {/* Key Improvements Card */}
       <Card className="bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-xl border-white/40 p-6">
-        <h2 className="text-xl font-semibold mb-4 text-teal-700">Key Improvements</h2>
+        <h2 className="text-xl font-semibold mb-4 text-[#5b6949]">Key Improvements</h2>
         <div className="space-y-3">
           {scoreData.overallImprovements.map((improvement, index) => (
             <motion.div
@@ -249,7 +249,7 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
               transition={{ delay: index * 0.1 }}
               className="flex items-start gap-3"
             >
-              <div className="mt-1.5 h-2 w-2 rounded-full bg-teal-500" />
+              <div className="mt-1.5 h-2 w-2 rounded-full bg-[#5b6949]" />
               <p className="text-muted-foreground">{improvement}</p>
             </motion.div>
           ))}
@@ -271,7 +271,7 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
 function MetricsCard({ title, metrics }: { title: string; metrics: Record<string, { score: number; reason: string }> }) {
   return (
     <Card className="bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-xl border-white/40 p-6">
-      <h2 className="text-xl font-semibold mb-6 text-teal-700">{title}</h2>
+      <h2 className="text-xl font-semibold mb-6 text-[#5b6949]">{title}</h2>
       <div className="grid gap-8">
         {Object.entries(metrics).map(([label, data]) => (
           <ScoreItem key={label} label={label} {...data} />
@@ -284,7 +284,7 @@ function MetricsCard({ title, metrics }: { title: string; metrics: Record<string
 function ScoreItem({ label, score, reason }: { label: string; score: number; reason: string }) {
   const getScoreColor = (score: number) => {
     if (score >= 90) return "bg-emerald-500";
-    if (score >= 70) return "bg-teal-500";
+    if (score >= 70) return "bg-[#5b6949]";
     if (score >= 50) return "bg-yellow-500";
     return "bg-red-500";
   };
@@ -299,7 +299,7 @@ function ScoreItem({ label, score, reason }: { label: string; score: number; rea
         <span className="text-sm font-medium text-gray-700">{label}</span>
         <span className={cn(
           "text-sm font-semibold px-2 py-1 rounded-full",
-          score >= 70 ? "bg-teal-100 text-teal-700" : "bg-yellow-100 text-yellow-700"
+          score >= 70 ? "bg-[#5b6949]/10 text-[#5b6949]" : "bg-yellow-100 text-yellow-700"
         )}>
           {score}/100
         </span>

@@ -70,10 +70,10 @@ export const EducationForm = memo(function EducationFormComponent({
             variant="outline" 
             className={cn(
               "flex-1 h-9 min-w-[120px]",
-              "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5",
-              "hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#5b6949]/10",
-              "border-2 border-dashed border-indigo-500/30 hover:border-indigo-500/40",
-              "text-indigo-700 hover:text-indigo-800",
+              "bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-zinc-100/5",
+              "hover:from-[#5b6949]/10 hover:via-[#5b6949]/15 hover:to-zinc-100/10",
+              "border-2 border-dashed border-[#5b6949]/30 hover:border-[#5b6949]/40",
+              "text-[#5b6949] hover:text-[#5b6949] hover:text-indigo-800",
               "transition-all duration-300",
               "rounded-xl",
               "whitespace-nowrap text-[11px] @[300px]:text-sm"
@@ -91,10 +91,10 @@ export const EducationForm = memo(function EducationFormComponent({
             buttonClassName={cn(
               "flex-1 mb-0 h-9 min-w-[120px]",
               "whitespace-nowrap text-[11px] @[300px]:text-sm",
-              "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5",
-              "hover:from-indigo-500/10 hover:via-indigo-500/15 hover:to-[#5b6949]/10",
-              "border-2 border-dashed border-indigo-500/30 hover:border-indigo-500/40",
-              "text-indigo-700 hover:text-indigo-800"
+              "bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-zinc-100/5",
+              "hover:from-[#5b6949]/10 hover:via-[#5b6949]/15 hover:to-zinc-100/10",
+              "border-2 border-dashed border-[#5b6949]/30 hover:border-[#5b6949]/40",
+              "text-[#5b6949] hover:text-[#5b6949] hover:text-indigo-800"
             )}
           />
         </div>
@@ -105,8 +105,8 @@ export const EducationForm = memo(function EducationFormComponent({
           key={index} 
           className={cn(
             "relative group transition-all duration-300",
-            "bg-gradient-to-r from-indigo-500/5 via-indigo-500/10 to-[#5b6949]/5",
-            "backdrop-blur-md border-2 border-indigo-500/30",
+            "bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-zinc-100/5",
+            "backdrop-blur-md border-2 border-[#5b6949]/30",
             "shadow-sm"
           )}
         >
@@ -120,14 +120,14 @@ export const EducationForm = memo(function EducationFormComponent({
                     onChange={(e) => updateEducation(index, 'school', e.target.value)}
                     className={cn(
                       "text-sm font-semibold h-9",
-                      "bg-white/50 border-gray-200 rounded-lg",
-                      "focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/20",
-                      "hover:border-indigo-500/30 hover:bg-white/60 transition-colors",
+                      "bg-zinc-100/50 border-gray-200 rounded-lg",
+                      "focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20",
+                      "hover:border-[#5b6949]/30 hover:bg-zinc-100/60 transition-colors",
                       "placeholder:text-gray-400"
                     )}
                     placeholder="Institution Name"
                   />
-                  <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-indigo-700">
+                  <div className="absolute -top-2 left-2 px-1 bg-zinc-100 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                     INSTITUTION
                   </div>
                 </div>
@@ -147,15 +147,15 @@ export const EducationForm = memo(function EducationFormComponent({
                   value={edu.location}
                   onChange={(e) => updateEducation(index, 'location', e.target.value)}
                   className={cn(
-                    "h-9 bg-white/50 border-gray-200 rounded-lg",
-                    "focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/20",
-                    "hover:border-indigo-500/30 hover:bg-white/60 transition-colors",
+                    "h-9 bg-zinc-100/50 border-gray-200 rounded-lg",
+                    "focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20",
+                    "hover:border-[#5b6949]/30 hover:bg-zinc-100/60 transition-colors",
                     "placeholder:text-gray-400",
                     "text-[10px] sm:text-xs"
                   )}
                   placeholder="City, Country"
                 />
-                <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-indigo-700">
+                <div className="absolute -top-2 left-2 px-1 bg-zinc-100 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                   LOCATION
                 </div>
               </div>
@@ -167,15 +167,15 @@ export const EducationForm = memo(function EducationFormComponent({
                     value={edu.degree}
                     onChange={(e) => updateEducation(index, 'degree', e.target.value)}
                     className={cn(
-                      "h-9 bg-white/50 border-gray-200 rounded-lg",
-                      "focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/20",
-                      "hover:border-indigo-500/30 hover:bg-white/60 transition-colors",
+                      "h-9 bg-zinc-100/50 border-gray-200 rounded-lg",
+                      "focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20",
+                      "hover:border-[#5b6949]/30 hover:bg-zinc-100/60 transition-colors",
                       "placeholder:text-gray-400",
                       "text-[10px] sm:text-xs"
                     )}
                     placeholder="Bachelor's, Master's, etc."
                   />
-                  <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-indigo-700">
+                  <div className="absolute -top-2 left-2 px-1 bg-zinc-100 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                     DEGREE
                   </div>
                 </div>
@@ -184,15 +184,15 @@ export const EducationForm = memo(function EducationFormComponent({
                     value={edu.field}
                     onChange={(e) => updateEducation(index, 'field', e.target.value)}
                     className={cn(
-                      "h-9 bg-white/50 border-gray-200 rounded-lg",
-                      "focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/20",
-                      "hover:border-indigo-500/30 hover:bg-white/60 transition-colors",
+                      "h-9 bg-zinc-100/50 border-gray-200 rounded-lg",
+                      "focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20",
+                      "hover:border-[#5b6949]/30 hover:bg-zinc-100/60 transition-colors",
                       "placeholder:text-gray-400",
                       "text-[10px] sm:text-xs"
                     )}
                     placeholder="Field of Study"
                   />
-                  <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-indigo-700">
+                  <div className="absolute -top-2 left-2 px-1 bg-zinc-100 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                     FIELD OF STUDY
                   </div>
                 </div>
@@ -205,14 +205,14 @@ export const EducationForm = memo(function EducationFormComponent({
                   value={edu.date}
                   onChange={(e) => updateEducation(index, 'date', e.target.value)}
                   className={cn(
-                    "w-full h-9 bg-white/50 border-gray-200 rounded-lg",
-                    "focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/20",
-                    "hover:border-indigo-500/30 hover:bg-white/60 transition-colors",
+                    "w-full h-9 bg-zinc-100/50 border-gray-200 rounded-lg",
+                    "focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20",
+                    "hover:border-[#5b6949]/30 hover:bg-zinc-100/60 transition-colors",
                     "text-[10px] sm:text-xs"
                   )}
                   placeholder="e.g., &apos;2019 - 2023&apos; or &apos;2020 - Present&apos;"
                 />
-                <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-indigo-700">
+                <div className="absolute -top-2 left-2 px-1 bg-zinc-100 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                   DATE
                 </div>
               </div>
@@ -232,15 +232,15 @@ export const EducationForm = memo(function EducationFormComponent({
                   value={edu.gpa || ''}
                   onChange={(e) => updateEducation(index, 'gpa', e.target.value ? parseFloat(e.target.value) : undefined)}
                   className={cn(
-                    "h-9 bg-white/50 border-gray-200 rounded-lg",
-                    "focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/20",
-                    "hover:border-indigo-500/30 hover:bg-white/60 transition-colors",
+                    "h-9 bg-zinc-100/50 border-gray-200 rounded-lg",
+                    "focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20",
+                    "hover:border-[#5b6949]/30 hover:bg-zinc-100/60 transition-colors",
                     "placeholder:text-gray-400",
                     "text-[10px] sm:text-xs"
                   )}
                   placeholder="0.00"
                 />
-                <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-indigo-700">
+                <div className="absolute -top-2 left-2 px-1 bg-zinc-100 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                   GPA (OPTIONAL)
                 </div>
               </div>
@@ -248,7 +248,7 @@ export const EducationForm = memo(function EducationFormComponent({
               {/* Achievements */}
               <div className="space-y-1.5">
                 <div className="flex justify-between items-baseline">
-                  <Label className="text-[10px] sm:text-xs font-medium text-indigo-700">Achievements & Activities</Label>
+                  <Label className="text-[10px] sm:text-xs font-medium text-[#5b6949]">Achievements & Activities</Label>
                   <span className="text-[8px] sm:text-[10px] text-gray-500">One achievement per line</span>
                 </div>
                 <Tiptap
@@ -262,9 +262,9 @@ export const EducationForm = memo(function EducationFormComponent({
                     }
                   }}
                   className={cn(
-                    "min-h-[120px] bg-white/50 border-gray-200 rounded-lg",
-                    "focus:border-indigo-500/40 focus:ring-2 focus:ring-indigo-500/20",
-                    "hover:border-indigo-500/30 hover:bg-white/60 transition-colors",
+                    "min-h-[120px] bg-zinc-100/50 border-gray-200 rounded-lg",
+                    "focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20",
+                    "hover:border-[#5b6949]/30 hover:bg-zinc-100/60 transition-colors",
                     "placeholder:text-gray-400",
                     "text-[10px] sm:text-xs"
                   )}

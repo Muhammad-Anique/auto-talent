@@ -57,14 +57,14 @@ function ScrollToBottom() {
         className={cn(
           "absolute z-50 rounded-full p-2",
           "bg-white/80 hover:bg-white",
-          "border border-purple-200/60 hover:border-purple-300/60",
-          "shadow-lg shadow-purple-500/5 hover:shadow-purple-500/10",
+          "border border-zinc-200/60 hover:border-zinc-300/60",
+          "shadow-lg shadow-zinc-500/5 hover:shadow-zinc-500/10",
           "transition-all duration-300",
           "left-[50%] translate-x-[-50%] bottom-4"
         )}
         onClick={() => scrollToBottom()}
       >
-        <ChevronDown className="h-4 w-4 text-purple-600" />
+        <ChevronDown className="h-4 w-4 text-zinc-600" />
       </button>
     )
   );
@@ -292,14 +292,14 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
   return (
     <Card className={cn(
       "flex flex-col w-full l mx-auto",
-      "bg-gradient-to-br from-purple-400/20 via-purple-400/50 to-indigo-400/50",
-      "border-2 border-purple-200/60",
-      "shadow-lg shadow-purple-500/5",
+      "bg-gradient-to-br from-zinc-100 via-zinc-50 to-zinc-50",
+      "border-2 border-zinc-200",
+      "shadow-lg shadow-zinc-500/5",
       "transition-all duration-500",
-      "hover:shadow-xl hover:shadow-purple-500/10",
+      "hover:shadow-xl hover:shadow-zinc-500/10",
       "overflow-hidden",
       "relative",
-      "data-[state=closed]:shadow-md data-[state=closed]:border data-[state=closed]:border-purple-200/40 "
+      "data-[state=closed]:shadow-md data-[state=closed]:border data-[state=closed]:border-zinc-200/40 "
     )}>
       
 
@@ -319,7 +319,7 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
               "hover:no-underline",
               "group",
               "transition-all duration-300",
-              "data-[state=open]:border-b border-purple-200/60",
+              "data-[state=open]:border-b border-zinc-200/60",
               "data-[state=closed]:opacity-80 data-[state=closed]:hover:opacity-100",
               "data-[state=closed]:py-1"
             )}>
@@ -332,8 +332,8 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                 <div className="flex items-center gap-1.5">
                   <div className={cn(
                     "p-1 rounded-lg",
-                    "bg-purple-100/80 text-purple-600",
-                    "group-hover:bg-purple-200/80",
+                    "bg-[#5b6949]/10 text-[#5b6949]",
+                    "group-hover:bg-[#5b6949]/20",
                     "transition-colors duration-300",
                     "group-data-[state=closed]:bg-white/60",
                     "group-data-[state=closed]:p-0.5"
@@ -351,15 +351,13 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                   className={cn(
                     "absolute right-8 top-1/2 -translate-y-1/2",
                     "px-3 py-1 rounded-lg",
-                    "bg-purple-100/40 text-purple-500/80 border border-purple-500",
-                    "hover:bg-purple-200/60 hover:text-purple-600",
+                    "bg-zinc-100/40 text-[#5b6949]/80 border border-[#5b6949]",
+                    "hover:bg-zinc-200/60 hover:text-[#5b6949]",
                     "transition-all duration-300",
-                    "focus:outline-none focus:ring-2 focus:ring-purple-400/40",
+                    "focus:outline-none focus:ring-2 focus:ring-[#5b6949]/40",
                     "disabled:opacity-50",
                     "flex items-center gap-2",
                     (accordionValue !== "chat" || isAlertOpen) && "hidden",
-                    
-                
                   )}
                   disabled={messages.length === 0}
                   aria-label="Clear chat history"
@@ -372,8 +370,8 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
               </AlertDialogTrigger>
               <AlertDialogContent className={cn(
                 "bg-white/95 backdrop-blur-xl",
-                "border-purple-200/60",
-                "shadow-lg shadow-purple-500/5"
+                "border-zinc-200/60",
+                "shadow-lg shadow-zinc-500/5"
               )}>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Clear Chat History</AlertDialogTitle>
@@ -383,18 +381,18 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel className={cn(
-                    "border-purple-200/60",
-                    "hover:bg-purple-50/50",
-                    "hover:text-purple-700"
+                    "border-zinc-200/60",
+                    "hover:bg-zinc-50/50",
+                    "hover:text-[#5b6949]"
                   )}>
                     Cancel
                   </AlertDialogCancel>
                   <AlertDialogAction
                     onClick={handleClearChat}
                     className={cn(
-                      "bg-purple-500 text-white",
-                      "hover:bg-purple-600",
-                      "focus:ring-purple-400"
+                      "bg-[#5b6949] text-white",
+                      "hover:bg-[#5b6949]/90",
+                      "focus:ring-[#5b6949]"
                     )}
                   >
                     Clear Chat
@@ -423,13 +421,13 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                               <div className={cn(
                                 "rounded-2xl px-4 py-2 max-w-[90%] text-sm relative group items-center",
                                 m.role === 'user' ? [
-                                  "bg-gradient-to-br from-purple-500 to-indigo-500",
+                                  "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/90",
                                   "text-white",
-                                  "shadow-md shadow-purple-500/10",
+                                  "shadow-md shadow-[#5b6949]/10",
                                   "ml-auto pb-0 text-white"
                                 ] : [
                                   "bg-white/60",
-                                  "border border-purple-200/60",
+                                  "border border-zinc-200/60",
                                   "shadow-sm",
                                   "backdrop-blur-sm pb-0"
                                 ]
@@ -445,18 +443,18 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                         "w-full min-h-[100px] p-2 rounded-lg",
                                         "bg-white/80 backdrop-blur-sm",
                                         m.role === 'user' 
-                                          ? "text-purple-900 placeholder-purple-400"
+                                          ? "text-[#5b6949] placeholder-zinc-400"
                                           : "text-gray-900 placeholder-gray-400",
-                                        "border border-purple-200/60 focus:border-purple-400/60",
-                                        "focus:outline-none focus:ring-1 focus:ring-purple-400/60"
+                                        "border border-zinc-200/60 focus:border-[#5b6949]/60",
+                                        "focus:outline-none focus:ring-1 focus:ring-[#5b6949]/60"
                                       )}
                                     />
                                     <button
                                       onClick={() => handleSaveEdit(m.id)}
                                       className={cn(
                                         "self-end px-3 py-1 rounded-lg text-xs",
-                                        "bg-purple-500 text-white",
-                                        "hover:bg-purple-600",
+                                        "bg-[#5b6949] text-white",
+                                        "hover:bg-[#5b6949]/90",
                                         "transition-colors duration-200"
                                       )}
                                     >
@@ -474,8 +472,8 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                     className={cn(
                                       "transition-colors duration-200",
                                       m.role === 'user' 
-                                        ? "text-purple-500/60 hover:text-purple-600"
-                                        : "text-purple-400/60 hover:text-purple-500",
+                                        ? "text-[#5b6949]/60 hover:text-[#5b6949]"
+                                        : "text-zinc-400/60 hover:text-zinc-500",
                                     )}
                                     aria-label="Delete message"
                                   >
@@ -486,8 +484,8 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                     className={cn(
                                       "transition-colors duration-200",
                                       m.role === 'user' 
-                                        ? "text-purple-500/60 hover:text-purple-600"
-                                        : "text-purple-400/60 hover:text-purple-500",
+                                        ? "text-[#5b6949]/60 hover:text-[#5b6949]"
+                                        : "text-zinc-400/60 hover:text-zinc-500",
                                     )}
                                     aria-label="Edit message"
                                   >
@@ -511,7 +509,7 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                     {toolName === 'getResume' ? (
                                       <div className={cn(
                                         "rounded-2xl px-4 py-2 max-w-[90%] text-sm",
-                                        "bg-white/60 border border-purple-200/60",
+                                        "bg-white/60 border border-zinc-200/60",
                                         "shadow-sm backdrop-blur-sm"
                                       )}>
                                         Reading Resume...
@@ -519,7 +517,7 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                     ) : toolName === 'modifyWholeResume' ? (
                                       <div className={cn(
                                         "w-full rounded-2xl px-4 py-2",
-                                        "bg-white/60 border border-purple-200/60",
+                                        "bg-white/60 border border-zinc-200/60",
                                         "shadow-sm backdrop-blur-sm"
                                       )}>
                                         Preparing resume modifications...
@@ -574,7 +572,7 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                     <div className="flex justify-start">
                                       <div className={cn(
                                         "rounded-2xl px-4 py-2 max-w-[90%] text-sm",
-                                        "bg-white/60 border border-purple-200/60",
+                                        "bg-white/60 border border-zinc-200/60",
                                         "shadow-sm backdrop-blur-sm"
                                       )}>
                                         {args.message}
@@ -641,11 +639,11 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                               <div className={cn(
                                 "rounded-2xl px-4 py-2.5 min-w-[60px]",
                                 "bg-white/60",
-                                "border border-purple-200/60",
+                                "border border-zinc-200/60",
                                 "shadow-sm",
                                 "backdrop-blur-sm"
                               )}>
-                                <LoadingDots className="text-purple-600" />
+                                <LoadingDots className="text-zinc-600" />
                               </div>
                             </div>
                           </div>

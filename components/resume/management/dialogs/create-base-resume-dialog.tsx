@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Profile, WorkExperience, Education, Skill, Project, Resume } from "@/lib/types";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, FileText, Copy, Wand2, Plus, Upload } from "lucide-react";
+import { Loader2, FileText, Copy, Wand2, Plus, Upload, Users, Target, Brain, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createBaseResume } from "@/utils/actions/resumes/actions";
 import pdfToText from "react-pdftotext";
@@ -19,6 +19,8 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { Textarea } from "@/components/ui/textarea";
 import { convertTextToResume } from "@/utils/actions/resumes/ai";
 import { ApiErrorDialog } from "@/components/ui/api-error-dialog";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface CreateBaseResumeDialogProps {
   children: React.ReactNode;
@@ -50,6 +52,9 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     description: ""
   });
   const [isDragging, setIsDragging] = useState(false);
+  const [activeTab, setActiveTab] = useState<keyof typeof selectedItems>('work_experience');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(3);
 
   const getItemId = (type: keyof typeof selectedItems, item: WorkExperience | Education | Skill | Project): string => {
     switch (type) {
@@ -95,6 +100,118 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     return selectedCount > 0 && selectedCount < sectionItems.length;
   };
 
+  // Pagination functions
+  const getCurrentItems = (items: any[]) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return items.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = (items: any[]) => {
+    return Math.ceil(items.length / itemsPerPage);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleTabChange = (tab: keyof typeof selectedItems) => {
+    setActiveTab(tab);
+    setCurrentPage(1); // Reset to first page when changing tabs
+  };
+
+  // Pagination Component
+  const Pagination = ({ totalPages, currentPage, onPageChange }: { totalPages: number; currentPage: number; onPageChange: (page: number) => void }) => {
+    if (totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisiblePages = 3;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return (
+      <div className="flex items-center justify-center gap-2 mt-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+          disabled={currentPage === 1}
+          className="flex items-center gap-2 border-zinc-200 hover:border-[#5b6949] hover:bg-zinc-50 text-xs"
+        >
+          <ChevronLeft className="w-3 h-3" />
+          Prev
+        </Button>
+
+        {startPage > 1 && (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(1)}
+              className="border-zinc-200 hover:border-[#5b6949] hover:bg-zinc-50 text-xs"
+            >
+              1
+            </Button>
+            {startPage > 2 && (
+              <span className="text-zinc-400 text-xs">...</span>
+            )}
+          </>
+        )}
+
+        {pages.map((page) => (
+          <Button
+            key={page}
+            variant={currentPage === page ? "default" : "outline"}
+            size="sm"
+            onClick={() => onPageChange(page)}
+            className={cn(
+              currentPage === page
+                ? "bg-[#5b6949] text-white border-[#5b6949] text-xs"
+                : "border-zinc-200 hover:border-[#5b6949] hover:bg-zinc-50 text-xs"
+            )}
+          >
+            {page}
+          </Button>
+        ))}
+
+        {endPage < totalPages && (
+          <>
+            {endPage < totalPages - 1 && (
+              <span className="text-zinc-400 text-xs">...</span>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onPageChange(totalPages)}
+              className="border-zinc-200 hover:border-[#5b6949] hover:bg-zinc-50 text-xs"
+            >
+              {totalPages}
+            </Button>
+          </>
+        )}
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+          disabled={currentPage === totalPages}
+          className="flex items-center gap-2 border-zinc-200 hover:border-[#5b6949] hover:bg-zinc-50 text-xs"
+        >
+          Next
+          <ChevronRight className="w-3 h-3" />
+        </Button>
+      </div>
+    );
+  };
+
   const handleCreate = async () => {
     if (!targetRole.trim()) {
       setIsTargetRoleInvalid(true);
@@ -136,8 +253,8 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
         };
 
         // Get model and API key from local storage
-        const MODEL_STORAGE_KEY = 'Auto Talent-default-model';
-        const LOCAL_STORAGE_KEY = 'Auto Talent-api-keys';
+        const MODEL_STORAGE_KEY = 'resumelm-default-model';
+        const LOCAL_STORAGE_KEY = 'resumelm-api-keys';
         const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
         const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
         let apiKeys = [];
@@ -342,7 +459,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
       <DialogContent className={cn(
         "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
         "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
-        "from-purple-50/95 to-indigo-50/90 border-purple-200/40",
+        "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
         "rounded-xl"
       )}>
         <style jsx global>{`
@@ -358,17 +475,17 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
         {/* Header Section with Icon */}
         <div className={cn(
           "relative px-8 pt-6 pb-4 border-b top-0 z-10 bg-white/50 backdrop-blur-xl",
-          "border-purple-200/20"
+          "border-zinc-200/20"
         )}>
           <div className="flex items-center gap-4">
             <div className={cn(
               "p-3 rounded-xl transition-all duration-300",
-              "bg-gradient-to-br from-purple-100/80 to-indigo-100/80 border border-purple-200/60"
+              "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
             )}>
-              <FileText className="w-6 h-6 text-purple-600" />
+              <FileText className="w-6 h-6 text-[#5b6949]" />
             </div>
             <div>
-              <DialogTitle className="text-xl font-semibold text-purple-950">
+              <DialogTitle className="text-xl font-semibold text-zinc-950">
                 Create Base Resume
               </DialogTitle>
               <DialogDescription className="mt-1 text-sm text-muted-foreground">
@@ -379,12 +496,12 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
         </div>
 
         {/* Content Section */}
-        <div className="px-8 py-6 space-y-6 bg-gradient-to-b from-purple-50/30 to-indigo-50/30">
+        <div className="px-8 py-6 space-y-6 bg-gradient-to-b from-zinc-50/30 to-gray-50/30">
           <div className="space-y-6">
             <div className="space-y-3">
               <Label 
                 htmlFor="target-role"
-                className="text-lg font-medium text-purple-950"
+                className="text-lg font-medium text-zinc-950"
               >
                 Target Role <span className="text-red-500">*</span>
               </Label>
@@ -394,7 +511,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                 value={targetRole}
                 onChange={(e) => setTargetRole(e.target.value)}
                 className={cn(
-                  "bg-white/80 border-gray-200 h-12 text-base focus:border-purple-500 focus:ring-purple-500/20 placeholder:text-gray-400",
+                  "bg-white/80 border-gray-200 h-12 text-base focus:border-[#5b6949] focus:ring-[#5b6949]/20 placeholder:text-gray-400",
                   isTargetRoleInvalid && "border-red-500 shake"
                 )}
                 required
@@ -402,7 +519,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
             </div>
 
             <div className="space-y-4">
-              <Label className="text-base font-medium text-purple-950">
+              <Label className="text-base font-medium text-zinc-950">
                 Resume Content
               </Label>
               <div className="grid grid-cols-3 gap-3">
@@ -421,17 +538,17 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                     className={cn(
                       "flex items-center h-[88px] rounded-lg p-3",
                       "bg-white border shadow-sm",
-                      "hover:border-purple-200 hover:bg-purple-50/50",
+                      "hover:border-zinc-200 hover:bg-zinc-50/50",
                       "transition-all duration-300 cursor-pointer",
-                      "peer-checked:border-purple-500 peer-checked:bg-purple-50",
-                      "peer-checked:shadow-md peer-checked:shadow-purple-100"
+                      "peer-checked:border-[#5b6949] peer-checked:bg-zinc-50",
+                      "peer-checked:shadow-md peer-checked:shadow-zinc-100"
                     )}
                   >
-                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 flex items-center justify-center shrink-0">
-                      <Copy className="h-5 w-5 text-purple-600" />
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-zinc-50 to-gray-50 border border-zinc-100 flex items-center justify-center shrink-0">
+                      <Copy className="h-5 w-5 text-[#5b6949]" />
                     </div>
                     <div className="ml-3 flex flex-col">
-                      <div className="font-medium text-sm text-purple-950">Import from Profile</div>
+                      <div className="font-medium text-sm text-zinc-950">Import from Profile</div>
                       <span className="text-xs text-gray-600 line-clamp-2">
                         Import your experience and skills
                       </span>
@@ -454,17 +571,17 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                     className={cn(
                       "flex items-center h-[88px] rounded-lg p-3",
                       "bg-white border shadow-sm",
-                      "hover:border-purple-200 hover:bg-purple-50/50",
+                      "hover:border-zinc-200 hover:bg-zinc-50/50",
                       "transition-all duration-300 cursor-pointer",
-                      "peer-checked:border-purple-500 peer-checked:bg-purple-50",
-                      "peer-checked:shadow-md peer-checked:shadow-purple-100"
+                      "peer-checked:border-[#5b6949] peer-checked:bg-zinc-50",
+                      "peer-checked:shadow-md peer-checked:shadow-zinc-100"
                     )}
                   >
-                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 flex items-center justify-center shrink-0">
-                      <Plus className="h-5 w-5 text-purple-600" />
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-zinc-50 to-gray-50 border border-zinc-100 flex items-center justify-center shrink-0">
+                      <Plus className="h-5 w-5 text-[#5b6949]" />
                     </div>
                     <div className="ml-3 flex flex-col">
-                      <div className="font-medium text-sm text-purple-950">Import from Resume</div>
+                      <div className="font-medium text-sm text-zinc-950">Import from Resume</div>
                       <span className="text-xs text-gray-600 line-clamp-2">
                         Paste your existing resume
                       </span>
@@ -487,17 +604,17 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                     className={cn(
                       "flex items-center h-[88px] rounded-lg p-3",
                       "bg-white border shadow-sm",
-                      "hover:border-purple-200 hover:bg-purple-50/50",
+                      "hover:border-zinc-200 hover:bg-zinc-50/50",
                       "transition-all duration-300 cursor-pointer",
-                      "peer-checked:border-purple-500 peer-checked:bg-purple-50",
-                      "peer-checked:shadow-md peer-checked:shadow-purple-100"
+                      "peer-checked:border-[#5b6949] peer-checked:bg-zinc-50",
+                      "peer-checked:shadow-md peer-checked:shadow-zinc-100"
                     )}
                   >
-                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-100 flex items-center justify-center shrink-0">
-                      <Wand2 className="h-5 w-5 text-purple-600" />
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-zinc-50 to-gray-50 border border-zinc-100 flex items-center justify-center shrink-0">
+                      <Wand2 className="h-5 w-5 text-[#5b6949]" />
                     </div>
                     <div className="ml-3 flex flex-col">
-                      <div className="font-medium text-sm text-purple-950">Start Fresh</div>
+                      <div className="font-medium text-sm text-zinc-950">Start Fresh</div>
                       <span className="text-xs text-gray-600 line-clamp-2">
                         Create a blank resume
                       </span>
@@ -507,114 +624,246 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
               </div>
 
               {importOption === 'import-profile' && (
-                <div className="grid grid-cols-2 gap-6">
-                  {/* Left Column */}
+                <div className="space-y-6">
+                  {/* Section Overview Cards */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('work_experience')}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
+                          <Users className="w-5 h-5 text-[#5b6949]" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-zinc-900">{profile.work_experience.length}</p>
+                          <p className="text-sm text-zinc-600">Work Experience</p>
+                        </div>
+                      </div>
+                    </Card>
+                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('education')}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
+                          <FileText className="w-5 h-5 text-[#5b6949]" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-zinc-900">{profile.education.length}</p>
+                          <p className="text-sm text-zinc-600">Education</p>
+                        </div>
+                      </div>
+                    </Card>
+                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('skills')}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
+                          <Target className="w-5 h-5 text-[#5b6949]" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-zinc-900">{profile.skills.length}</p>
+                          <p className="text-sm text-zinc-600">Skills</p>
+                        </div>
+                      </div>
+                    </Card>
+                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('projects')}>
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
+                          <Brain className="w-5 h-5 text-[#5b6949]" />
+                        </div>
+                        <div>
+                          <p className="text-lg font-bold text-zinc-900">{profile.projects.length}</p>
+                          <p className="text-sm text-zinc-600">Projects</p>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
+
+                  {/* Tabbed Interface */}
+                  <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as keyof typeof selectedItems)}>
+                    <TabsList className="grid w-full grid-cols-4 bg-white/80 border border-zinc-200 p-1 rounded-xl">
+                      <TabsTrigger 
+                        value="work_experience" 
+                        className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
+                      >
+                        Work Experience
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="education" 
+                        className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
+                      >
+                        Education
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="skills" 
+                        className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
+                      >
+                        Skills
+                      </TabsTrigger>
+                      <TabsTrigger 
+                        value="projects" 
+                        className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
+                      >
+                        Projects
+                      </TabsTrigger>
+                    </TabsList>
+
+                    {/* Work Experience Tab */}
+                    <TabsContent value="work_experience" className="mt-6">
                   <div className="space-y-4">
-                    <Accordion type="single" collapsible className="space-y-4">
-                      {/* Work Experience */}
-                      <AccordionItem value="work-experience" className="shadow-2xl border-b border-black/30">
-                        <div className="flex items-center w-full gap-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-[#5b6949]/10">
+                              <Users className="w-5 h-5 text-[#5b6949]" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-zinc-900">Work Experience</h3>
+                              <p className="text-sm text-zinc-600">Select positions to include in your resume</p>
+                            </div>
+                          </div>
                           <Checkbox
                             id="work-experience-section"
                             checked={isSectionSelected('work_experience')}
                             onCheckedChange={(checked) => handleSectionSelection('work_experience', checked as boolean)}
                             className={cn(
-                              "mt-0.5 ml-2",
-                              isSectionPartiallySelected('work_experience') && "data-[state=checked]:bg-purple-600/50"
+                              "mt-0.5",
+                              isSectionPartiallySelected('work_experience') && "data-[state=checked]:bg-[#5b6949]/50"
                             )}
                           />
-                          <AccordionTrigger className="w-full py-2 hover:no-underline group ">
-                            <div className="flex flex-col items-start w-full">
-                              <span className="text-sm font-semibold text-purple-950 group-hover:text-purple-950">
-                                Work Experience
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {profile.work_experience.length} {profile.work_experience.length === 1 ? 'position' : 'positions'}
-                              </span>
                             </div>
-                          </AccordionTrigger>
-                        </div>
-                        <AccordionContent>
-                          <div className="space-y-2 pt-2">
-                            {profile.work_experience.map((exp: WorkExperience) => {
+                        
+                        <div className="space-y-3">
+                          {getCurrentItems(profile.work_experience).map((exp: WorkExperience, index: number) => {
                               const id = getItemId('work_experience', exp);
                               return (
-                                <div
-                                  key={id}
-                                  className="flex items-start space-x-2 p-2.5 rounded-md border border-gray-200 bg-white/50 hover:bg-white/80 transition-colors"
-                                >
+                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-start gap-3">
                                   <Checkbox
                                     id={id}
                                     checked={selectedItems.work_experience.includes(id)}
                                     onCheckedChange={() => handleItemSelection('work_experience', id)}
-                                    className="mt-0.5 ml-2"
+                                    className="mt-1"
                                   />
-                                  <div 
-                                    className="flex-1 cursor-pointer"
-                                    onClick={() => handleItemSelection('work_experience', id)}
-                                  >
-                                    <div className="flex items-baseline justify-between">
-                                      <div className="font-medium text-sm">{exp.position}</div>
-                                      <div className="text-xs text-muted-foreground">{exp.date}</div>
+                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('work_experience', id)}>
+                                    <div className="flex items-baseline justify-between mb-2">
+                                      <h4 className="font-semibold text-zinc-900">{exp.position}</h4>
+                                      <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{exp.date}</span>
                                     </div>
-                                    <div className="text-xs text-muted-foreground">{exp.company}</div>
+                                    <p className="text-sm text-zinc-600 mb-2">{exp.company}</p>
+                                    {exp.description && (
+                                      <p className="text-xs text-zinc-500 line-clamp-2">{exp.description}</p>
+                                    )}
                                   </div>
                                 </div>
+                              </Card>
                               );
                             })}
                           </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                        <Pagination 
+                          totalPages={getTotalPages(profile.work_experience)}
+                          currentPage={currentPage}
+                          onPageChange={handlePageChange}
+                        />
+                      </div>
+                    </TabsContent>
 
-                      {/* Skills */}
-                      <AccordionItem value="skills" className="shadow-2xl border-b border-black/30">
-                        <div className="flex items-center w-full gap-2">
+                    {/* Education Tab */}
+                    <TabsContent value="education" className="mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-[#5b6949]/10">
+                              <FileText className="w-5 h-5 text-[#5b6949]" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-zinc-900">Education</h3>
+                              <p className="text-sm text-zinc-600">Select educational background to include</p>
+                            </div>
+                          </div>
+                          <Checkbox
+                            id="education-section"
+                            checked={isSectionSelected('education')}
+                            onCheckedChange={(checked) => handleSectionSelection('education', checked as boolean)}
+                            className={cn(
+                              "mt-0.5",
+                              isSectionPartiallySelected('education') && "data-[state=checked]:bg-[#5b6949]/50"
+                            )}
+                          />
+                        </div>
+                        
+                        <div className="space-y-3">
+                          {getCurrentItems(profile.education).map((edu: Education, index: number) => {
+                            const id = getItemId('education', edu);
+                            return (
+                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-start gap-3">
+                                  <Checkbox
+                                    id={id}
+                                    checked={selectedItems.education.includes(id)}
+                                    onCheckedChange={() => handleItemSelection('education', id)}
+                                    className="mt-1"
+                                  />
+                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('education', id)}>
+                                    <div className="flex items-baseline justify-between mb-2">
+                                      <h4 className="font-semibold text-zinc-900">{`${edu.degree} in ${edu.field}`}</h4>
+                                      <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{edu.date}</span>
+                                    </div>
+                                    <p className="text-sm text-zinc-600 mb-2">{edu.school}</p>
+                                    {edu.gpa && (
+                                      <p className="text-xs text-zinc-500">GPA: {edu.gpa}</p>
+                                    )}
+                                  </div>
+                                </div>
+                              </Card>
+                            );
+                          })}
+                        </div>
+                        <Pagination 
+                          totalPages={getTotalPages(profile.education)}
+                          currentPage={currentPage}
+                          onPageChange={handlePageChange}
+                        />
+                      </div>
+                    </TabsContent>
+
+                    {/* Skills Tab */}
+                    <TabsContent value="skills" className="mt-6">
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-[#5b6949]/10">
+                              <Target className="w-5 h-5 text-[#5b6949]" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-zinc-900">Skills</h3>
+                              <p className="text-sm text-zinc-600">Select skill categories to include</p>
+                            </div>
+                          </div>
                           <Checkbox
                             id="skills-section"
                             checked={isSectionSelected('skills')}
                             onCheckedChange={(checked) => handleSectionSelection('skills', checked as boolean)}
                             className={cn(
-                              "mt-0.5 ml-2",
-                              isSectionPartiallySelected('skills') && "data-[state=checked]:bg-purple-600/50"
+                              "mt-0.5",
+                              isSectionPartiallySelected('skills') && "data-[state=checked]:bg-[#5b6949]/50"
                             )}
                           />
-                          <AccordionTrigger className="w-full py-2 hover:no-underline group">
-                            <div className="flex flex-col items-start w-full">
-                              <span className="text-sm font-semibold text-purple-950 group-hover:text-purple-950">
-                                Skills
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {profile.skills.length} {profile.skills.length === 1 ? 'category' : 'categories'}
-                              </span>
                             </div>
-                          </AccordionTrigger>
-                        </div>
-                        <AccordionContent>
-                          <div className="space-y-2 pt-2">
-                            {profile.skills.map((skill: Skill) => {
+                        
+                        <div className="space-y-3">
+                          {getCurrentItems(profile.skills).map((skill: Skill, index: number) => {
                               const id = getItemId('skills', skill);
                               return (
-                                <div
-                                  key={id}
-                                  className="flex items-start space-x-2 p-2.5 rounded-md border border-gray-200 bg-white/50 hover:bg-white/80 transition-colors"
-                                >
+                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-start gap-3">
                                   <Checkbox
                                     id={id}
                                     checked={selectedItems.skills.includes(id)}
                                     onCheckedChange={() => handleItemSelection('skills', id)}
-                                    className="mt-0.5 ml-2"
+                                    className="mt-1"
                                   />
-                                  <div 
-                                    className="flex-1 cursor-pointer"
-                                    onClick={() => handleItemSelection('skills', id)}
-                                  >
-                                    <div className="font-medium text-sm mb-1">{skill.category}</div>
-                                    <div className="flex flex-wrap gap-1">
-                                      {skill.items.map((item: string, index: number) => (
+                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('skills', id)}>
+                                    <h4 className="font-semibold text-zinc-900 mb-3">{skill.category}</h4>
+                                    <div className="flex flex-wrap gap-2">
+                                      {skill.items.map((item: string, skillIndex: number) => (
                                         <Badge
-                                          key={index}
+                                          key={skillIndex}
                                           variant="secondary"
-                                          className="bg-white/60 text-purple-700 border border-purple-200 text-[10px] px-1.5 py-0"
+                                          className="bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20 text-xs px-1.5 py-0"
                                         >
                                           {item}
                                         </Badge>
@@ -622,134 +871,91 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                                     </div>
                                   </div>
                                 </div>
+                              </Card>
                               );
                             })}
                           </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
+                        <Pagination 
+                          totalPages={getTotalPages(profile.skills)}
+                          currentPage={currentPage}
+                          onPageChange={handlePageChange}
+                        />
                   </div>
+                    </TabsContent>
 
-                  {/* Right Column */}
+                    {/* Projects Tab */}
+                    <TabsContent value="projects" className="mt-6">
                   <div className="space-y-4">
-                    <Accordion type="single" collapsible className="space-y-4">
-                      {/* Projects */}
-                      <AccordionItem value="projects" className="shadow-2xl border-b border-black/30">
-                        <div className="flex items-center w-full gap-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-lg bg-[#5b6949]/10">
+                              <Brain className="w-5 h-5 text-[#5b6949]" />
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-zinc-900">Projects</h3>
+                              <p className="text-sm text-zinc-600">Select projects to showcase</p>
+                            </div>
+                          </div>
                           <Checkbox
                             id="projects-section"
                             checked={isSectionSelected('projects')}
                             onCheckedChange={(checked) => handleSectionSelection('projects', checked as boolean)}
                             className={cn(
-                              "mt-0.5 ml-2",
-                              isSectionPartiallySelected('projects') && "data-[state=checked]:bg-purple-600/50"
+                              "mt-0.5",
+                              isSectionPartiallySelected('projects') && "data-[state=checked]:bg-[#5b6949]/50"
                             )}
                           />
-                          <AccordionTrigger className="w-full py-2 hover:no-underline group">
-                            <div className="flex flex-col items-start w-full">
-                              <span className="text-sm font-semibold text-purple-950 group-hover:text-purple-950">
-                                Projects
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {profile.projects.length} {profile.projects.length === 1 ? 'project' : 'projects'}
-                              </span>
                             </div>
-                          </AccordionTrigger>
-                        </div>
-                        <AccordionContent>
-                          <div className="space-y-2 pt-2">
-                            {profile.projects.map((project: Project) => {
+                        
+                        <div className="space-y-3">
+                          {getCurrentItems(profile.projects).map((project: Project, index: number) => {
                               const id = getItemId('projects', project);
                               return (
-                                <div
-                                  key={id}
-                                  className="flex items-start space-x-2 p-2.5 rounded-md border border-gray-200 bg-white/50 hover:bg-white/80 transition-colors"
-                                >
+                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
+                                <div className="flex items-start gap-3">
                                   <Checkbox
                                     id={id}
                                     checked={selectedItems.projects.includes(id)}
                                     onCheckedChange={() => handleItemSelection('projects', id)}
-                                    className="mt-0.5 ml-2"
+                                    className="mt-1"
                                   />
-                                  <div 
-                                    className="flex-1 cursor-pointer"
-                                    onClick={() => handleItemSelection('projects', id)}
-                                  >
-                                    <div className="flex items-baseline justify-between">
-                                      <div className="font-medium text-sm">{project.name}</div>
+                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('projects', id)}>
+                                    <div className="flex items-baseline justify-between mb-2">
+                                      <h4 className="font-semibold text-zinc-900">{project.name}</h4>
                                       {project.date && (
-                                        <div className="text-xs text-muted-foreground">{project.date}</div>
+                                        <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{project.date}</span>
                                       )}
                                     </div>
+                                    {project.description && (
+                                      <p className="text-sm text-zinc-600 mb-2 line-clamp-2">{project.description}</p>
+                                    )}
                                     {project.technologies && (
-                                      <div className="text-xs text-muted-foreground line-clamp-1">
-                                        {project.technologies.join(', ')}
+                                      <div className="flex flex-wrap gap-1">
+                                        {project.technologies.map((tech: string, techIndex: number) => (
+                                          <Badge
+                                            key={techIndex}
+                                            variant="secondary"
+                                            className="bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20 text-xs px-1.5 py-0"
+                                          >
+                                            {tech}
+                                          </Badge>
+                                        ))}
                                       </div>
                                     )}
                                   </div>
                                 </div>
+                              </Card>
                               );
                             })}
                           </div>
-                        </AccordionContent>
-                      </AccordionItem>
-
-                      {/* Education */}
-                      <AccordionItem value="education" className="shadow-2xl border-b border-black/30">
-                        <div className="flex items-center w-full gap-2">
-                          <Checkbox
-                            id="education-section"
-                            checked={isSectionSelected('education')}
-                            onCheckedChange={(checked) => handleSectionSelection('education', checked as boolean)}
-                            className={cn(
-                              "mt-0.5 ml-2",
-                              isSectionPartiallySelected('education') && "data-[state=checked]:bg-purple-600/50"
-                            )}
-                          />
-                          <AccordionTrigger className="w-full py-2 hover:no-underline group">
-                            <div className="flex flex-col items-start w-full">
-                              <span className="text-sm font-semibold text-purple-950 group-hover:text-purple-950">
-                                Education
-                              </span>
-                              <span className="text-xs text-muted-foreground">
-                                {profile.education.length} {profile.education.length === 1 ? 'institution' : 'institutions'}
-                              </span>
+                        <Pagination 
+                          totalPages={getTotalPages(profile.projects)}
+                          currentPage={currentPage}
+                          onPageChange={handlePageChange}
+                        />
                             </div>
-                          </AccordionTrigger>
-                        </div>
-                        <AccordionContent>
-                          <div className="space-y-2 pt-2">
-                            {profile.education.map((edu: Education) => {
-                              const id = getItemId('education', edu);
-                              return (
-                                <div
-                                  key={id}
-                                  className="flex items-start space-x-2 p-2.5 rounded-md border border-gray-200 bg-white/50 hover:bg-white/80 transition-colors"
-                                >
-                                  <Checkbox
-                                    id={id}
-                                    checked={selectedItems.education.includes(id)}
-                                    onCheckedChange={() => handleItemSelection('education', id)}
-                                    className="mt-0.5 ml-2"
-                                  />
-                                  <div 
-                                    className="flex-1 cursor-pointer"
-                                    onClick={() => handleItemSelection('education', id)}
-                                  >
-                                    <div className="flex items-baseline justify-between">
-                                      <div className="font-medium text-sm">{`${edu.degree} in ${edu.field}`}</div>
-                                      <div className="text-xs text-muted-foreground">{edu.date}</div>
-                                    </div>
-                                    <div className="text-xs text-muted-foreground">{edu.school}</div>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                    </Accordion>
-                  </div>
+                    </TabsContent>
+                  </Tabs>
                 </div>
               )}
 
@@ -763,8 +969,8 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                     className={cn(
                       "border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center gap-3 transition-colors duration-200 cursor-pointer group",
                       isDragging
-                        ? "border-purple-500 bg-purple-50/50"
-                        : "border-gray-200 hover:border-purple-500/50 hover:bg-purple-50/10"
+                        ? "border-[#5b6949] bg-zinc-50/50"
+                        : "border-gray-200 hover:border-[#5b6949]/50 hover:bg-zinc-50/10"
                     )}
                   >
                     <input
@@ -773,7 +979,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       accept="application/pdf"
                       onChange={handleFileInput}
                     />
-                    <Upload className="w-10 h-10 text-purple-500 group-hover:scale-110 transition-transform duration-200" />
+                    <Upload className="w-10 h-10 text-[#5b6949] group-hover:scale-110 transition-transform duration-200" />
                     <div className="text-center">
                       <p className="text-sm font-medium text-foreground">
                         Drop your PDF resume here
@@ -792,7 +998,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       value={resumeText}
                       onChange={(e) => setResumeText(e.target.value)}
                       placeholder="Start pasting your resume content here..."
-                      className="min-h-[200px] bg-white/80 border-gray-200 focus:border-purple-500 focus:ring-purple-500/20 pt-4"
+                      className="min-h-[200px] bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20 pt-4"
                     />
                   </div>
                 </div>
@@ -819,7 +1025,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
         {/* Footer Section */}
         <div className={cn(
           "px-8 py-4 border-t sticky bottom-0 z-10 bg-white/50 backdrop-blur-xl",
-          "border-purple-200/20 bg-white/40"
+          "border-zinc-200/20 bg-white/40"
         )}>
           <div className="flex justify-end gap-3">
             <Button 
@@ -828,7 +1034,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
               className={cn(
                 "border-gray-200 text-gray-600",
                 "hover:bg-white/60",
-                "hover:border-purple-200"
+                "hover:border-zinc-200"
               )}
             >
               Cancel
@@ -838,7 +1044,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
               disabled={isCreating}
               className={cn(
                 "text-white shadow-lg hover:shadow-xl transition-all duration-500",
-                "bg-gradient-to-r from-[#5b6949] via-[#5b6949]/90 to-blue-700  hover:from-blue-700 hover:to-blue-700"
+                "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 hover:from-[#5b6949]/90 hover:to-[#5b6949]/70"
               )}
             >
               {isCreating ? (

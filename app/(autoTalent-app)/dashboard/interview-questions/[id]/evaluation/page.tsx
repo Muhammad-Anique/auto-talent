@@ -209,14 +209,14 @@ export default function InterviewDetailPage() {
 
   // Quiz Start Screen
   if (!isTimerActive && !showResults) {
-    return (
+  return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-50 via-white to-gray-50">
         <div className="container mx-auto p-6">
           <div className="max-w-2xl mx-auto">
             <Card className="p-8 bg-white/80 backdrop-blur-xl border-white/40 shadow-md border border-zinc-200">
               <div className="text-center space-y-8">
                 {/* Header */}
-                <div className="space-y-4">
+      <div className="space-y-4">
                   <div className="flex justify-center">
                     <div className="p-4 rounded-full bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60">
                       <Brain className="w-12 h-12 text-[#5b6949]" />
@@ -292,7 +292,7 @@ export default function InterviewDetailPage() {
               </div>
             </Card>
           </div>
-        </div>
+            </div>
       </div>
     );
   }
@@ -370,13 +370,13 @@ export default function InterviewDetailPage() {
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back to Questions
                   </Button>
-                  <Button
+        <Button
                     onClick={() => window.location.reload()}
                     className="bg-[#5b6949] text-white hover:bg-[#5b6949]/90"
-                  >
+        >
                     <Trophy className="w-4 h-4 mr-2" />
                     Try Again
-                  </Button>
+        </Button>
                 </div>
               </div>
             </Card>
@@ -524,4 +524,4 @@ export default function InterviewDetailPage() {
       </div>
     </div>
   );
-} 
+}

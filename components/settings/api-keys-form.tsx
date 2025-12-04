@@ -163,7 +163,7 @@ export function ApiKeysForm({ isProPlan }: { isProPlan: boolean }) {
     const autoSelectModel = () => {
       switch (service) {
         case 'anthropic':
-          return 'claude-3-sonnet-20240229'
+          return 'gpt-4o'
         case 'openai':
           return 'gpt-4o'
         case 'deepseek':

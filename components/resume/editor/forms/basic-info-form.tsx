@@ -57,21 +57,21 @@ const BasicInfoField = memo(function BasicInfoField({
   return (
     <div className="relative group">
       <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
-        <div className="p-1 rounded-full bg-teal-100/80 transition-transform duration-300 group-focus-within:scale-110">
-          <Icon className="h-3.5 w-3.5 text-teal-600" />
+        <div className="p-1 rounded-full bg-[#5b6949]/10 transition-transform duration-300 group-focus-within:scale-110">
+          <Icon className="h-4 w-4 text-[#5b6949]" />
         </div>
       </div>
       <Input
         type={type}
         value={value || ""}
         onChange={handleChange}
-        className="pr-10 text-sm bg-white/50 border-gray-200 rounded-lg h-9
-          focus:border-teal-500/40 focus:ring-2 focus:ring-teal-500/20
-          hover:border-teal-500/30 hover:bg-white/60 transition-colors
-          placeholder:text-gray-400"
+        className="pr-10 text-sm bg-white border-zinc-200 rounded-lg h-9
+          focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20
+          hover:border-[#5b6949]/60 hover:bg-zinc-50/80 transition-colors
+          placeholder:text-zinc-400"
         placeholder={placeholder}
       />
-      <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[9px] font-medium text-teal-700">
+      <div className="absolute -top-2 left-2 px-1 text-[9px] font-medium text-[#5b6949]">
         {label}
       </div>
     </div>
@@ -114,15 +114,15 @@ export const BasicInfoForm = memo(function BasicInfoFormComponent({
 
   return (
     <div className="space-y-6">
-      <Card className="relative group bg-gradient-to-r from-teal-500/5 via-teal-500/10 to-cyan-500/5 backdrop-blur-md border border-teal-500/30 hover:border-teal-500/40 hover:shadow-lg transition-all duration-300 shadow-sm">
+      <Card className="relative group bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-zinc-100/5 backdrop-blur-md border border-[#5b6949]/20 hover:border-[#5b6949]/40 hover:shadow-lg transition-all duration-300 shadow-sm">
         <CardContent className="p-3 sm:p-4">
           {profile && (
             <div className="mb-3 sm:mb-4">
               <Button
                 onClick={handleFillFromProfile}
-                className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white text-sm hover:from-teal-700 hover:to-cyan-700 transition-all duration-500 shadow-md hover:shadow-lg hover:shadow-teal-500/20 hover:-translate-y-0.5"
+                className="w-full bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 text-white text-sm hover:from-[#5b6949]/90 hover:to-[#5b6949]/70 transition-all duration-500 shadow-md hover:shadow-lg hover:shadow-[#5b6949]/20 hover:-translate-y-0.5"
               >
-                <UserCircle2 className="mr-2 h-3.5 w-3.5" />
+                <UserCircle2 className="mr-2 h-4 w-4" />
                 Fill from Profile
               </Button>
             </div>

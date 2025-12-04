@@ -1,9 +1,43 @@
 // utils/rateLimiter.ts
-import redis from '@/lib/redis';
+import redis from "@/lib/redis";
+
+// Simple in-memory fallback store used only when Redis is unavailable.
+// Keyed by user id; values mirror the Redis hash { tokens, last } semantics.
+const inMemoryBuckets: Record<
+  string,
+  { tokens: number; last: number; expiresAt: number }
+> = {};
+
+function readFromMemory(key: string) {
+  const entry = inMemoryBuckets[key];
+  if (!entry) return null;
+  // Expire entries past their TTL
+  if (Date.now() / 1000 > entry.expiresAt) {
+    delete inMemoryBuckets[key];
+    return null;
+  }
+  return {
+    tokens: entry.tokens.toString(),
+    last: entry.last.toString(),
+  } as const;
+}
+
+function writeToMemory(
+  key: string,
+  tokens: number,
+  last: number,
+  ttlSeconds: number
+) {
+  inMemoryBuckets[key] = {
+    tokens,
+    last,
+    expiresAt: Date.now() / 1000 + ttlSeconds,
+  };
+}
 
 /**
  * Checks and updates the leaky bucket for a given user.
- * 
+ *
  * @param userId - The unique identifier for the Pro user.
  * @param capacity - Maximum number of allowed messages (default: 80).
  * @param duration - The duration (in seconds) over which the capacity is allowed (default: 5 hours).
@@ -18,8 +52,15 @@ export async function checkRateLimit(
   const redisKey = `rate-limit:pro:${userId}`;
   const now = Date.now() / 1000; // current time in seconds
 
-  // Get existing bucket data from Redis.
-  const bucket = await redis.hgetall(redisKey);
+  // Try to get existing bucket data from Redis; fall back to memory if Redis is unavailable.
+  let bucket: { tokens?: string; last?: string } | null = null;
+  let usingMemory = false;
+  try {
+    bucket = await redis.hgetall(redisKey);
+  } catch {
+    bucket = readFromMemory(redisKey);
+    usingMemory = true;
+  }
   let tokens: number;
   let last: number;
 
@@ -28,7 +69,17 @@ export async function checkRateLimit(
     tokens = 0;
     last = now;
     // Set an expiration a bit longer than the duration so that stale data is removed.
-    await redis.expire(redisKey, duration + 3600);
+    if (usingMemory) {
+      writeToMemory(redisKey, tokens, last, duration + 3600);
+    } else {
+      try {
+        await redis.expire(redisKey, duration + 3600);
+      } catch {
+        // Redis failed; ensure memory fallback is primed
+        writeToMemory(redisKey, tokens, last, duration + 3600);
+        usingMemory = true;
+      }
+    }
   } else {
     tokens = parseFloat(bucket.tokens as string);
     last = parseFloat(bucket.last as string);
@@ -48,6 +99,18 @@ export async function checkRateLimit(
   }
 
   // Update the bucket in Redis with the new token count and current timestamp.
-  await redis.hset(redisKey, { tokens: newTokens.toString(), last: now.toString() });
-  await redis.expire(redisKey, duration + 3600);
+  if (usingMemory) {
+    writeToMemory(redisKey, newTokens, now, duration + 3600);
+  } else {
+    try {
+      await redis.hset(redisKey, {
+        tokens: newTokens.toString(),
+        last: now.toString(),
+      });
+      await redis.expire(redisKey, duration + 3600);
+    } catch {
+      // On write failure, continue with memory fallback to avoid crashing.
+      writeToMemory(redisKey, newTokens, now, duration + 3600);
+    }
+  }
 }

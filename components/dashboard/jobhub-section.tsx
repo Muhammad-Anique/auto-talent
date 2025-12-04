@@ -50,8 +50,8 @@ export function JobHubSection({
       text: 'text-[#5b6949]',
       icon: FileText,
       accent: {
-        bg: 'purple-100',
-        hover: 'purple-100/50'
+        bg: 'zinc-100',
+        hover: 'zinc-100/50'
       }
     },
     tailored: {
@@ -61,8 +61,8 @@ export function JobHubSection({
       text: 'text-[#5b6949]',
       icon: Sparkles,
       accent: {
-        bg: 'pink-100',
-        hover: 'pink-100/50'
+        bg: 'zinc-100',
+        hover: 'zinc-100/50'
       }
     }
   }[type];

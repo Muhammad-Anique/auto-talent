@@ -52,24 +52,15 @@ export function ResumeEditorActions({
 
 
   // Dynamic color classes based on resume type
-  const colors = resume.is_base_resume ? {
+  const colors = {
     // Import button colors
-    importBg: "bg-indigo-600",
-    importHover: "hover:bg-indigo-700",
-    importShadow: "shadow-indigo-400/20",
+    importBg: "bg-[#5b6949]",
+    importHover: "hover:bg-[#5b6949]/90",
+    importShadow: "shadow-[#5b6949]/20",
     // Action buttons colors (download & save)
-    actionBg: "bg-purple-600",
-    actionHover: "hover:bg-purple-700",
-    actionShadow: "shadow-purple-400/20"
-  } : {
-    // Import button colors
-    importBg: "bg-rose-600",
-    importHover: "hover:bg-rose-700",
-    importShadow: "shadow-rose-400/20",
-    // Action buttons colors (download & save)
-    actionBg: "bg-pink-600",
-    actionHover: "hover:bg-pink-700",
-    actionShadow: "shadow-pink-400/20"
+    actionBg: "bg-[#5b6949]",
+    actionHover: "hover:bg-[#5b6949]/90",
+    actionShadow: "shadow-[#5b6949]/20"
   };
 
   
@@ -319,11 +310,7 @@ export function ResumeEditorActions({
               align="start"
               sideOffset={5}
               className={cn(
-                "w-48 p-3",
-                resume.is_base_resume 
-                  ? "bg-indigo-50 border-2 border-indigo-200"
-                  : "bg-rose-50 border-2 border-rose-200",
-                "rounded-lg shadow-lg"
+                "w-48 p-3 bg-zinc-50 border-2 border-zinc-200 rounded-lg shadow-lg"
               )}
             >
               <div className="space-y-3">
@@ -334,9 +321,7 @@ export function ResumeEditorActions({
                       setDownloadOptions(prev => ({ ...prev, resume: checked as boolean }))
                     }
                     className={cn(
-                      resume.is_base_resume 
-                        ? "border-indigo-400 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
-                        : "border-rose-400 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600"
+                      "border-[#5b6949] data-[state=checked]:bg-[#5b6949] data-[state=checked]:border-[#5b6949]"
                     )}
                   />
                   <span className="text-sm font-medium text-foreground">Resume</span>
@@ -348,9 +333,7 @@ export function ResumeEditorActions({
                       setDownloadOptions(prev => ({ ...prev, coverLetter: checked as boolean }))
                     }
                     className={cn(
-                      resume.is_base_resume 
-                        ? "border-indigo-400 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
-                        : "border-rose-400 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600"
+                      "border-[#5b6949] data-[state=checked]:bg-[#5b6949] data-[state=checked]:border-[#5b6949]"
                     )}
                   />
                   <span className="text-sm font-medium text-foreground">Cover Letter</span>
@@ -362,9 +345,7 @@ export function ResumeEditorActions({
                       setDownloadOptions(prev => ({ ...prev, followUpEmail: checked as boolean }))
                     }
                     className={cn(
-                      resume.is_base_resume 
-                        ? "border-indigo-400 data-[state=checked]:bg-indigo-600 data-[state=checked]:border-indigo-600"
-                        : "border-rose-400 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600"
+                      "border-[#5b6949] data-[state=checked]:bg-[#5b6949] data-[state=checked]:border-[#5b6949]"
                     )}
                   />
                   <span className="text-sm font-medium text-foreground">Follow-Up Email</span>

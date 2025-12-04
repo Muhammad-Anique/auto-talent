@@ -91,10 +91,10 @@ export function SkillsForm({
             variant="outline" 
             className={cn(
               "flex-1 h-9 min-w-[120px]",
-              "bg-gradient-to-r from-rose-500/5 via-rose-500/10 to-pink-500/5",
-              "hover:from-rose-500/10 hover:via-rose-500/15 hover:to-pink-500/10",
-              "border-2 border-dashed border-rose-500/30 hover:border-rose-500/40",
-              "text-rose-700 hover:text-rose-800",
+              "bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-[#5b6949]/5",
+              "hover:from-[#5b6949]/10 hover:via-[#5b6949]/15 hover:to-[#5b6949]/10",
+              "border-2 border-dashed border-[#5b6949]/30 hover:border-[#5b6949]/40",
+              "text-[#5b6949] hover:text-[#5b6949]/80",
               "transition-all duration-300",
               "rounded-xl",
               "whitespace-nowrap text-[11px] @[300px]:text-sm"
@@ -112,10 +112,10 @@ export function SkillsForm({
             buttonClassName={cn(
               "flex-1 mb-0 h-9 min-w-[120px]",
               "whitespace-nowrap text-[11px] @[300px]:text-sm",
-              "bg-gradient-to-r from-rose-500/5 via-rose-500/10 to-pink-500/5",
-              "hover:from-rose-500/10 hover:via-rose-500/15 hover:to-pink-500/10",
-              "border-2 border-dashed border-rose-500/30 hover:border-rose-500/40",
-              "text-rose-700 hover:text-rose-800"
+              "bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-[#5b6949]/5",
+              "hover:from-[#5b6949]/10 hover:via-[#5b6949]/15 hover:to-[#5b6949]/10",
+              "border-2 border-dashed border-[#5b6949]/30 hover:border-[#5b6949]/40",
+              "text-[#5b6949] hover:text-[#5b6949]/80"
             )}
           />
         </div>
@@ -126,8 +126,8 @@ export function SkillsForm({
           key={index} 
           className={cn(
             "relative group transition-all duration-300",
-            "bg-gradient-to-r from-rose-500/5 via-rose-500/10 to-pink-500/5",
-            "backdrop-blur-md border-2 border-rose-500/30",
+            "bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-[#5b6949]/5",
+            "backdrop-blur-md border-2 border-[#5b6949]/30",
             "shadow-sm"
           )}
         >
@@ -141,14 +141,14 @@ export function SkillsForm({
                     onChange={(e) => updateSkillCategory(index, 'category', e.target.value)}
                     className={cn(
                       "text-sm font-medium h-9",
-                      "bg-white/50 border-gray-200 rounded-lg",
-                      "focus:border-rose-500/40 focus:ring-2 focus:ring-rose-500/20",
-                      "hover:border-rose-500/30 hover:bg-white/60 transition-colors",
-                      "placeholder:text-gray-400"
+                      "bg-white/50 border-zinc-200 rounded-lg",
+                      "focus:border-[#5b6949]/40 focus:ring-2 focus:ring-[#5b6949]/20",
+                      "hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors",
+                      "placeholder:text-zinc-400"
                     )}
                     placeholder="Category Name"
                   />
-                  <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-rose-700">
+                  <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                     CATEGORY
                   </div>
                 </div>
@@ -170,7 +170,7 @@ export function SkillsForm({
                       key={skillIndex}
                       variant="secondary"
                       className={cn(
-                        "bg-white/60 hover:bg-white/80 text-rose-700 border border-rose-200 py-0.5",
+                        "bg-white/60 hover:bg-white/80 text-[#5b6949] border border-zinc-200 py-0.5",
                         "transition-all duration-300 group/badge cursor-default text-[10px] sm:text-xs"
                       )}
                     >
@@ -192,10 +192,10 @@ export function SkillsForm({
                     onChange={(e) => setNewSkills({ ...newSkills, [index]: e.target.value })}
                     onKeyPress={(e) => handleKeyPress(e, index)}
                     className={cn(
-                      "h-9 bg-white/50 border-gray-200 rounded-lg",
-                      "focus:border-rose-500/40 focus:ring-2 focus:ring-rose-500/20",
-                      "hover:border-rose-500/30 hover:bg-white/60 transition-colors",
-                      "placeholder:text-gray-400",
+                      "h-9 bg-white/50 border-zinc-200 rounded-lg",
+                      "focus:border-[#5b6949]/40 focus:ring-2 focus:ring-[#5b6949]/20",
+                      "hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors",
+                      "placeholder:text-zinc-400",
                       "text-[10px] sm:text-xs"
                     )}
                     placeholder="Type a skill and press Enter or click +"
@@ -208,7 +208,7 @@ export function SkillsForm({
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
-                  <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-rose-700">
+                  <div className="absolute -top-2 left-2 px-1 bg-white/80 text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                     ADD SKILL
                   </div>
                 </div>

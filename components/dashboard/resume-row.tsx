@@ -29,7 +29,7 @@ const resumeRow= ({ baseResumes, profile, baseSort, baseDirection }: ResumeRowPr
   return (
     <div className="relative">
     <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4">
-      <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+      <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 bg-clip-text text-transparent">
         Base Resumes
       </h2>
       <div className="flex items-center gap-2">
@@ -90,9 +90,9 @@ const resumeRow= ({ baseResumes, profile, baseSort, baseDirection }: ResumeRowPr
                       type="submit"
                       className={cn(
                         "h-8 w-8 rounded-lg",
-                        "bg-teal-50/80 hover:bg-teal-100/80",
-                        "text-teal-600 hover:text-teal-700",
-                        "border border-teal-200/60",
+                        "bg-zinc-50/80 hover:bg-zinc-100/80",
+                        "text-[#5b6949] hover:text-[#5b6949]/80",
+                        "border border-zinc-200/60",
                         "shadow-sm",
                         "transition-all duration-300",
                         "hover:scale-105 hover:shadow-md",
@@ -135,11 +135,11 @@ const resumeRow= ({ baseResumes, profile, baseSort, baseDirection }: ResumeRowPr
 
 
         <CreateResumeDialog type="base" profile={profile}>
-          <button className="aspect-[8.5/11] rounded-lg border-2 border-dashed border-purple-300 bg-purple-50/50 hover:bg-purple-100/50 transition-colors flex flex-col items-center justify-center gap-2 group">
-            <div className="h-8 w-8 rounded-full bg-purple-100 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <FileText className="h-4 w-4 text-purple-600" />
+          <button className="aspect-[8.5/11] rounded-lg border-2 border-dashed border-zinc-300 bg-zinc-50/50 hover:bg-zinc-100/50 transition-colors flex flex-col items-center justify-center gap-2 group">
+            <div className="h-8 w-8 rounded-full bg-zinc-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <FileText className="h-4 w-4 text-[#5b6949]" />
             </div>
-            <span className="text-sm font-medium text-purple-600">Create Base Resume</span>
+            <span className="text-sm font-medium text-[#5b6949]">Create Base Resume</span>
           </button>
         </CreateResumeDialog>
         {baseResumes.length === 0 && baseResumes.length + 1 < 4 && (

@@ -184,30 +184,30 @@ export default function SavedJobsPage() {
           </div>
         </div>
 
-        {loading ? (
+      {loading ? (
           <div className="text-center py-12">
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#5b6949]/10 to-gray-500/10 border border-[#5b6949]/20">
               <div className="w-4 h-4 border-2 border-[#5b6949]/30 border-t-[#5b6949] rounded-full animate-spin"></div>
               <span className="text-zinc-700 font-medium">Loading your saved jobs...</span>
             </div>
           </div>
-        ) : savedJobs.length === 0 ? (
+      ) : savedJobs.length === 0 ? (
           <EmptyState />
-        ) : (
-          <>
-            {/* Search and Filters */}
+      ) : (
+        <>
+          {/* Search and Filters */}
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-white/40 shadow-sm">
               <div className="space-y-4">
                 {/* Search Input */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
                   <Input
-                    type="text"
+              type="text"
                     placeholder="Search job titles..."
                     className="pl-10 h-12 text-base bg-white/80 border-zinc-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
-                    value={searchTitle}
-                    onChange={(e) => setSearchTitle(e.target.value)}
-                  />
+              value={searchTitle}
+              onChange={(e) => setSearchTitle(e.target.value)}
+            />
                 </div>
 
                 {/* Filters Row */}
@@ -217,18 +217,18 @@ export default function SavedJobsPage() {
                       <Building2 className="w-4 h-4 text-[#5b6949]" />
                       <span className="text-sm font-medium text-zinc-700">Company</span>
                     </div>
-                    <select
+            <select
                       className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
-                      value={filterCompany}
-                      onChange={(e) => setFilterCompany(e.target.value)}
-                    >
-                      <option value="">All Companies</option>
-                      {companyOptions.map((company) => (
-                        <option key={company} value={company}>
-                          {company}
-                        </option>
-                      ))}
-                    </select>
+              value={filterCompany}
+              onChange={(e) => setFilterCompany(e.target.value)}
+            >
+              <option value="">All Companies</option>
+              {companyOptions.map((company) => (
+                <option key={company} value={company}>
+                  {company}
+                </option>
+              ))}
+            </select>
                   </div>
 
                   <div className="relative">
@@ -236,18 +236,18 @@ export default function SavedJobsPage() {
                       <MapPin className="w-4 h-4 text-[#5b6949]" />
                       <span className="text-sm font-medium text-zinc-700">Location</span>
                     </div>
-                    <select
+            <select
                       className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
-                      value={filterLocation}
-                      onChange={(e) => setFilterLocation(e.target.value)}
-                    >
-                      <option value="">All Locations</option>
-                      {locationOptions.map((loc) => (
-                        <option key={loc} value={loc}>
-                          {loc}
-                        </option>
-                      ))}
-                    </select>
+              value={filterLocation}
+              onChange={(e) => setFilterLocation(e.target.value)}
+            >
+              <option value="">All Locations</option>
+              {locationOptions.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
                   </div>
 
                   <div className="relative">
@@ -255,16 +255,16 @@ export default function SavedJobsPage() {
                       <SortAsc className="w-4 h-4 text-[#5b6949]" />
                       <span className="text-sm font-medium text-zinc-700">Sort By</span>
                     </div>
-                    <select
+            <select
                       className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                    >
-                      <option value="newest">Newest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="az">Title A–Z</option>
-                      <option value="za">Title Z–A</option>
-                    </select>
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="az">Title A–Z</option>
+              <option value="za">Title Z–A</option>
+            </select>
                   </div>
                 </div>
               </div>
@@ -280,42 +280,42 @@ export default function SavedJobsPage() {
                   </span>
                 )}
               </h2>
-            </div>
+          </div>
 
-            {/* Job Cards */}
+          {/* Job Cards */}
             {filteredJobs.length > 0 ? (
-              <div className="grid gap-4">
-                {filteredJobs.map(({ id, job }) => (
+          <div className="grid gap-4">
+            {filteredJobs.map(({ id, job }) => (
                   <Card
-                    key={id}
+                key={id}
                     className="group relative bg-white/80 backdrop-blur-sm border-white/40 shadow-sm hover:shadow-lg transition-all duration-300 p-6"
-                  >
+              >
                     {/* Remove Button */}
-                    <button
-                      onClick={() => removeJob(id)}
+                <button
+                  onClick={() => removeJob(id)}
                       className="absolute top-4 right-4 p-2 rounded-lg bg-zinc-100/80 hover:bg-red-50 hover:text-red-600 transition-all duration-200 opacity-0 group-hover:opacity-100"
                       title="Remove from saved jobs"
-                    >
+                >
                       <Trash2 className="w-4 h-4" />
-                    </button>
+                </button>
 
-                    <Link
-                      href={job.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                <Link
+                  href={job.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                       className="block"
-                    >
+                >
                       <div className="flex items-start gap-4">
                         {/* Company Logo */}
-                        {job.company?.logo && (
+                    {job.company?.logo && (
                           <div className="flex-shrink-0">
-                            <img
-                              src={job.company.logo}
-                              alt={job.company.name}
+                      <img
+                        src={job.company.logo}
+                        alt={job.company.name}
                               className="w-12 h-12 object-contain rounded-lg border border-zinc-200"
-                            />
+                      />
                           </div>
-                        )}
+                    )}
                         
                         {/* Job Details */}
                         <div className="flex-1 min-w-0">
@@ -346,9 +346,9 @@ export default function SavedJobsPage() {
                         {/* External Link Icon */}
                         <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <ExternalLink className="w-5 h-5 text-[#5b6949]" />
-                        </div>
-                      </div>
-                    </Link>
+                    </div>
+                  </div>
+                </Link>
                   </Card>
                 ))}
               </div>
@@ -360,10 +360,10 @@ export default function SavedJobsPage() {
                     No jobs match your current filters
                   </span>
                 </div>
-              </div>
-            )}
-          </>
-        )}
+          </div>
+          )}
+        </>
+      )}
       </div>
     </div>
   );

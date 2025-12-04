@@ -48,8 +48,8 @@ export function EditorPanel({
               className={cn(
                 "sticky top-0 z-20 backdrop-blur-sm",
                 resume.is_base_resume
-                  ? "bg-purple-50/80"
-                  : "bg-pink-100/90 shadow-sm shadow-pink-200/50"
+                  ? "bg-zinc-50/80"
+                  : "bg-[#5b6949]/5 shadow-sm shadow-[#5b6949]/10"
               )}
             >
               <div className="flex flex-col gap-4">
@@ -206,10 +206,10 @@ export function EditorPanel({
 
       <div
         className={cn(
-          "absolute w-full bottom-0 rounded-lg border`",
+          "absolute w-full bottom-0 rounded-lg border",
           resume.is_base_resume
-            ? "bg-purple-50/50 border-purple-200/40"
-            : "bg-pink-50/80 border-pink-300/50 shadow-sm shadow-pink-200/20"
+            ? "bg-zinc-50/50 border-zinc-200/40"
+            : "bg-[#5b6949]/5 border-[#5b6949]/20 shadow-sm shadow-[#5b6949]/10"
         )}
       >
         <ChatBot resume={resume} onResumeChange={onResumeChange} job={job} />

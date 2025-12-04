@@ -26,7 +26,7 @@ export function AIImprovementPrompt({
   return (
     <div className="space-y-3">
       <div>
-        <Label className="text-[11px] font-medium text-purple-700">Prompt for AI (Optional)</Label>
+        <Label className="text-[11px] font-medium text-[#5b6949]">Prompt for AI (Optional)</Label>
         <Textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -34,11 +34,11 @@ export function AIImprovementPrompt({
           className={cn(
             "h-14 mt-0.5 text-xs",
             "bg-white",
-            "border-purple-200",
-            "focus:border-purple-400 focus:ring-1 focus:ring-purple-300",
+            "border-zinc-200",
+            "focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]/20",
             "hover:bg-white",
             "resize-none",
-            "text-purple-900 placeholder:text-purple-400"
+            "text-zinc-900 placeholder:text-zinc-400"
           )}
         />
       </div>
@@ -50,9 +50,9 @@ export function AIImprovementPrompt({
           disabled={isLoading}
           className={cn(
             "w-full h-8",
-            "bg-purple-50/80 hover:bg-purple-100/80",
-            "text-purple-600 hover:text-purple-700",
-            "border border-purple-200/60",
+            "bg-zinc-50/80 hover:bg-zinc-100/80",
+            "text-[#5b6949] hover:text-[#5b6949]/80",
+            "border border-zinc-200/60",
             "shadow-sm",
             "transition-all duration-300",
             "hover:scale-[1.02] hover:shadow-md",

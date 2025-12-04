@@ -24,27 +24,27 @@ export function AISuggestions({ suggestions, onApprove, onDelete }: AISuggestion
       "relative group/suggestions",
       "p-6 mt-4",
       "rounded-xl",
-      "bg-gradient-to-br from-purple-50/95 via-purple-50/90 to-indigo-50/95",
-      "border border-purple-200/60",
-      "shadow-lg shadow-purple-500/5",
+      "bg-gradient-to-br from-zinc-50/95 via-zinc-50/90 to-zinc-50/95",
+      "border border-zinc-200/60",
+      "shadow-lg shadow-zinc-500/5",
       "transition-all duration-500",
-      "hover:shadow-xl hover:shadow-purple-500/10",
+      "hover:shadow-xl hover:shadow-zinc-500/10",
       "overflow-hidden"
     )}>
       {/* Animated Background Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:24px_24px] opacity-10" />
       
       {/* Floating Gradient Orbs */}
-      <div className="absolute -top-1/2 -right-1/2 w-full h-full rounded-full bg-gradient-to-br from-purple-200/20 to-indigo-200/20 blur-3xl animate-float opacity-70" />
-      <div className="absolute -bottom-1/2 -left-1/2 w-full h-full rounded-full bg-gradient-to-br from-indigo-200/20 to-purple-200/20 blur-3xl animate-float-delayed opacity-70" />
+      <div className="absolute -top-1/2 -right-1/2 w-full h-full rounded-full bg-gradient-to-br from-[#5b6949]/10 to-zinc-200/20 blur-3xl animate-float opacity-70" />
+      <div className="absolute -bottom-1/2 -left-1/2 w-full h-full rounded-full bg-gradient-to-br from-zinc-200/20 to-[#5b6949]/10 blur-3xl animate-float-delayed opacity-70" />
       
       {/* Content */}
       <div className="relative">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-1.5 rounded-lg bg-purple-100/80 text-purple-600">
+          <div className="p-1.5 rounded-lg bg-[#5b6949]/10 text-[#5b6949]">
             <Sparkles className="h-4 w-4" />
           </div>
-          <span className="font-semibold text-purple-600">AI Suggestions</span>
+          <span className="font-semibold text-[#5b6949]">AI Suggestions</span>
         </div>
         
         <div className="space-y-4">
@@ -66,10 +66,10 @@ export function AISuggestions({ suggestions, onApprove, onDelete }: AISuggestion
                     className={cn(
                       "min-h-[80px] text-sm",
                       "bg-white/60",
-                      "border-purple-200/60",
-                      "text-purple-900",
-                      "focus:border-purple-300/60 focus:ring-2 focus:ring-purple-500/10",
-                      "placeholder:text-purple-400",
+                      "border-zinc-200/60",
+                      "text-zinc-900",
+                      "focus:border-[#5b6949]/60 focus:ring-2 focus:ring-[#5b6949]/10",
+                      "placeholder:text-zinc-400",
                       "transition-all duration-300",
                       "hover:bg-white/80"
                     )}

@@ -44,25 +44,25 @@ export function ResumesSection({
 }: ResumesSectionProps) {
   const config = {
     base: {
-      gradient: 'from-purple-600 to-indigo-600',
-      border: 'border-purple-300',
-      bg: 'bg-purple-50',
-      text: 'text-purple-600',
+      gradient: 'from-[#5b6949] to-[#5b6949]/90',
+      border: 'border-zinc-300',
+      bg: 'bg-zinc-50',
+      text: 'text-[#5b6949]',
       icon: FileText,
       accent: {
-        bg: 'purple-100',
-        hover: 'purple-100/50'
+        bg: 'zinc-100',
+        hover: 'zinc-100/50'
       }
     },
     tailored: {
-      gradient: 'from-pink-600 to-rose-600',
-      border: 'border-pink-300',
-      bg: 'bg-pink-50',
-      text: 'text-pink-600',
+      gradient: 'from-[#5b6949] to-[#5b6949]/90',
+      border: 'border-zinc-300',
+      bg: 'bg-zinc-50',
+      text: 'text-[#5b6949]',
       icon: Sparkles,
       accent: {
-        bg: 'pink-100',
-        hover: 'pink-100/50'
+        bg: 'zinc-100',
+        hover: 'zinc-100/50'
       }
     }
   }[type];

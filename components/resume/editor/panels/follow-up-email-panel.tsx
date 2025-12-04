@@ -125,17 +125,17 @@ export function FollowUpEmailPanel({
   if (resume.is_base_resume) {
     return (
       <div className={cn(
-        "p-4 backdrop-blur-xl rounded-lg shadow-lg bg-purple-50/80 border border-purple-200",
+        "p-4 backdrop-blur-xl rounded-lg shadow-lg bg-zinc-50/80 border border-zinc-200",
         "space-y-4 text-center"
       )}>
         <div className="flex items-center gap-2 justify-center">
-          <div className="p-1.5 rounded-md bg-purple-100/80">
-            <FileText className="h-4 w-4 text-purple-600" />
+          <div className="p-1.5 rounded-md bg-zinc-100">
+            <FileText className="h-4 w-4 text-[#5b6949]" />
           </div>
-          <h3 className="text-lg font-semibold text-purple-900">Follow Up Email</h3>
+          <h3 className="text-lg font-semibold text-[#5b6949]">Follow Up Email</h3>
         </div>
         
-        <p className="text-sm text-purple-700">
+        <p className="text-sm text-zinc-700">
           To generate a Follow Up Email, please first tailor this base resume to a specific job.
         </p>
         
@@ -145,7 +145,7 @@ export function FollowUpEmailPanel({
           <Button
             variant="outline"
             size="sm"
-            className="mt-2 border-purple-300 text-purple-700 hover:bg-purple-50"
+            className="mt-2 border-[#5b6949]/50 text-[#5b6949] hover:bg-[#5b6949]/10"
           >
             <Plus className="h-4 w-4 mr-2" />
             Tailor This Resume
@@ -157,22 +157,22 @@ export function FollowUpEmailPanel({
 
   return (
     <div className={cn(
-      "p-4 backdrop-blur-xl rounded-lg shadow-lg bg-white/80 border border-emerald-600/50",
+      "p-4 backdrop-blur-xl rounded-lg shadow-lg bg-white/80 border border-[#5b6949]/50",
       "space-y-6"
     )}>
       <div className="flex items-center gap-2 mb-4">
-        <div className="p-1.5 rounded-md bg-emerald-100/80">
-          <FileText className="h-4 w-4 text-emerald-600" />
+        <div className="p-1.5 rounded-md bg-[#5b6949]/10">
+          <FileText className="h-4 w-4 text-[#5b6949]" />
         </div>
-        <h3 className="text-lg font-semibold text-emerald-900">Follow Up Email</h3>
+        <h3 className="text-lg font-semibold text-[#5b6949]">Follow Up Email</h3>
       </div>
 
       {resume.has_follow_up_email ? (
         <div className="space-y-6">
           <div className={cn(
             "w-full p-4",
-            "bg-emerald-50",
-            "border-2 border-emerald-300",
+            "bg-zinc-50",
+            "border-2 border-zinc-200",
             "shadow-sm",
             "rounded-lg"
           )}>
@@ -191,10 +191,10 @@ export function FollowUpEmailPanel({
               size="sm"
               className={cn(
                 "w-full",
-                "bg-emerald-600 hover:bg-emerald-700",
+                "bg-[#5b6949] hover:bg-[#5b6949]/90",
                 "text-white",
-                "border border-emerald-200/60",
-                "shadow-sm",
+                "border border-[#5b6949]/20",
+                "shadow-[#5b6949]/10",
                 "transition-all duration-300",
                 "hover:scale-[1.02] hover:shadow-md",
                 "hover:-translate-y-0.5"
@@ -228,13 +228,13 @@ export function FollowUpEmailPanel({
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="p-4 rounded-lg bg-muted/50 border border-muted">
-            <p className="text-sm text-muted-foreground">No Follow Up Email has been created for this resume yet.</p>
+          <div className="p-4 rounded-lg bg-zinc-50 border border-zinc-200">
+            <p className="text-sm text-zinc-500">No Follow Up Email has been created for this resume yet.</p>
           </div>
           <Button
             variant="outline"
             size="sm"
-            className="w-full border-emerald-600/50 text-emerald-700 hover:bg-emerald-50"
+            className="w-full border-[#5b6949]/50 text-[#5b6949] hover:bg-[#5b6949]/10"
             onClick={() => updateField('has_follow_up_email', true)}
           >
             <Plus className="h-4 w-4 mr-2" />

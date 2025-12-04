@@ -47,7 +47,7 @@ export default function ChatInput({
     return (
       <form onSubmit={handleSubmit} className={cn(
         "relative z-10",
-        "p-1 border-t border-purple-200/60",
+        "p-1 border-t border-zinc-200/60",
         "bg-white/40",
         "backdrop-blur-sm",
         "flex gap-1.5"
@@ -72,10 +72,10 @@ export default function ChatInput({
           className={cn(
             "flex-1",
             "bg-white/60",
-            "border-purple-200/60",
-            "focus:border-purple-300",
-            "focus:ring-2 focus:ring-purple-500/10",
-            "placeholder:text-purple-400",
+            "border-zinc-200/60",
+            "focus:border-[#5b6949]",
+            "focus:ring-2 focus:ring-[#5b6949]/10",
+            "placeholder:text-zinc-400",
             "text-sm",
             "min-h-[32px]",
             "max-h-[144px]", // Approximately 6 lines
@@ -83,7 +83,7 @@ export default function ChatInput({
             "overflow-y-auto",
             "px-2 py-1.5",
             "transition-height duration-200",
-            "scrollbar-thin scrollbar-thumb-purple-200 scrollbar-track-transparent"
+            "scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent"
           )}
         />
         <Button 
@@ -95,12 +95,12 @@ export default function ChatInput({
               "bg-gradient-to-br from-rose-500 to-pink-500",
               "hover:from-rose-600 hover:to-pink-600",
             ] : [
-              "bg-gradient-to-br from-purple-500 to-indigo-500",
-              "hover:from-purple-600 hover:to-indigo-600",
+              "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/90",
+              "hover:from-[#5b6949]/90 hover:to-[#5b6949]/80",
             ],
             "text-white",
             "border-none",
-            "shadow-md shadow-purple-500/10",
+            "shadow-md shadow-[#5b6949]/10",
             "transition-all duration-300",
             "hover:scale-105 hover:shadow-lg",
             "hover:-translate-y-0.5",

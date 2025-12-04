@@ -23,8 +23,6 @@ interface EducationFormProps {
   profile: { education: Education[] };
 }
 
-
-
 interface SkillsFormProps {
   skills: Skill[];
   onChange: (skills: Skill[]) => void;
@@ -62,7 +60,6 @@ export const ProjectsForm = dynamic(
     ssr: false
   }
 );
-
 
 export const DocumentSettingsForm = dynamic(
   () => import('./forms/document-settings-form').then(mod => ({ 
