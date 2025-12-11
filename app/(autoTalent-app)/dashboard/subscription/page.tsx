@@ -4,6 +4,9 @@ import { FreePlanDisplay } from '@/components/pricing/free-plan-display';
 import { CancelingPlanDisplay } from '@/components/pricing/canceling-plan-display';
 import { getSubscriptionStatus} from '@/utils/actions/stripe/actions';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 
 interface Profile {
   subscription_plan: string | null;
