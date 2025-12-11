@@ -97,6 +97,7 @@ export default function Sidebar() {
       className={`h-screen bg-white border-r border-r-gray-200 shadow-lg flex flex-col p-3 transition-all duration-200 ease-in-out ${
         expanded ? "w-72" : "w-20"
       }`}
+      style={{ colorScheme: 'light' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

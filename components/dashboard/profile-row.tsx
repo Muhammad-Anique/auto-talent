@@ -80,7 +80,7 @@ export function ProfileRow({ profile }: ProfileRowProps) {
                     </div>
                     <span className="text-sm whitespace-nowrap">
                       <span className="font-semibold text-[#5b6949]">{stat.count}</span>
-                      <span className="text-muted-foreground ml-1.5">{stat.label}</span>
+                      <span className="!text-gray-900 ml-1.5">{stat.label}</span>
                     </span>
                   </div>
                 ))}

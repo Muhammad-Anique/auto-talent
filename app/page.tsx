@@ -1,6 +1,11 @@
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+
+export const metadata: Metadata = {
+  themeColor: "#ffffff",
+};
 
 export default async function Home({
   searchParams,

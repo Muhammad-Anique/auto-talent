@@ -100,7 +100,7 @@ function SignInForm() {
             <BrainCircuitIcon className="text-[#ffffff] size-8" />
           </span>
         </div>
-        <h2 className="text-3xl font-bold mb-2">Sign in</h2>
+        <h2 className="text-3xl text-gray-900 font-bold mb-2">Sign in</h2>
         <p className=" text-gray-500 mb-6">Enter your email to get started</p>
         <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -150,7 +150,7 @@ function SignInForm() {
             alt="Google"
             className="h-5 w-5"
           />
-          <span className="font-medium">Google</span>
+          <span className="font-medium text-gray-900">Google</span>
         </button>
         {/* reCAPTCHA and privacy text */}
         <div className="mt-8 text-xs text-gray-400 text-center">
