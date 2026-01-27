@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
   DialogDescription,
-} from '@/components/ui/dialog';
-import { PlayCircle, Sparkles } from 'lucide-react';
-import Image from 'next/image';
+} from "@/components/ui/dialog";
+import { PlayCircle, Sparkles } from "lucide-react";
+import Image from "next/image";
 export function HeroVideoSection() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -20,7 +20,7 @@ export function HeroVideoSection() {
         <h2 className="text-2xl sm:text-3xl font-semibold mb-4 bg-gradient-to-r from-violet-600 via-blue-600 to-violet-600 bg-clip-text text-transparent">
           See Auto Talent in Action
         </h2>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-gray-700 text-lg">
           Watch how our AI-powered platform transforms your resume in minutes
         </p>
       </div>
@@ -40,11 +40,11 @@ export function HeroVideoSection() {
                   width={1000}
                   height={1000}
                 />
-                
+
                 {/* Enhanced Gradient Overlays */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/20 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-br from-violet-500/20 via-transparent to-[#5b6949]/20 mix-blend-overlay" />
-                
+
                 {/* Improved Play Button */}
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform">
                   <div className="relative group-hover:scale-105 transition-transform duration-500">
@@ -79,7 +79,7 @@ export function HeroVideoSection() {
       </Dialog>
 
       {/* Feature Highlight */}
-      <div className="mt-8 flex justify-center items-center gap-2 text-muted-foreground">
+      <div className="mt-8 flex justify-center items-center gap-2 text-gray-700">
         <Sparkles className="h-4 w-4 text-violet-500" />
         <span className="text-sm">
           Powered by advanced AI to create ATS-optimized resumes in minutes
@@ -87,4 +87,4 @@ export function HeroVideoSection() {
       </div>
     </section>
   );
-} 
+}

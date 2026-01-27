@@ -1,25 +1,18 @@
 "use client";
 
 import {
-  Clock,
-  Target,
-  Zap,
-  Users,
   CheckCircle,
   ArrowRight,
-  Brain,
   Search,
   FileText,
   MessageSquare,
+  Zap,
 } from "lucide-react";
+import { useLocale } from "@/components/providers/locale-provider";
 
 const benefitsData = [
   {
     id: 1,
-    title: "Intelligent Job Matching",
-    description:
-      "Our AI-powered system analyzes your skills, experience, and preferences to find the perfect job matches. No more endless scrolling through irrelevant postings.",
-    features: ["Smart Algorithm", "Personalized Results", "Real-time Updates"],
     icon: Search,
     gradient: "from-[#5b6949] to-[#5b6949]",
     bgColor: "bg-[#5b6949]/10",
@@ -27,14 +20,6 @@ const benefitsData = [
   },
   {
     id: 2,
-    title: "Automated Applications",
-    description:
-      "Apply to hundreds of jobs with a single click. Our system handles the entire application process while you focus on preparing for interviews.",
-    features: [
-      "One-Click Apply",
-      "Bulk Applications",
-      "Time-Saving Efficiency",
-    ],
     icon: Zap,
     gradient: "from-yellow-500 to-yellow-600",
     bgColor: "bg-yellow-50",
@@ -42,14 +27,6 @@ const benefitsData = [
   },
   {
     id: 3,
-    title: "Resume Optimization",
-    description:
-      "Get your resume tailored for each application. Our AI ensures your resume passes ATS systems and stands out to hiring managers.",
-    features: [
-      "ATS Optimization",
-      "Custom Tailoring",
-      "Professional Formatting",
-    ],
     icon: FileText,
     gradient: "from-[#5b6949] to-emerald-600",
     bgColor: "bg-emerald-50",
@@ -57,10 +34,6 @@ const benefitsData = [
   },
   {
     id: 4,
-    title: "Interview Preparation",
-    description:
-      "Ace your interviews with AI-powered mock sessions, personalized questions, and expert guidance tailored to your target role.",
-    features: ["Mock Interviews", "Question Bank", "Performance Analytics"],
     icon: MessageSquare,
     gradient: "from-yellow-500 to-orange-500",
     bgColor: "bg-orange-50",
@@ -69,6 +42,50 @@ const benefitsData = [
 ];
 
 export function BenefitsSection() {
+  const { t } = useLocale();
+
+  const benefits = [
+    {
+      ...benefitsData[0],
+      title: t("benefits.intelligentMatching.title"),
+      description: t("benefits.intelligentMatching.description"),
+      features: [
+        t("benefits.intelligentMatching.features.0"),
+        t("benefits.intelligentMatching.features.1"),
+        t("benefits.intelligentMatching.features.2"),
+      ],
+    },
+    {
+      ...benefitsData[1],
+      title: t("benefits.automatedApplications.title"),
+      description: t("benefits.automatedApplications.description"),
+      features: [
+        t("benefits.automatedApplications.features.0"),
+        t("benefits.automatedApplications.features.1"),
+        t("benefits.automatedApplications.features.2"),
+      ],
+    },
+    {
+      ...benefitsData[2],
+      title: t("benefits.resumeOptimization.title"),
+      description: t("benefits.resumeOptimization.description"),
+      features: [
+        t("benefits.resumeOptimization.features.0"),
+        t("benefits.resumeOptimization.features.1"),
+        t("benefits.resumeOptimization.features.2"),
+      ],
+    },
+    {
+      ...benefitsData[3],
+      title: t("benefits.interviewPrep.title"),
+      description: t("benefits.interviewPrep.description"),
+      features: [
+        t("benefits.interviewPrep.features.0"),
+        t("benefits.interviewPrep.features.1"),
+        t("benefits.interviewPrep.features.2"),
+      ],
+    },
+  ];
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
@@ -76,24 +93,23 @@ export function BenefitsSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-[#5b6949]/10 text-[#5b6949] px-4 py-2 rounded-full text-sm font-medium mb-6">
             <CheckCircle className="w-4 h-4" />
-            Why Choose AutoTalent
+            {t("benefits.badge")}
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 px-4">
-            Everything you need to
+            {t("benefits.title")}
             <span className="bg-gradient-to-r from-[#5b6949] to-[#5b6949] bg-clip-text text-transparent">
               {" "}
-              land your dream job
+              {t("benefits.titleHighlight")}
             </span>
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-            Our comprehensive platform combines AI-powered automation with
-            expert insights to streamline your entire job search process.
+          <p className="text-gray-800 sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
+            {t("benefits.description")}
           </p>
         </div>
 
         {/* Benefits Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {benefitsData.map((benefit) => {
+          {benefits.map((benefit) => {
             const IconComponent = benefit.icon;
             return (
               <div
@@ -142,14 +158,13 @@ export function BenefitsSection() {
         <div className="mt-16 text-center">
           <div className="bg-[#5b6949] rounded-2xl p-12 border-2 border-[#5b6949]">
             <h3 className="text-3xl font-bold text-white mb-4">
-              Ready to transform your job search?
+              {t("benefits.cta.title")}
             </h3>
             <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
-              Join thousands of professionals who have already automated their
-              job search and landed their dream roles.
+              {t("benefits.cta.description")}
             </p>
             <button className="bg-white text-[#5b6949] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 mx-auto shadow-xl hover:shadow-2xl hover:scale-105">
-              Get Started Free
+              {t("benefits.cta.button")}
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>

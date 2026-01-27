@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import React from "react";
-import { useSidebarContext } from '@/context/SidebarContext';
+import { useSidebarContext } from "@/context/SidebarContext";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -97,7 +97,7 @@ export default function Sidebar() {
       className={`h-screen bg-white border-r border-r-gray-200 shadow-lg flex flex-col p-3 transition-all duration-200 ease-in-out ${
         expanded ? "w-72" : "w-20"
       }`}
-      style={{ colorScheme: 'light' }}
+      style={{ colorScheme: "light" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -119,13 +119,20 @@ export default function Sidebar() {
                 }`}
               >
                 <span className="flex items-center justify-center w-10 pl-4">
-                  {React.cloneElement(link.icon, { className: "w-6 h-6 flex-shrink-0" })}
+                  {React.cloneElement(link.icon, {
+                    className: "w-6 h-6 flex-shrink-0",
+                  })}
                 </span>
                 <span
                   className={`ml-2 font-semibold transition-all duration-200 ease-in-out whitespace-nowrap ${
-                    expanded ? "max-w-xs opacity-100" : "max-w-0 opacity-0 overflow-hidden"
+                    expanded
+                      ? "max-w-xs opacity-100"
+                      : "max-w-0 opacity-0 overflow-hidden"
                   }`}
-                  style={{ transitionProperty: 'max-width, opacity', minWidth: 0 }}
+                  style={{
+                    transitionProperty: "max-width, opacity",
+                    minWidth: 0,
+                  }}
                 >
                   {link.name}
                 </span>
@@ -136,7 +143,7 @@ export default function Sidebar() {
       </nav>
       <button
         onClick={handleLogout}
-        className={`mt-8 flex items-center justify-center px-2 py-3 bg-[#5b6949] text-white rounded-md hover:bg-[#5b6949]/90 text-base transition-all duration-200 ${expanded ? "w-full" : "w-12 mx-auto"}`}
+        className={`mt-8 flex items-center justify-center px-2 py-3 bg-[#5b6949] text-white rounded-md hover:bg-[#5b6949]/90 text-gray-800 transition-all duration-200 ${expanded ? "w-full" : "w-12 mx-auto"}`}
       >
         <LogOut className="w-5 h-5 mr-2" />
         <span

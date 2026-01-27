@@ -1,19 +1,29 @@
-'use client'
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { Loader2 } from "lucide-react"
-import { useFormStatus } from 'react-dom'
-import { deleteUserAccount } from '@/app/(auth)/signin/actions'
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
+import { useFormStatus } from "react-dom";
+import { deleteUserAccount } from "@/app/(auth)/signin/actions";
 
 interface DangerZoneProps {
   subscriptionStatus?: string;
 }
 
 function SubmitButton() {
-  const { pending } = useFormStatus()
+  const { pending } = useFormStatus();
 
   return (
     <AlertDialogAction
@@ -24,7 +34,7 @@ function SubmitButton() {
       {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
       Delete Account
     </AlertDialogAction>
-  )
+  );
 }
 
 export function DangerZone({ subscriptionStatus }: DangerZoneProps) {
@@ -33,21 +43,22 @@ export function DangerZone({ subscriptionStatus }: DangerZoneProps) {
       <div className="flex items-center justify-between p-4 rounded-lg border border-destructive/50 bg-destructive/5">
         <div>
           <h3 className="font-medium text-destructive">Delete Account</h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray-700">
             Permanently delete your account and all of your data
           </p>
-          {subscriptionStatus === 'active' && (
-            <p className="text-sm text-muted-foreground mt-2">
-              You currently have an active subscription. Please cancel your subscription above before deleting your account.
+          {subscriptionStatus === "active" && (
+            <p className="text-sm text-gray-700 mt-2">
+              You currently have an active subscription. Please cancel your
+              subscription above before deleting your account.
             </p>
           )}
         </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button 
+            <Button
               variant="destructive"
               className="bg-rose-500 hover:bg-rose-600"
-              disabled={subscriptionStatus === 'active'}
+              disabled={subscriptionStatus === "active"}
             >
               Delete Account
             </Button>
@@ -57,13 +68,15 @@ export function DangerZone({ subscriptionStatus }: DangerZoneProps) {
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete your account
-                  and remove your data from our servers.
+                  This action cannot be undone. This will permanently delete
+                  your account and remove your data from our servers.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="confirm">Type &ldquo;DELETE&rdquo; to confirm</Label>
+                  <Label htmlFor="confirm">
+                    Type &ldquo;DELETE&rdquo; to confirm
+                  </Label>
                   <Input
                     id="confirm"
                     name="confirm"
@@ -82,5 +95,5 @@ export function DangerZone({ subscriptionStatus }: DangerZoneProps) {
         </AlertDialog>
       </div>
     </div>
-  )
-} 
+  );
+}

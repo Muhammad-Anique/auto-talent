@@ -76,7 +76,7 @@ export default function AutoApplyDashboard() {
       if (authError || !user) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.AUTHENTICATION_ERROR,
-          "You must be logged in to view this page"
+          "You must be logged in to view this page",
         );
         AutoApplyErrorHandler.logError(error);
         setError(AutoApplyErrorHandler.getErrorMessage(error));
@@ -94,7 +94,7 @@ export default function AutoApplyDashboard() {
         // PGRST116 is "not found"
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.DATABASE_ERROR,
-          "Failed to load user data"
+          "Failed to load user data",
         );
         AutoApplyErrorHandler.logError(error, { userError });
         setError(AutoApplyErrorHandler.getErrorMessage(error));
@@ -132,7 +132,7 @@ export default function AutoApplyDashboard() {
       if (authError || !user) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.AUTHENTICATION_ERROR,
-          "You must be logged in to activate Auto-Apply"
+          "You must be logged in to activate Auto-Apply",
         );
         AutoApplyErrorHandler.logError(error);
         const notification =
@@ -151,7 +151,7 @@ export default function AutoApplyDashboard() {
       if (fetchError && fetchError.code !== "PGRST116") {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.DATABASE_ERROR,
-          "Failed to fetch user data"
+          "Failed to fetch user data",
         );
         AutoApplyErrorHandler.logError(error, { fetchError });
         const notification =
@@ -174,13 +174,13 @@ export default function AutoApplyDashboard() {
         },
         {
           onConflict: "id",
-        }
+        },
       );
 
       if (updateError) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.DATABASE_ERROR,
-          "Failed to activate Auto-Apply"
+          "Failed to activate Auto-Apply",
         );
         AutoApplyErrorHandler.logError(error, { updateError });
         const notification =
@@ -217,7 +217,7 @@ export default function AutoApplyDashboard() {
       if (authError || !user) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.AUTHENTICATION_ERROR,
-          "You must be logged in to view configurations"
+          "You must be logged in to view configurations",
         );
         AutoApplyErrorHandler.logError(error);
         setError(AutoApplyErrorHandler.getErrorMessage(error));
@@ -233,7 +233,7 @@ export default function AutoApplyDashboard() {
       if (error) {
         const autoApplyError = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.DATABASE_ERROR,
-          "Failed to load configurations"
+          "Failed to load configurations",
         );
         AutoApplyErrorHandler.logError(autoApplyError, { error });
         setError(AutoApplyErrorHandler.getErrorMessage(autoApplyError));
@@ -264,7 +264,7 @@ export default function AutoApplyDashboard() {
       if (authError || !user) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.AUTHENTICATION_ERROR,
-          "You must be logged in to view applied jobs"
+          "You must be logged in to view applied jobs",
         );
         AutoApplyErrorHandler.logError(error);
         setError(AutoApplyErrorHandler.getErrorMessage(error));
@@ -280,7 +280,7 @@ export default function AutoApplyDashboard() {
       if (error) {
         const autoApplyError = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.DATABASE_ERROR,
-          "Failed to load applied jobs"
+          "Failed to load applied jobs",
         );
         AutoApplyErrorHandler.logError(autoApplyError, { error });
         setError(AutoApplyErrorHandler.getErrorMessage(autoApplyError));
@@ -354,12 +354,12 @@ export default function AutoApplyDashboard() {
         if (error) {
           const autoApplyError = AutoApplyErrorHandler.createError(
             AutoApplyErrorCode.DATABASE_ERROR,
-            "Failed to delete configuration"
+            "Failed to delete configuration",
           );
           AutoApplyErrorHandler.logError(autoApplyError, { error });
           const notification =
             AutoApplyNotificationManager.createErrorNotification(
-              autoApplyError
+              autoApplyError,
             );
           AutoApplyNotificationManager.showNotification(notification, toast);
           return;
@@ -370,7 +370,7 @@ export default function AutoApplyDashboard() {
         const notification =
           AutoApplyNotificationManager.createSuccessNotification(
             "Configuration Deleted",
-            "Your auto-apply configuration has been deleted successfully."
+            "Your auto-apply configuration has been deleted successfully.",
           );
         AutoApplyNotificationManager.showNotification(notification, toast);
       } catch (error) {
@@ -388,15 +388,15 @@ export default function AutoApplyDashboard() {
 
   // Calculate real data from applied jobs
   const jobsProgress = appliedJobs.filter(
-    (job) => job.status === "applied"
+    (job) => job.status === "applied",
   ).length;
   const jobsTotal = appliedJobs.length;
   const lastUpdate =
     appliedJobs.length > 0
       ? new Date(
           Math.max(
-            ...appliedJobs.map((job) => new Date(job.applied_at).getTime())
-          )
+            ...appliedJobs.map((job) => new Date(job.applied_at).getTime()),
+          ),
         ).toLocaleString()
       : "No applications yet";
   const status = autoApplyEnabled ? "Active" : "Inactive";
@@ -434,7 +434,7 @@ export default function AutoApplyDashboard() {
               <CardTitle className="text-2xl mt-2">
                 {jobsProgress}/{jobsTotal}
               </CardTitle>
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-xs text-gray-700 mt-1">
                 {jobsTotal > 0
                   ? `${Math.round((jobsProgress / jobsTotal) * 100)}% Completed`
                   : "No applications yet"}
@@ -448,7 +448,7 @@ export default function AutoApplyDashboard() {
                 <Coins className="w-5 h-5" />
                 {loadingCredits ? "..." : credits}
               </CardTitle>
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-xs text-gray-700 mt-1">
                 {credits >= 10 ? "Ready to apply" : "Need 10 credits to apply"}
               </div>
             </CardHeader>
@@ -461,10 +461,10 @@ export default function AutoApplyDashboard() {
                 {loadingAutoApply
                   ? "..."
                   : autoApplyEnabled
-                  ? "Active"
-                  : "Inactive"}
+                    ? "Active"
+                    : "Inactive"}
               </CardTitle>
-              <div className="text-xs text-muted-foreground mt-1">
+              <div className="text-xs text-gray-700 mt-1">
                 {autoApplyEnabled ? "Auto-applying enabled" : "Manual mode"}
               </div>
             </CardHeader>
@@ -474,7 +474,7 @@ export default function AutoApplyDashboard() {
         {/* Auto-Apply Control */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base font-medium">
+            <CardTitle className="text-gray-800 font-medium">
               Auto-Apply Control
             </CardTitle>
             <CardDescription>
@@ -510,7 +510,7 @@ export default function AutoApplyDashboard() {
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-base font-medium">
+              <CardTitle className="text-gray-800 font-medium">
                 Submitted Configurations
               </CardTitle>
               <Button
@@ -532,7 +532,7 @@ export default function AutoApplyDashboard() {
             {loading ? (
               <div className="text-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-sm text-gray-700 mt-2">
                   Loading configurations...
                 </p>
               </div>
@@ -569,9 +569,7 @@ export default function AutoApplyDashboard() {
                               ? `${form.first_name} ${form.last_name}`
                               : "Unnamed Configuration"}
                           </h3>
-                          <p className="text-sm text-muted-foreground">
-                            {form.email}
-                          </p>
+                          <p className="text-sm text-gray-700">{form.email}</p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
@@ -596,22 +594,18 @@ export default function AutoApplyDashboard() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-muted-foreground" />
+                        <Calendar className="w-4 h-4 text-gray-700" />
                         <span>
                           Created:{" "}
                           {new Date(form.created_at).toLocaleDateString()}
                         </span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">
-                          Location:{" "}
-                        </span>
+                        <span className="text-gray-700">Location: </span>
                         <span>{form.search_location || "Not specified"}</span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">
-                          Job Terms:{" "}
-                        </span>
+                        <span className="text-gray-700">Job Terms: </span>
                         <span>{form.search_terms || "Not specified"}</span>
                       </div>
                     </div>
@@ -625,7 +619,7 @@ export default function AutoApplyDashboard() {
         {/* Applied Jobs Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base font-medium">
+            <CardTitle className="text-gray-800 font-medium">
               Applied Jobs
             </CardTitle>
           </CardHeader>
@@ -634,7 +628,7 @@ export default function AutoApplyDashboard() {
               {loadingJobs ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="text-sm text-muted-foreground mt-2">
+                  <p className="text-sm text-gray-700 mt-2">
                     Loading applied jobs...
                   </p>
                 </div>
@@ -645,7 +639,7 @@ export default function AutoApplyDashboard() {
               ) : (
                 <table className="min-w-full text-sm border-separate border-spacing-y-2">
                   <thead>
-                    <tr className="text-muted-foreground">
+                    <tr className="text-gray-700">
                       <th className="px-2 py-1 text-left">Job Title</th>
                       <th className="px-2 py-1 text-left">Company</th>
                       <th className="px-2 py-1 text-left">Status</th>
@@ -666,15 +660,15 @@ export default function AutoApplyDashboard() {
                               job.status === "applied"
                                 ? "text-green-600"
                                 : job.status === "error"
-                                ? "text-green-600"
-                                : job.status === "skipped"
-                                ? "text-yellow-600"
-                                : "text-gray-600"
+                                  ? "text-green-600"
+                                  : job.status === "skipped"
+                                    ? "text-yellow-600"
+                                    : "text-gray-600"
                             }
                           >
                             Applied
                             {/* {job.status.charAt(0).toUpperCase() +
-                              job.status.slice(1)} */}  
+                              job.status.slice(1)} */}
                           </span>
                         </td>
                         <td className="px-2 py-1">

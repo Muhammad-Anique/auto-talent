@@ -1,15 +1,16 @@
-
-
 import { redirect } from "next/navigation";
 import { countResumes } from "@/utils/actions/resumes/actions";
-import {User } from "lucide-react";
+import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ProfileRow } from "@/components/dashboard/profile-row";
 import { WelcomeDialog } from "@/components/dashboard/welcome-dialog";
 import { getGreeting } from "@/lib/utils";
 import { ApiKeyAlert } from "@/components/dashboard/api-key-alert";
-import { type SortOption, type SortDirection } from "@/components/resume/management/resume-sort-controls";
+import {
+  type SortOption,
+  type SortDirection,
+} from "@/components/resume/management/resume-sort-controls";
 import type { Resume } from "@/lib/types";
 import { ResumesSection } from "@/components/dashboard/resumes-section";
 import { createClient } from "@/utils/supabase/server";
@@ -19,30 +20,23 @@ import { checkSubscriptionPlan } from "@/utils/actions/stripe/actions";
 import IsLoadingFalseforDashboard from "@/components/dashboard/isLoadingFalseforDashboard";
 import { JobHubSection } from "@/components/dashboard/jobhub-section";
 
-
 export default async function Home({
-  
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
-
   const supabase = await createClient();
-  
 
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-
-
+  } = await supabase.auth.getUser();
 
   const userId = user?.id;
   void userId;
-  
-  
+
   // Check if user is coming from confirmation
   const params = await searchParams;
-  const isNewSignup = params?.type === 'signup' && params?.token_hash;
+  const isNewSignup = params?.type === "signup" && params?.token_hash;
 
   // Fetch dashboard data and handle authentication
   let data;
@@ -56,66 +50,81 @@ export default async function Home({
     redirect("/auth/login");
   }
 
-  const { profile, baseResumes: unsortedBaseResumes, tailoredResumes: unsortedTailoredResumes } = data;
+  const {
+    profile,
+    baseResumes: unsortedBaseResumes,
+    tailoredResumes: unsortedTailoredResumes,
+  } = data;
 
   // Get sort parameters for both sections
-  const baseSort = (params.baseSort as SortOption) || 'createdAt';
-  const baseDirection = (params.baseDirection as SortDirection) || 'asc';
-  const tailoredSort = (params.tailoredSort as SortOption) || 'createdAt';
-  const tailoredDirection = (params.tailoredDirection as SortDirection) || 'asc';
+  const baseSort = (params.baseSort as SortOption) || "createdAt";
+  const baseDirection = (params.baseDirection as SortDirection) || "asc";
+  const tailoredSort = (params.tailoredSort as SortOption) || "createdAt";
+  const tailoredDirection =
+    (params.tailoredDirection as SortDirection) || "asc";
 
   // Sort function
-  function sortResumes(resumes: Resume[], sort: SortOption, direction: SortDirection) {
+  function sortResumes(
+    resumes: Resume[],
+    sort: SortOption,
+    direction: SortDirection,
+  ) {
     return [...resumes].sort((a, b) => {
-      const modifier = direction === 'asc' ? 1 : -1;
+      const modifier = direction === "asc" ? 1 : -1;
       switch (sort) {
-        case 'name':
+        case "name":
           return modifier * a.name.localeCompare(b.name);
-        case 'jobTitle':
-          return modifier * ((a.target_role || '').localeCompare(b.target_role || '') || 0);
-        case 'createdAt':
+        case "jobTitle":
+          return (
+            modifier *
+            ((a.target_role || "").localeCompare(b.target_role || "") || 0)
+          );
+        case "createdAt":
         default:
-          return modifier * (new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      
-    }
+          return (
+            modifier *
+            (new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime())
+          );
+      }
     });
   }
 
-
   // Sort both resume lists
   const baseResumes = sortResumes(unsortedBaseResumes, baseSort, baseDirection);
-  const tailoredResumes = sortResumes(unsortedTailoredResumes, tailoredSort, tailoredDirection);
-  
+  const tailoredResumes = sortResumes(
+    unsortedTailoredResumes,
+    tailoredSort,
+    tailoredDirection,
+  );
+
   // Check if user is on Pro plan
   const subscription = await checkSubscriptionPlan();
-  const isProPlan = subscription.plan === 'pro';
+  const isProPlan = subscription.plan === "pro";
 
   // console.log(subscription);
-  
+
   // Count resumes for base and tailored sections
-  const baseResumesCount = await countResumes('base');
-  const tailoredResumesCount = await countResumes('tailored');
+  const baseResumesCount = await countResumes("base");
+  const tailoredResumesCount = await countResumes("tailored");
   // console.log(baseResumesCount, tailoredResumesCount);
   // console.log(isProPlan);
-  
 
   // Free plan limits
   const canCreateBase = isProPlan || baseResumesCount < 2;
   const canCreateTailored = isProPlan || tailoredResumesCount < 4;
 
-
   // Display a friendly message if no profile exists
   if (!profile) {
     return (
       <main className="min-h-screen p-6 md:p-8 lg:p-10 relative flex items-center justify-center">
-       
         <Card className="max-w-md w-full p-8 bg-white/80 backdrop-blur-xl border-white/40 shadow-2xl">
           <div className="text-center space-y-4">
-            <User className="w-12 h-12 text-muted-foreground mx-auto" />
+            <User className="w-12 h-12 text-gray-700 mx-auto" />
             <h2 className="text-2xl font-semibold text-gray-800">
               Profile Not Found
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-gray-700">
               We couldn&apos;t find your profile information. Please contact
               support for assistance.
             </p>
@@ -124,14 +133,13 @@ export default async function Home({
             </Button>
           </div>
         </Card>
-        
       </main>
     );
   }
 
   return (
     <main className="min-h-screen relative sm:pb-12 pb-40">
-      <IsLoadingFalseforDashboard/>
+      <IsLoadingFalseforDashboard />
       {/* Welcome Dialog for New Signups */}
       <WelcomeDialog isOpen={!!isNewSignup} />
 
@@ -161,7 +169,7 @@ export default async function Home({
                 <h1 className="text-2xl font-semibold text-zinc-800">
                   {getGreeting()}, {profile.first_name}
                 </h1>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <p className="text-sm text-gray-900 mt-0.5">
                   Welcome to your job hub dashboard
                 </p>
               </div>

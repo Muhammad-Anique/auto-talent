@@ -1,16 +1,18 @@
 "use client";
 
 import { Star, Facebook, Instagram, Twitter, Music } from "lucide-react";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useLocale } from "@/components/providers/locale-provider";
 
 const footerData = {
   company: {
     logo: {
       icon: Star,
-      text: "aiApply",
+      text: "AutoTalent",
     },
     language: "us English",
     links: [
-      "Post a Job on AIApply",
+      "Post a Job on AutoTalent",
       "Privacy Policy",
       "Terms of Service",
       "Affiliate Program",
@@ -53,12 +55,17 @@ const footerData = {
     { icon: Twitter, href: "#" },
     { icon: Music, href: "#" },
   ],
-  copyright: "© 2025 AIApply Limited, All rights reserved",
+  copyright: "© 2025 AutoTalent, All rights reserved",
 };
 
 export function FooterSection() {
+  const { t, dir } = useLocale();
+
   return (
-    <footer className="bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <footer
+      dir={dir}
+      className="bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50 py-8 sm:py-12 px-4 sm:px-6 lg:px-8"
+    >
       <div className="max-w-7xl mx-auto">
         {/* Upper Content Area */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
@@ -72,10 +79,8 @@ export function FooterSection() {
               </span>
             </div>
 
-            {/* Language Button */}
-            <button className="bg-black text-white px-4 py-2 rounded-full text-sm font-medium">
-              {footerData.company.language}
-            </button>
+            {/* Language Switcher */}
+            <LanguageSwitcher />
 
             {/* Company Links */}
             <div className="space-y-1.5 sm:space-y-2">
@@ -83,7 +88,7 @@ export function FooterSection() {
                 <a
                   key={index}
                   href="#"
-                  className="block text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors"
+                  className="block text-sm sm:text-gray-800 text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   {link}
                 </a>
@@ -105,7 +110,7 @@ export function FooterSection() {
 
           {/* Middle Column - Tools */}
           <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 uppercase">
+            <h3 className="text-gray-800 sm:text-lg font-bold text-gray-900 uppercase">
               {footerData.tools.title}
             </h3>
             <div className="space-y-1.5 sm:space-y-2">
@@ -113,7 +118,7 @@ export function FooterSection() {
                 <a
                   key={index}
                   href="#"
-                  className="block text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors"
+                  className="block text-sm sm:text-gray-800 text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   {link}
                 </a>
@@ -123,7 +128,7 @@ export function FooterSection() {
 
           {/* Right Column - Blog */}
           <div className="space-y-3 sm:space-y-4">
-            <h3 className="text-base sm:text-lg font-bold text-gray-900 uppercase">
+            <h3 className="text-gray-800 sm:text-lg font-bold text-gray-900 uppercase">
               {footerData.blog.title}
             </h3>
             <div className="space-y-1.5 sm:space-y-2">
@@ -131,7 +136,7 @@ export function FooterSection() {
                 <a
                   key={index}
                   href="#"
-                  className="block text-sm sm:text-base text-gray-700 hover:text-gray-900 transition-colors"
+                  className="block text-sm sm:text-gray-800 text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   {link}
                 </a>
@@ -147,7 +152,7 @@ export function FooterSection() {
         <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
           {/* Copyright */}
           <div className="text-xs sm:text-sm text-gray-700 text-center sm:text-left">
-            {footerData.copyright}
+            {t("footer.copyright")}
           </div>
 
           {/* Social Media Icons */}

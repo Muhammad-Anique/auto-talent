@@ -1,41 +1,44 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Sparkles, Star, Trophy, Rocket, Clock, Zap } from "lucide-react"
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import { createPortalSession, postStripeSession } from '@/app/(autoTalent-app)/dashboard/subscription/stripe-session';
-import { PricingCard, type Plan } from '../pricing/pricing-card';
-import { useRouter } from 'next/navigation';
-import { getSubscriptionStatus } from '@/utils/actions/stripe/actions';
+import { useState, useEffect } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Sparkles, Star, Trophy, Rocket, Clock, Zap } from "lucide-react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+import {
+  createPortalSession,
+  postStripeSession,
+} from "@/app/(autoTalent-app)/dashboard/subscription/stripe-session";
+import { PricingCard, type Plan } from "../pricing/pricing-card";
+import { useRouter } from "next/navigation";
+import { getSubscriptionStatus } from "@/utils/actions/stripe/actions";
 
 const plans = [
   {
-    title: 'Free',
-    priceId: '',
-    price: '$0',
+    title: "Free",
+    priceId: "",
+    price: "$0",
     features: [
-      '1 Base Resume',
-      '3 Tailored Resumes',
-      'Basic AI Assistance',
-      'Standard Templates'
-    ]
+      "1 Base Resume",
+      "3 Tailored Resumes",
+      "Basic AI Assistance",
+      "Standard Templates",
+    ],
   },
   {
-    title: 'Pro',
+    title: "Pro",
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID!,
-    price: '$20',
+    price: "$20",
     features: [
-      'Unlimited Base Resumes',
-      'Unlimited Tailored Resumes',
-      'Advanced AI Assistance',
-      'Premium Templates',
-      'Priority Support',
-      'Custom Branding'
-    ]
-  }
+      "Unlimited Base Resumes",
+      "Unlimited Tailored Resumes",
+      "Advanced AI Assistance",
+      "Premium Templates",
+      "Priority Support",
+      "Custom Branding",
+    ],
+  },
 ];
 
 interface Profile {
@@ -60,7 +63,7 @@ export function SubscriptionSection() {
         const data = await getSubscriptionStatus();
         setProfile(data);
       } catch (error) {
-        console.error('Error fetching subscription status:', error);
+        console.error("Error fetching subscription status:", error);
       } finally {
         setIsLoadingProfile(false);
       }
@@ -72,9 +75,9 @@ export function SubscriptionSection() {
   const subscription_plan = profile?.subscription_plan;
   const subscription_status = profile?.subscription_status;
   const current_period_end = profile?.current_period_end;
-  
-  const isPro = subscription_plan?.toLowerCase() === 'pro';
-  const isCanceling = subscription_status === 'canceled';
+
+  const isPro = subscription_plan?.toLowerCase() === "pro";
+  const isCanceling = subscription_status === "canceled";
 
   const handlePortalSession = async () => {
     try {
@@ -85,7 +88,7 @@ export function SubscriptionSection() {
       }
     } catch (error) {
       // Handle error silently
-      void error
+      void error;
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +99,9 @@ export function SubscriptionSection() {
 
     try {
       setIsCheckingOut(true);
-      const { clientSecret } = await postStripeSession({ priceId: plan.priceId });
+      const { clientSecret } = await postStripeSession({
+        priceId: plan.priceId,
+      });
       router.push(`/subscription/checkout?session_id=${clientSecret}`);
     } catch (error) {
       console.error(`Error during checkout:`, error);
@@ -106,7 +111,13 @@ export function SubscriptionSection() {
 
   // Calculate days remaining for canceling plan
   const daysRemaining = current_period_end
-    ? Math.max(0, Math.ceil((new Date(current_period_end).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))
+    ? Math.max(
+        0,
+        Math.ceil(
+          (new Date(current_period_end).getTime() - new Date().getTime()) /
+            (1000 * 60 * 60 * 24),
+        ),
+      )
     : 0;
 
   if (isLoadingProfile) {
@@ -149,12 +160,18 @@ export function SubscriptionSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <Card className={cn(
-          "p-8 text-center rounded-3xl border backdrop-blur-xl relative overflow-hidden shadow-2xl",
-          isPro && "border-purple-200/50 bg-gradient-to-br from-purple-50/80 to-violet-50/80",
-          isCanceling && "border-amber-200/50 bg-gradient-to-br from-amber-50/80 to-orange-50/80",
-          !isPro && !isCanceling && "border-teal-200/50 bg-gradient-to-br from-teal-50/80 to-emerald-50/80"
-        )}>
+        <Card
+          className={cn(
+            "p-8 text-center rounded-3xl border backdrop-blur-xl relative overflow-hidden shadow-2xl",
+            isPro &&
+              "border-purple-200/50 bg-gradient-to-br from-purple-50/80 to-violet-50/80",
+            isCanceling &&
+              "border-amber-200/50 bg-gradient-to-br from-amber-50/80 to-orange-50/80",
+            !isPro &&
+              !isCanceling &&
+              "border-teal-200/50 bg-gradient-to-br from-teal-50/80 to-emerald-50/80",
+          )}
+        >
           <div className="relative space-y-6">
             {/* Icon */}
             <div className="flex items-center justify-center">
@@ -164,13 +181,17 @@ export function SubscriptionSection() {
                 transition={{
                   type: "spring",
                   stiffness: 260,
-                  damping: 20
+                  damping: 20,
                 }}
                 className={cn(
                   "h-16 w-16 rounded-2xl flex items-center justify-center transform transition-transform duration-300",
-                  isPro && "bg-gradient-to-br from-purple-500 to-violet-500 hover:rotate-12",
-                  isCanceling && "bg-gradient-to-br from-amber-500/20 to-orange-500/20",
-                  !isPro && !isCanceling && "bg-gradient-to-br from-teal-500 to-emerald-500 hover:rotate-12"
+                  isPro &&
+                    "bg-gradient-to-br from-purple-500 to-violet-500 hover:rotate-12",
+                  isCanceling &&
+                    "bg-gradient-to-br from-amber-500/20 to-orange-500/20",
+                  !isPro &&
+                    !isCanceling &&
+                    "bg-gradient-to-br from-teal-500 to-emerald-500 hover:rotate-12",
                 )}
               >
                 {isPro ? (
@@ -186,20 +207,38 @@ export function SubscriptionSection() {
             {/* Title and Description */}
             <div className="space-y-2">
               <h2 className="text-3xl font-bold">
-                <span className={cn(
-                  "bg-clip-text text-transparent",
-                  isPro && "bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600",
-                  isCanceling && "bg-gradient-to-r from-amber-600 to-orange-600",
-                  !isPro && !isCanceling && "bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600"
-                )}>
-                  {isPro ? 'Pro Plan Active' : isCanceling ? 'Pro Access Ending Soon' : 'Free Plan Active'}
+                <span
+                  className={cn(
+                    "bg-clip-text text-transparent",
+                    isPro &&
+                      "bg-gradient-to-r from-purple-600 via-violet-600 to-indigo-600",
+                    isCanceling &&
+                      "bg-gradient-to-r from-amber-600 to-orange-600",
+                    !isPro &&
+                      !isCanceling &&
+                      "bg-gradient-to-r from-teal-600 via-emerald-600 to-cyan-600",
+                  )}
+                >
+                  {isPro
+                    ? "Pro Plan Active"
+                    : isCanceling
+                      ? "Pro Access Ending Soon"
+                      : "Free Plan Active"}
                 </span>
               </h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-gray-700">
                 {isCanceling ? (
-                  <>You have <span className="font-semibold text-amber-600">{daysRemaining} days</span> of Pro access remaining</>
+                  <>
+                    You have{" "}
+                    <span className="font-semibold text-amber-600">
+                      {daysRemaining} days
+                    </span>{" "}
+                    of Pro access remaining
+                  </>
+                ) : isPro ? (
+                  "Enjoying unlimited access to all features"
                 ) : (
-                  isPro ? 'Enjoying unlimited access to all features' : 'Start building your perfect resume today'
+                  "Start building your perfect resume today"
                 )}
               </p>
             </div>
@@ -207,19 +246,23 @@ export function SubscriptionSection() {
             {/* Features Grid */}
             <div className="grid grid-cols-3 gap-4">
               {[
-                isPro ? [
-                  { icon: Trophy, text: "Premium Features" },
-                  { icon: Sparkles, text: "Priority Support" },
-                  { icon: Star, text: "Exclusive Templates" }
-                ] : isCanceling ? [
-                  { icon: Star, text: "Premium Features Ending" },
-                  { icon: Clock, text: `${daysRemaining} Days Left` },
-                  { icon: Zap, text: "Download Your Content" }
-                ] : [
-                  { icon: Rocket, text: "Quick Start" },
-                  { icon: Sparkles, text: "Basic Features" },
-                  { icon: Zap, text: "Standard Templates" }
-                ]
+                isPro
+                  ? [
+                      { icon: Trophy, text: "Premium Features" },
+                      { icon: Sparkles, text: "Priority Support" },
+                      { icon: Star, text: "Exclusive Templates" },
+                    ]
+                  : isCanceling
+                    ? [
+                        { icon: Star, text: "Premium Features Ending" },
+                        { icon: Clock, text: `${daysRemaining} Days Left` },
+                        { icon: Zap, text: "Download Your Content" },
+                      ]
+                    : [
+                        { icon: Rocket, text: "Quick Start" },
+                        { icon: Sparkles, text: "Basic Features" },
+                        { icon: Zap, text: "Standard Templates" },
+                      ],
               ][0].map((item, i) => (
                 <motion.div
                   key={i}
@@ -228,23 +271,33 @@ export function SubscriptionSection() {
                   transition={{ delay: i * 0.1 + 0.3 }}
                   className={cn(
                     "p-4 rounded-xl backdrop-blur-sm border transition-all duration-300",
-                    isPro && "bg-white/40 border-purple-100 hover:border-purple-200",
-                    isCanceling && "bg-white/40 border-amber-100 hover:border-amber-200",
-                    !isPro && !isCanceling && "bg-white/40 border-teal-100 hover:border-teal-200"
+                    isPro &&
+                      "bg-white/40 border-purple-100 hover:border-purple-200",
+                    isCanceling &&
+                      "bg-white/40 border-amber-100 hover:border-amber-200",
+                    !isPro &&
+                      !isCanceling &&
+                      "bg-white/40 border-teal-100 hover:border-teal-200",
                   )}
                 >
-                  <item.icon className={cn(
-                    "h-6 w-6 mx-auto mb-2",
-                    isPro && "text-purple-600",
-                    isCanceling && "text-amber-600",
-                    !isPro && !isCanceling && "text-teal-600"
-                  )} />
-                  <p className={cn(
-                    "text-sm font-medium",
-                    isPro && "text-purple-900",
-                    isCanceling && "text-amber-900",
-                    !isPro && !isCanceling && "text-teal-900"
-                  )}>{item.text}</p>
+                  <item.icon
+                    className={cn(
+                      "h-6 w-6 mx-auto mb-2",
+                      isPro && "text-purple-600",
+                      isCanceling && "text-amber-600",
+                      !isPro && !isCanceling && "text-teal-600",
+                    )}
+                  />
+                  <p
+                    className={cn(
+                      "text-sm font-medium",
+                      isPro && "text-purple-900",
+                      isCanceling && "text-amber-900",
+                      !isPro && !isCanceling && "text-teal-900",
+                    )}
+                  >
+                    {item.text}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -258,14 +311,16 @@ export function SubscriptionSection() {
                   "px-8 py-2 text-white border-0 transition-colors",
                   isPro && "bg-violet-600 hover:bg-violet-700",
                   isCanceling && "bg-amber-600 hover:bg-amber-700",
-                  !isPro && !isCanceling && "bg-teal-600 hover:bg-teal-700"
+                  !isPro && !isCanceling && "bg-teal-600 hover:bg-teal-700",
                 )}
               >
-                {isLoading ? (
-                  "Loading..."
-                ) : (
-                  isPro ? 'Manage Subscription' : isCanceling ? 'Reactivate Pro' : 'Upgrade to Pro'
-                )}
+                {isLoading
+                  ? "Loading..."
+                  : isPro
+                    ? "Manage Subscription"
+                    : isCanceling
+                      ? "Reactivate Pro"
+                      : "Upgrade to Pro"}
               </Button>
             </div>
           </div>
@@ -279,16 +334,16 @@ export function SubscriptionSection() {
             key={plan.title}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              delay: plan.title === 'Pro' ? 0.2 : 0,
-              duration: 0.5
+            transition={{
+              delay: plan.title === "Pro" ? 0.2 : 0,
+              duration: 0.5,
             }}
             className={cn(
               "relative",
-              plan.title === 'Pro' && "md:-mt-4 md:mb-4"
+              plan.title === "Pro" && "md:-mt-4 md:mb-4",
             )}
           >
-            {plan.title === 'Pro' && (
+            {plan.title === "Pro" && (
               <>
                 {/* Animated glow effect */}
                 <div className="absolute -inset-[2px] bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-500 rounded-2xl opacity-75 blur-lg group-hover:opacity-100 animate-pulse transition-opacity duration-500" />
@@ -307,18 +362,24 @@ export function SubscriptionSection() {
             <PricingCard
               key={plan.title}
               plan={plan}
-              isCurrentPlan={plan.title.toLowerCase() === subscription_plan?.toLowerCase()}
+              isCurrentPlan={
+                plan.title.toLowerCase() === subscription_plan?.toLowerCase()
+              }
               isLoading={isCheckingOut}
               onAction={handleCheckout}
-              buttonText={plan.title.toLowerCase() === subscription_plan?.toLowerCase() ? 'Current Plan' : undefined}
-              variant={isPro ? 'pro' : isCanceling ? 'canceling' : 'default'}
+              buttonText={
+                plan.title.toLowerCase() === subscription_plan?.toLowerCase()
+                  ? "Current Plan"
+                  : undefined
+              }
+              variant={isPro ? "pro" : isCanceling ? "canceling" : "default"}
               className={cn(
                 "relative",
-                plan.title === 'Pro' && [
+                plan.title === "Pro" && [
                   "scale-105 shadow-2xl",
                   "hover:scale-[1.07] hover:shadow-3xl hover:shadow-purple-500/20",
-                  "transition-all duration-500"
-                ]
+                  "transition-all duration-500",
+                ],
               )}
             />
           </motion.div>
@@ -326,4 +387,4 @@ export function SubscriptionSection() {
       </div>
     </div>
   );
-} 
+}

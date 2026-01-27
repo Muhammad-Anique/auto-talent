@@ -69,7 +69,7 @@ const MemoizedMarkdownBlock = memo(
               <h3 className="text-lg font-bold mt-2.5 mb-1.5">{children}</h3>
             ),
             h4: ({ children }) => (
-              <h4 className="text-base font-bold mt-2 mb-1">{children}</h4>
+              <h4 className="text-gray-800 font-bold mt-2 mb-1">{children}</h4>
             ),
             h5: ({ children }) => (
               <h5 className="text-sm font-bold mt-1.5 mb-1">{children}</h5>
@@ -110,7 +110,7 @@ const MemoizedMarkdownBlock = memo(
       </div>
     );
   },
-  (prevProps, nextProps) => prevProps.content === nextProps.content
+  (prevProps, nextProps) => prevProps.content === nextProps.content,
 );
 
 MemoizedMarkdownBlock.displayName = "MemoizedMarkdownBlock";
@@ -122,7 +122,7 @@ export const MemoizedMarkdown = memo(
     return blocks.map((block, index) => (
       <MemoizedMarkdownBlock content={block} key={`${id}-block_${index}`} />
     ));
-  }
+  },
 );
 
 MemoizedMarkdown.displayName = "MemoizedMarkdown";

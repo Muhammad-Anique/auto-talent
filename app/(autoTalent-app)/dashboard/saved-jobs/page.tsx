@@ -1,27 +1,27 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import Link from 'next/link';
-import { useLoading } from '@/context/LoadingContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
-import { 
-  Bookmark, 
-  Search, 
-  Building2, 
-  MapPin, 
-  Calendar, 
-  Trash2, 
+import { useEffect, useState } from "react";
+import { createClient } from "@/utils/supabase/client";
+import Link from "next/link";
+import { useLoading } from "@/context/LoadingContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import {
+  Bookmark,
+  Search,
+  Building2,
+  MapPin,
+  Calendar,
+  Trash2,
   ExternalLink,
   Heart,
   Briefcase,
   Filter,
   SortAsc,
-  ArrowRight
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+  ArrowRight,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Job = {
   id: string;
@@ -39,10 +39,10 @@ export default function SavedJobsPage() {
   const { setIsLoading } = useLoading();
   const [savedJobs, setSavedJobs] = useState<{ id: string; job: Job }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTitle, setSearchTitle] = useState('');
-  const [filterCompany, setFilterCompany] = useState('');
-  const [filterLocation, setFilterLocation] = useState('');
-  const [sortBy, setSortBy] = useState('newest');
+  const [searchTitle, setSearchTitle] = useState("");
+  const [filterCompany, setFilterCompany] = useState("");
+  const [filterLocation, setFilterLocation] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
 
   const supabase = createClient();
 
@@ -53,13 +53,13 @@ export default function SavedJobsPage() {
       if (!userId) return;
 
       const { data, error } = await supabase
-        .from('saved_jobs')
-        .select('id, job, created_at')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
+        .from("saved_jobs")
+        .select("id, job, created_at")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Failed to load saved jobs:', error);
+        console.error("Failed to load saved jobs:", error);
       } else {
         setSavedJobs(data || []);
       }
@@ -72,11 +72,11 @@ export default function SavedJobsPage() {
   }, [setIsLoading]);
 
   const removeJob = async (id: string) => {
-    const { error } = await supabase.from('saved_jobs').delete().eq('id', id);
+    const { error } = await supabase.from("saved_jobs").delete().eq("id", id);
 
     if (error) {
-      console.error('Error deleting job:', error);
-      alert('Failed to remove job');
+      console.error("Error deleting job:", error);
+      alert("Failed to remove job");
     } else {
       setSavedJobs((prev) => prev.filter((job) => job.id !== id));
     }
@@ -84,23 +84,28 @@ export default function SavedJobsPage() {
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
   // Extract unique companies and locations for dropdowns
-  const companyOptions = Array.from(new Set(savedJobs.map((j) => j.job.company.name)));
-  const locationOptions = Array.from(new Set(savedJobs.map((j) => j.job.location)));
+  const companyOptions = Array.from(
+    new Set(savedJobs.map((j) => j.job.company.name)),
+  );
+  const locationOptions = Array.from(
+    new Set(savedJobs.map((j) => j.job.location)),
+  );
 
   // Filter + sort logic
   const filteredJobs = savedJobs
-    .filter(({ job }) =>
-      job.title.toLowerCase().includes(searchTitle.toLowerCase()) &&
-      job.company.name.toLowerCase().includes(filterCompany.toLowerCase()) &&
-      job.location.toLowerCase().includes(filterLocation.toLowerCase())
+    .filter(
+      ({ job }) =>
+        job.title.toLowerCase().includes(searchTitle.toLowerCase()) &&
+        job.company.name.toLowerCase().includes(filterCompany.toLowerCase()) &&
+        job.location.toLowerCase().includes(filterLocation.toLowerCase()),
     )
     .sort((a, b) => {
       const titleA = a.job.title.toLowerCase();
@@ -109,11 +114,11 @@ export default function SavedJobsPage() {
       const dateB = new Date(b.job.postAt).getTime();
 
       switch (sortBy) {
-        case 'az':
+        case "az":
           return titleA.localeCompare(titleB);
-        case 'za':
+        case "za":
           return titleB.localeCompare(titleA);
-        case 'oldest':
+        case "oldest":
           return dateA - dateB;
         default:
           return dateB - dateA;
@@ -130,27 +135,28 @@ export default function SavedJobsPage() {
             <Bookmark className="w-12 h-12 text-[#5b6949]" />
           </div>
         </div>
-        
+
         {/* Content */}
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold text-zinc-900">
             No saved jobs yet
           </h2>
           <p className="text-zinc-600 max-w-md">
-            Start building your job collection by saving interesting positions from your search results
+            Start building your job collection by saving interesting positions
+            from your search results
           </p>
         </div>
-        
+
         {/* Button */}
         <Button
-          onClick={() => window.location.href = '/dashboard/search-jobs'}
+          onClick={() => (window.location.href = "/dashboard/search-jobs")}
           className={cn(
             "inline-flex items-center gap-2",
-            "rounded-full text-base font-medium px-8 py-3",
+            "rounded-full text-gray-800 font-medium px-8 py-3",
             "transition-all duration-500",
             "bg-[#5b6949]",
             "text-white hover:shadow-xl hover:shadow-[#5b6949]/25",
-            "hover:-translate-y-1 hover:scale-105"
+            "hover:-translate-y-1 hover:scale-105",
           )}
         >
           <Briefcase className="w-5 h-5" />
@@ -167,10 +173,12 @@ export default function SavedJobsPage() {
         {/* Header */}
         <div className="space-y-4">
           <div className="flex items-center gap-4">
-            <div className={cn(
-              "p-3 rounded-xl transition-all duration-300",
-              "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
-            )}>
+            <div
+              className={cn(
+                "p-3 rounded-xl transition-all duration-300",
+                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
+              )}
+            >
               <Bookmark className="w-6 h-6 text-[#5b6949]" />
             </div>
             <div>
@@ -184,30 +192,32 @@ export default function SavedJobsPage() {
           </div>
         </div>
 
-      {loading ? (
+        {loading ? (
           <div className="text-center py-12">
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#5b6949]/10 to-gray-500/10 border border-[#5b6949]/20">
               <div className="w-4 h-4 border-2 border-[#5b6949]/30 border-t-[#5b6949] rounded-full animate-spin"></div>
-              <span className="text-zinc-700 font-medium">Loading your saved jobs...</span>
+              <span className="text-zinc-700 font-medium">
+                Loading your saved jobs...
+              </span>
             </div>
           </div>
-      ) : savedJobs.length === 0 ? (
+        ) : savedJobs.length === 0 ? (
           <EmptyState />
-      ) : (
-        <>
-          {/* Search and Filters */}
+        ) : (
+          <>
+            {/* Search and Filters */}
             <Card className="p-6 bg-white/80 backdrop-blur-sm border-white/40 shadow-sm">
               <div className="space-y-4">
                 {/* Search Input */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
                   <Input
-              type="text"
+                    type="text"
                     placeholder="Search job titles..."
-                    className="pl-10 h-12 text-base bg-white/80 border-zinc-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
-              value={searchTitle}
-              onChange={(e) => setSearchTitle(e.target.value)}
-            />
+                    className="pl-10 h-12 text-gray-800 bg-white/80 border-zinc-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                    value={searchTitle}
+                    onChange={(e) => setSearchTitle(e.target.value)}
+                  />
                 </div>
 
                 {/* Filters Row */}
@@ -215,56 +225,62 @@ export default function SavedJobsPage() {
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <Building2 className="w-4 h-4 text-[#5b6949]" />
-                      <span className="text-sm font-medium text-zinc-700">Company</span>
+                      <span className="text-sm font-medium text-zinc-700">
+                        Company
+                      </span>
                     </div>
-            <select
+                    <select
                       className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
-              value={filterCompany}
-              onChange={(e) => setFilterCompany(e.target.value)}
-            >
-              <option value="">All Companies</option>
-              {companyOptions.map((company) => (
-                <option key={company} value={company}>
-                  {company}
-                </option>
-              ))}
-            </select>
+                      value={filterCompany}
+                      onChange={(e) => setFilterCompany(e.target.value)}
+                    >
+                      <option value="">All Companies</option>
+                      {companyOptions.map((company) => (
+                        <option key={company} value={company}>
+                          {company}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <MapPin className="w-4 h-4 text-[#5b6949]" />
-                      <span className="text-sm font-medium text-zinc-700">Location</span>
+                      <span className="text-sm font-medium text-zinc-700">
+                        Location
+                      </span>
                     </div>
-            <select
+                    <select
                       className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
-              value={filterLocation}
-              onChange={(e) => setFilterLocation(e.target.value)}
-            >
-              <option value="">All Locations</option>
-              {locationOptions.map((loc) => (
-                <option key={loc} value={loc}>
-                  {loc}
-                </option>
-              ))}
-            </select>
+                      value={filterLocation}
+                      onChange={(e) => setFilterLocation(e.target.value)}
+                    >
+                      <option value="">All Locations</option>
+                      {locationOptions.map((loc) => (
+                        <option key={loc} value={loc}>
+                          {loc}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="relative">
                     <div className="flex items-center gap-2 mb-2">
                       <SortAsc className="w-4 h-4 text-[#5b6949]" />
-                      <span className="text-sm font-medium text-zinc-700">Sort By</span>
+                      <span className="text-sm font-medium text-zinc-700">
+                        Sort By
+                      </span>
                     </div>
-            <select
+                    <select
                       className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="az">Title A–Z</option>
-              <option value="za">Title Z–A</option>
-            </select>
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="oldest">Oldest First</option>
+                      <option value="az">Title A–Z</option>
+                      <option value="za">Title Z–A</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -273,50 +289,51 @@ export default function SavedJobsPage() {
             {/* Results Header */}
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-zinc-900">
-                {filteredJobs.length} saved job{filteredJobs.length !== 1 ? 's' : ''}
+                {filteredJobs.length} saved job
+                {filteredJobs.length !== 1 ? "s" : ""}
                 {(searchTitle || filterCompany || filterLocation) && (
                   <span className="text-zinc-600 font-normal ml-2">
                     matching your filters
                   </span>
                 )}
               </h2>
-          </div>
+            </div>
 
-          {/* Job Cards */}
+            {/* Job Cards */}
             {filteredJobs.length > 0 ? (
-          <div className="grid gap-4">
-            {filteredJobs.map(({ id, job }) => (
+              <div className="grid gap-4">
+                {filteredJobs.map(({ id, job }) => (
                   <Card
-                key={id}
+                    key={id}
                     className="group relative bg-white/80 backdrop-blur-sm border-white/40 shadow-sm hover:shadow-lg transition-all duration-300 p-6"
-              >
+                  >
                     {/* Remove Button */}
-                <button
-                  onClick={() => removeJob(id)}
+                    <button
+                      onClick={() => removeJob(id)}
                       className="absolute top-4 right-4 p-2 rounded-lg bg-zinc-100/80 hover:bg-red-50 hover:text-red-600 transition-all duration-200 opacity-0 group-hover:opacity-100"
                       title="Remove from saved jobs"
-                >
+                    >
                       <Trash2 className="w-4 h-4" />
-                </button>
+                    </button>
 
-                <Link
-                  href={job.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                    <Link
+                      href={job.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="block"
-                >
+                    >
                       <div className="flex items-start gap-4">
                         {/* Company Logo */}
-                    {job.company?.logo && (
+                        {job.company?.logo && (
                           <div className="flex-shrink-0">
-                      <img
-                        src={job.company.logo}
-                        alt={job.company.name}
+                            <img
+                              src={job.company.logo}
+                              alt={job.company.name}
                               className="w-12 h-12 object-contain rounded-lg border border-zinc-200"
-                      />
+                            />
                           </div>
-                    )}
-                        
+                        )}
+
                         {/* Job Details */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
@@ -325,7 +342,7 @@ export default function SavedJobsPage() {
                               {job.title}
                             </h3>
                           </div>
-                          
+
                           <div className="flex items-center gap-4 text-sm text-zinc-600 mb-2">
                             <div className="flex items-center gap-1">
                               <Building2 className="w-4 h-4" />
@@ -336,7 +353,7 @@ export default function SavedJobsPage() {
                               <span>{job.location}</span>
                             </div>
                           </div>
-                          
+
                           <div className="flex items-center gap-1 text-sm text-zinc-500">
                             <Calendar className="w-4 h-4" />
                             <span>Posted: {formatDate(job.postAt)}</span>
@@ -346,9 +363,9 @@ export default function SavedJobsPage() {
                         {/* External Link Icon */}
                         <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                           <ExternalLink className="w-5 h-5 text-[#5b6949]" />
-                    </div>
-                  </div>
-                </Link>
+                        </div>
+                      </div>
+                    </Link>
                   </Card>
                 ))}
               </div>
@@ -360,10 +377,10 @@ export default function SavedJobsPage() {
                     No jobs match your current filters
                   </span>
                 </div>
-          </div>
-          )}
-        </>
-      )}
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

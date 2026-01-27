@@ -2,30 +2,22 @@
 
 import Link from "next/link";
 import { Star, ArrowRight, CheckCircle, Zap } from "lucide-react";
+import { useLocale } from "@/components/providers/locale-provider";
 
-const ctaData = {
-  title: "Ready to Land Your Dream Job?",
-  subTitle: "Join thousands of professionals who've automated their job search",
-  description:
-    "Stop wasting time on manual applications. Let AI handle the heavy lifting while you focus on what matters most.",
+const staticData = {
   button: {
-    primary: "Start Free Trial",
-    secondary: "Watch Demo",
     href: "/signup",
   },
   trustpilot: {
-    rating: "Excellent",
     stars: 5,
-    platform: "Trustpilot",
   },
   socialProof: {
-    userCount: "50,000+ professionals",
     stars: 5,
   },
-  features: ["No credit card required", "14-day free trial", "Cancel anytime"],
 };
 
 export function CTASection() {
+  const { t } = useLocale();
   return (
     <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[#5b6949] relative overflow-hidden">
       {/* Banner Background Pattern */}
@@ -48,33 +40,37 @@ export function CTASection() {
           {/* Main Content */}
           <div className="mb-8 sm:mb-10 px-4">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 leading-tight drop-shadow-lg">
-              {ctaData.title}
+              {t("cta.title")}
             </h2>
-            <p className="text-base sm:text-lg text-white/95 mb-2 sm:mb-3 font-medium">
-              {ctaData.subTitle}
+            <p className="text-gray-800 sm:text-lg text-white/95 mb-2 sm:mb-3 font-medium">
+              {t("cta.subtitle")}
             </p>
-            <p className="text-sm sm:text-base text-white/85 max-w-2xl mx-auto leading-relaxed">
-              {ctaData.description}
+            <p className="text-sm sm:text-gray-800 text-white/85 max-w-2xl mx-auto leading-relaxed">
+              {t("cta.description")}
             </p>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-10 px-4">
-            <Link href={ctaData.button.href} className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto bg-white text-[#5b6949] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
-                {ctaData.button.primary}
+            <Link href={staticData.button.href} className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-white text-[#5b6949] px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-gray-800 sm:text-lg font-semibold hover:bg-gray-50 transition-all duration-300 flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transform hover:-translate-y-1">
+                {t("cta.primary")}
                 <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </Link>
-            <button className="w-full sm:w-auto bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-base sm:text-lg font-semibold hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2 border border-white/30 shadow-lg">
-              {ctaData.button.secondary}
+            <button className="w-full sm:w-auto bg-white/20 backdrop-blur-sm text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-lg text-gray-800 sm:text-lg font-semibold hover:bg-white/30 transition-all duration-300 flex items-center justify-center gap-2 border border-white/30 shadow-lg">
+              {t("cta.secondary")}
               <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
           {/* Features */}
           <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-6 sm:mb-8 px-4">
-            {ctaData.features.map((feature, index) => (
+            {[
+              t("cta.features.0"),
+              t("cta.features.1"),
+              t("cta.features.2"),
+            ].map((feature, index) => (
               <div
                 key={index}
                 className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/25 shadow-md"
@@ -92,10 +88,10 @@ export function CTASection() {
             {/* Trustpilot Rating */}
             <div className="flex items-center gap-1.5 sm:gap-2 bg-white/15 backdrop-blur-sm px-4 sm:px-5 py-1.5 sm:py-2 rounded-full border border-white/25 shadow-md">
               <span className="text-white font-medium text-xs sm:text-sm">
-                {ctaData.trustpilot.rating}
+                {t("hero.trustpilotRating")}
               </span>
               <div className="flex items-center gap-0.5 sm:gap-1">
-                {[...Array(ctaData.trustpilot.stars)].map((_, i) => (
+                {[...Array(staticData.trustpilot.stars)].map((_, i) => (
                   <Star
                     key={i}
                     className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white fill-current"
@@ -103,7 +99,7 @@ export function CTASection() {
                 ))}
               </div>
               <span className="text-white text-xs">
-                {ctaData.trustpilot.platform}
+                {t("hero.trustpilotPlatform")}
               </span>
             </div>
 
@@ -115,14 +111,14 @@ export function CTASection() {
                 <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-r from-white/60 to-white/40 rounded-full border border-white/30"></div>
               </div>
               <div className="flex items-center gap-0.5 sm:gap-1">
-                {[...Array(ctaData.socialProof.stars)].map((_, i) => (
+                {[...Array(staticData.socialProof.stars)].map((_, i) => (
                   <Star
                     key={i}
                     className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white fill-current"
                   />
                 ))}
                 <span className="text-white font-medium text-xs sm:text-sm ml-0.5 sm:ml-1">
-                  Trusted by {ctaData.socialProof.userCount}
+                  {t("cta.trustedBy")}
                 </span>
               </div>
             </div>

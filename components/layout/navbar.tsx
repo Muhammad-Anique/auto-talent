@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,26 +18,29 @@ export function Navbar() {
       <div className="max-w-[2000px] mx-auto h-full px-6 flex items-center justify-between">
         <div className="flex items-center gap-8">
           {/* Logo/Brand */}
-          <Link href="/" className="text-xl font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+          <Link
+            href="/"
+            className="text-xl font-semibold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent"
+          >
             Resume.AI
           </Link>
 
           {/* Navigation Links */}
           <div className="flex items-center gap-6">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className={cn(
                 "text-sm transition-colors hover:text-teal-600",
-                isActive('/') ? "text-teal-600" : "text-muted-foreground"
+                isActive("/") ? "text-teal-600" : "text-gray-700",
               )}
             >
               Dashboard
             </Link>
-            <Link 
-              href="/jobs" 
+            <Link
+              href="/jobs"
               className={cn(
                 "text-sm transition-colors hover:text-teal-600",
-                isActive('/jobs') ? "text-teal-600" : "text-muted-foreground"
+                isActive("/jobs") ? "text-teal-600" : "text-gray-700",
               )}
             >
               Jobs
@@ -46,10 +49,8 @@ export function Navbar() {
         </div>
 
         {/* Right Side Actions */}
-        <div className="flex items-center gap-4">
-          {/* <LogoutButton /> */}
-        </div>
+        <div className="flex items-center gap-4">{/* <LogoutButton /> */}</div>
       </div>
     </nav>
   );
-} 
+}

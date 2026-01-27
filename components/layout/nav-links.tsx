@@ -11,8 +11,8 @@ function NavLink({ href, children, className }: NavLinkProps) {
     <a
       href={href}
       className={cn(
-        "text-sm font-medium text-muted-foreground/90 hover:text-foreground transition-colors duration-200",
-        className
+        "text-sm font-medium text-gray-700/90 hover:text-foreground transition-colors duration-200",
+        className,
       )}
     >
       {children}
@@ -29,4 +29,4 @@ export function NavLinks() {
       <NavLink href="#about">About</NavLink>
     </div>
   );
-} 
+}

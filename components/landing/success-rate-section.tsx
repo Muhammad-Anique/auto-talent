@@ -13,73 +13,60 @@ const toolsData = [
   {
     id: 1,
     icon: FileText,
-    title: "AI-Powered Resume Creator",
+    title: "AI Resume Builder",
     description:
-      "Streamline your job search with our AI-driven resume builder. It customizes your resume for each application.",
+      "Tailored resumes for each application",
   },
   {
     id: 2,
     icon: Mail,
-    title: "Intelligent Cover Letter Generator",
+    title: "Cover Letter Generator",
     description:
-      "Our AI generates personalized cover letters for each job application, helping you stand out and increasing your likelihood of landing interviews.",
+      "Personalized letters to boost response rate",
   },
   {
     id: 3,
     icon: ClipboardList,
-    title: "Automated Job Applications",
+    title: "Auto Apply to Jobs",
     description:
-      "Let our AI automatically apply to thousands of job opportunities for you. This saves you valuable time and speeds up the hiring process.",
+      "Apply to hundreds of jobs in one click",
   },
   {
     id: 4,
     icon: User,
-    title: "AI Interview Simulator",
+    title: "Interview Simulator",
     description:
-      "Prepare for job interviews with AI-generated simulations that provide feedback and help you build confidence before the real thing.",
+      "Practice with mock interviews",
   },
   {
     id: 5,
     icon: Mic,
-    title: "Real-Time Interview Assistance",
+    title: "Real-Time AI Interview Assistant",
     description:
-      "Receive instant feedback and support during interviews with our AI-powered Interview Buddy, ensuring you answer questions effectively.",
+      "Get real-time help during interviews",
   },
   {
     id: 6,
     icon: Languages,
     title: "Resume Translator",
     description:
-      "Automatically translate your resume into multiple languages, expanding your job search globally and improving your chances of landing a role.",
+      "Translate resume into multiple languages",
   },
 ];
 
 const sectionData = {
-  title: {
-    part1: "You are",
-    highlight: "80% More Likely",
-    part2: "to",
-    part3: "Secure a Job with Auto Apply",
-  },
-  description:
-    "Leverage Our Cutting-Edge AI Tools Designed Specifically for Job Seekers",
+  title: "Everything You Need to Land Your Dream Job – Fast",
+  description: "",
 };
 
 export function SuccessRateSection() {
   return (
     <section className="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-transparent">
       <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 leading-tight px-4">
-          {sectionData.title.part1}{" "}
-          <span className="text-[#5b6949]">{sectionData.title.highlight}</span>{" "}
-          {sectionData.title.part2}
+        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-8 sm:mb-12 leading-tight px-4">
+          {sectionData.title.split(" – ")[0]}
+          <span className="text-[#5b6949]"> – {sectionData.title.split(" – ")[1]}</span>
         </h2>
-        <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight px-4">
-          {sectionData.title.part3}
-        </h2>
-        <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-8 sm:mb-12 px-4">
-          {sectionData.description}
-        </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {toolsData.map((tool, index) => {

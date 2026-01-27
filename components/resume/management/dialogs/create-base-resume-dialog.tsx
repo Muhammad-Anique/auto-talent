@@ -1,21 +1,52 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Profile, WorkExperience, Education, Skill, Project, Resume } from "@/lib/types";
+import {
+  Profile,
+  WorkExperience,
+  Education,
+  Skill,
+  Project,
+  Resume,
+} from "@/lib/types";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, FileText, Copy, Wand2, Plus, Upload, Users, Target, Brain, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Loader2,
+  FileText,
+  Copy,
+  Wand2,
+  Plus,
+  Upload,
+  Users,
+  Target,
+  Brain,
+  ChevronLeft,
+  ChevronRight,
+  Globe,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createBaseResume } from "@/utils/actions/resumes/actions";
 import pdfToText from "react-pdftotext";
 
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 import { Textarea } from "@/components/ui/textarea";
 import { convertTextToResume } from "@/utils/actions/resumes/ai";
 import { ApiErrorDialog } from "@/components/ui/api-error-dialog";
@@ -27,12 +58,18 @@ interface CreateBaseResumeDialogProps {
   profile: Profile;
 }
 
-export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDialogProps) {
+export function CreateBaseResumeDialog({
+  children,
+  profile,
+}: CreateBaseResumeDialogProps) {
   const [open, setOpen] = useState(false);
-  const [targetRole, setTargetRole] = useState('');
+  const [targetRole, setTargetRole] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const [importOption, setImportOption] = useState<'import-profile' | 'scratch' | 'import-resume'>('import-profile');
+  const [importOption, setImportOption] = useState<
+    "import-profile" | "scratch" | "import-resume" | "import-linkedin"
+  >("import-profile");
   const [isTargetRoleInvalid, setIsTargetRoleInvalid] = useState(false);
+  const [linkedinUrl, setLinkedinUrl] = useState("");
   const [selectedItems, setSelectedItems] = useState<{
     work_experience: string[];
     education: string[];
@@ -42,61 +79,85 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     work_experience: [],
     education: [],
     skills: [],
-    projects: []
+    projects: [],
   });
-  const [resumeText, setResumeText] = useState('');
+  const [resumeText, setResumeText] = useState("");
   const router = useRouter();
   const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<{ title: string; description: string }>({
+  const [errorMessage, setErrorMessage] = useState<{
+    title: string;
+    description: string;
+  }>({
     title: "",
-    description: ""
+    description: "",
   });
   const [isDragging, setIsDragging] = useState(false);
-  const [activeTab, setActiveTab] = useState<keyof typeof selectedItems>('work_experience');
+  const [activeTab, setActiveTab] =
+    useState<keyof typeof selectedItems>("work_experience");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(3);
 
-  const getItemId = (type: keyof typeof selectedItems, item: WorkExperience | Education | Skill | Project): string => {
+  const getItemId = (
+    type: keyof typeof selectedItems,
+    item: WorkExperience | Education | Skill | Project,
+  ): string => {
     switch (type) {
-      case 'work_experience':
+      case "work_experience":
         return `${(item as WorkExperience).company}-${(item as WorkExperience).position}-${(item as WorkExperience).date}`;
-      case 'projects':
+      case "projects":
         return (item as Project).name;
-      case 'education':
+      case "education":
         return `${(item as Education).school}-${(item as Education).degree}-${(item as Education).field}`;
-      case 'skills':
+      case "skills":
         return (item as Skill).category;
       default:
-        return '';
+        return "";
     }
   };
 
-  const handleItemSelection = (section: keyof typeof selectedItems, id: string) => {
-    setSelectedItems(prev => ({
+  const handleItemSelection = (
+    section: keyof typeof selectedItems,
+    id: string,
+  ) => {
+    setSelectedItems((prev) => ({
       ...prev,
       [section]: prev[section].includes(id)
-        ? prev[section].filter(x => x !== id)
-        : [...prev[section], id]
+        ? prev[section].filter((x) => x !== id)
+        : [...prev[section], id],
     }));
   };
 
-  const handleSectionSelection = (section: keyof typeof selectedItems, checked: boolean) => {
-    setSelectedItems(prev => ({
+  const handleSectionSelection = (
+    section: keyof typeof selectedItems,
+    checked: boolean,
+  ) => {
+    setSelectedItems((prev) => ({
       ...prev,
-      [section]: checked 
-        ? profile[section].map(item => getItemId(section, item))
-        : []
+      [section]: checked
+        ? profile[section].map((item) => getItemId(section, item))
+        : [],
     }));
   };
 
   const isSectionSelected = (section: keyof typeof selectedItems): boolean => {
-    const sectionItems = profile[section].map(item => getItemId(section, item));
-    return sectionItems.length > 0 && sectionItems.every(id => selectedItems[section].includes(id));
+    const sectionItems = profile[section].map((item) =>
+      getItemId(section, item),
+    );
+    return (
+      sectionItems.length > 0 &&
+      sectionItems.every((id) => selectedItems[section].includes(id))
+    );
   };
 
-  const isSectionPartiallySelected = (section: keyof typeof selectedItems): boolean => {
-    const sectionItems = profile[section].map(item => getItemId(section, item));
-    const selectedCount = sectionItems.filter(id => selectedItems[section].includes(id)).length;
+  const isSectionPartiallySelected = (
+    section: keyof typeof selectedItems,
+  ): boolean => {
+    const sectionItems = profile[section].map((item) =>
+      getItemId(section, item),
+    );
+    const selectedCount = sectionItems.filter((id) =>
+      selectedItems[section].includes(id),
+    ).length;
     return selectedCount > 0 && selectedCount < sectionItems.length;
   };
 
@@ -121,7 +182,15 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
   };
 
   // Pagination Component
-  const Pagination = ({ totalPages, currentPage, onPageChange }: { totalPages: number; currentPage: number; onPageChange: (page: number) => void }) => {
+  const Pagination = ({
+    totalPages,
+    currentPage,
+    onPageChange,
+  }: {
+    totalPages: number;
+    currentPage: number;
+    onPageChange: (page: number) => void;
+  }) => {
     if (totalPages <= 1) return null;
 
     const pages = [];
@@ -175,7 +244,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
             className={cn(
               currentPage === page
                 ? "bg-[#5b6949] text-white border-[#5b6949] text-xs"
-                : "border-zinc-200 hover:border-[#5b6949] hover:bg-zinc-50 text-xs"
+                : "border-zinc-200 hover:border-[#5b6949] hover:bg-zinc-50 text-xs",
             )}
           >
             {page}
@@ -218,7 +287,8 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
       setTimeout(() => setIsTargetRoleInvalid(false), 820);
       toast({
         title: "Required Field Missing",
-        description: "Target role is a required field. Please enter your target role.",
+        description:
+          "Target role is a required field. Please enter your target role.",
         variant: "destructive",
       });
       return;
@@ -227,21 +297,98 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     try {
       setIsCreating(true);
 
-      if (importOption === 'import-resume') {
+      if (importOption === "import-linkedin") {
+        if (!linkedinUrl.trim()) {
+          toast({
+            title: "LinkedIn URL Required",
+            description: "Please enter your LinkedIn profile URL.",
+            variant: "destructive",
+          });
+          setIsCreating(false);
+          return;
+        }
+
+        // Validate LinkedIn URL format
+        if (!linkedinUrl.includes("linkedin.com/in/")) {
+          toast({
+            title: "Invalid LinkedIn URL",
+            description:
+              "Please enter a valid LinkedIn profile URL (e.g., https://www.linkedin.com/in/your-profile).",
+            variant: "destructive",
+          });
+          setIsCreating(false);
+          return;
+        }
+
+        try {
+          toast({
+            title: "Scraping LinkedIn Profile",
+            description: "This may take up to 2 minutes. Please wait...",
+          });
+
+          const response = await fetch("/api/scrape-linkedin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ profileUrl: linkedinUrl }),
+          });
+
+          const result = await response.json();
+
+          if (!response.ok || !result.success) {
+            throw new Error(
+              result.message || "Failed to scrape LinkedIn profile",
+            );
+          }
+
+          const linkedinData = result.data;
+
+          // Create resume with LinkedIn data
+          const resume = await createBaseResume(
+            targetRole,
+            "import-resume",
+            linkedinData as any,
+          );
+
+          toast({
+            title: "Success",
+            description: "Resume created successfully from LinkedIn profile",
+          });
+
+          router.push(`/dashboard/resumes/${resume.id}`);
+          setOpen(false);
+          return;
+        } catch (error) {
+          console.error("LinkedIn import error:", error);
+          setErrorMessage({
+            title: "LinkedIn Import Error",
+            description:
+              error instanceof Error
+                ? error.message
+                : "Failed to import LinkedIn profile. Please try again.",
+          });
+          setShowErrorDialog(true);
+          setIsCreating(false);
+          return;
+        }
+      }
+
+      if (importOption === "import-resume") {
         if (!resumeText.trim()) {
           return;
         }
 
         // Create an empty resume to pass to convertTextToResume
         const emptyResume: Resume = {
-          id: '',
-          user_id: '',
+          id: "",
+          user_id: "",
           name: targetRole,
           target_role: targetRole,
           is_base_resume: true,
-          first_name: '',
-          last_name: '',
-          email: '',
+          first_name: "",
+          last_name: "",
+          email: "",
           work_experience: [],
           education: [],
           skills: [],
@@ -249,53 +396,57 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           has_cover_letter: false,
-          has_follow_up_email: false
+          has_follow_up_email: false,
         };
 
         // Get model and API key from local storage
-        const MODEL_STORAGE_KEY = 'resumelm-default-model';
-        const LOCAL_STORAGE_KEY = 'resumelm-api-keys';
+        const MODEL_STORAGE_KEY = "resumelm-default-model";
+        const LOCAL_STORAGE_KEY = "resumelm-api-keys";
         const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
         const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
         let apiKeys = [];
         try {
           apiKeys = storedKeys ? JSON.parse(storedKeys) : [];
         } catch (error) {
-          console.error('Error parsing API keys:', error);
+          console.error("Error parsing API keys:", error);
         }
 
-
         try {
-          const convertedResume = await convertTextToResume(resumeText, emptyResume, targetRole, {
-            model: selectedModel || '',
-            apiKeys
-          });
-          
+          const convertedResume = await convertTextToResume(
+            resumeText,
+            emptyResume,
+            targetRole,
+            {
+              model: selectedModel || "",
+              apiKeys,
+            },
+          );
+
           // Extract content sections and basic info for createBaseResume
           const selectedContent = {
             // Basic Info
-            first_name: convertedResume.first_name || '',
-            last_name: convertedResume.last_name || '',
-            email: convertedResume.email || '',
+            first_name: convertedResume.first_name || "",
+            last_name: convertedResume.last_name || "",
+            email: convertedResume.email || "",
             phone_number: convertedResume.phone_number,
             location: convertedResume.location,
             website: convertedResume.website,
             linkedin_url: convertedResume.linkedin_url,
             github_url: convertedResume.github_url,
-            
+
             // Content Sections
             work_experience: convertedResume.work_experience || [],
             education: convertedResume.education || [],
             skills: convertedResume.skills || [],
             projects: convertedResume.projects || [],
           };
-          
+
           const resume = await createBaseResume(
             targetRole,
-            'import-resume',
-            selectedContent as Resume
+            "import-resume",
+            selectedContent as Resume,
           );
-          
+
           toast({
             title: "Success",
             description: "Resume created successfully",
@@ -305,20 +456,22 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
           setOpen(false);
           return;
         } catch (error: Error | unknown) {
-          if (error instanceof Error && (
-            error.message.toLowerCase().includes('api key') || 
-            error.message.toLowerCase().includes('unauthorized') ||
-            error.message.toLowerCase().includes('invalid key') ||
-            error.message.toLowerCase().includes('invalid x-api-key')
-          )) {
+          if (
+            error instanceof Error &&
+            (error.message.toLowerCase().includes("api key") ||
+              error.message.toLowerCase().includes("unauthorized") ||
+              error.message.toLowerCase().includes("invalid key") ||
+              error.message.toLowerCase().includes("invalid x-api-key"))
+          ) {
             setErrorMessage({
               title: "API Key Error",
-              description: "There was an issue with your API key. Please check your settings and try again."
+              description:
+                "There was an issue with your API key. Please check your settings and try again.",
             });
           } else {
             setErrorMessage({
               title: "Error",
-              description: "Failed to convert resume text. Please try again."
+              description: "Failed to convert resume text. Please try again.",
             });
           }
           setShowErrorDialog(true);
@@ -328,28 +481,31 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
       }
 
       const selectedContent = {
-        work_experience: profile.work_experience.filter(exp => 
-          selectedItems.work_experience.includes(getItemId('work_experience', exp))
+        work_experience: profile.work_experience.filter((exp) =>
+          selectedItems.work_experience.includes(
+            getItemId("work_experience", exp),
+          ),
         ),
-        education: profile.education.filter(edu => 
-          selectedItems.education.includes(getItemId('education', edu))
+        education: profile.education.filter((edu) =>
+          selectedItems.education.includes(getItemId("education", edu)),
         ),
-        skills: profile.skills.filter(skill => 
-          selectedItems.skills.includes(getItemId('skills', skill))
+        skills: profile.skills.filter((skill) =>
+          selectedItems.skills.includes(getItemId("skills", skill)),
         ),
-        projects: profile.projects.filter(project => 
-          selectedItems.projects.includes(getItemId('projects', project))
+        projects: profile.projects.filter((project) =>
+          selectedItems.projects.includes(getItemId("projects", project)),
         ),
       };
 
-
       const resume = await createBaseResume(
-        targetRole, 
-        importOption === 'scratch' ? 'fresh' : importOption,
-        selectedContent
+        targetRole,
+        importOption === "scratch"
+          ? "fresh"
+          : importOption === "import-linkedin"
+            ? "import-resume"
+            : importOption,
+        selectedContent,
       );
-
-
 
       toast({
         title: "Success",
@@ -359,10 +515,10 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
       router.push(`/dashboard/resumes/${resume.id}`);
       setOpen(false);
     } catch (error) {
-      console.error('Create resume error:', error);
+      console.error("Create resume error:", error);
       setErrorMessage({
         title: "Error",
-        description: "Failed to create resume. Please try again."
+        description: "Failed to create resume. Please try again.",
       });
       setShowErrorDialog(true);
     } finally {
@@ -373,10 +529,14 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
   // Initialize all items as selected when dialog opens
   const initializeSelectedItems = () => {
     setSelectedItems({
-      work_experience: profile.work_experience.map(exp => getItemId('work_experience', exp)),
-      education: profile.education.map(edu => getItemId('education', edu)),
-      skills: profile.skills.map(skill => getItemId('skills', skill)),
-      projects: profile.projects.map(project => getItemId('projects', project))
+      work_experience: profile.work_experience.map((exp) =>
+        getItemId("work_experience", exp),
+      ),
+      education: profile.education.map((edu) => getItemId("education", edu)),
+      skills: profile.skills.map((skill) => getItemId("skills", skill)),
+      projects: profile.projects.map((project) =>
+        getItemId("projects", project),
+      ),
     });
   };
 
@@ -391,8 +551,8 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     }
     setOpen(newOpen);
     if (newOpen) {
-      setTargetRole('');
-      setImportOption('import-profile');
+      setTargetRole("");
+      setImportOption("import-profile");
       initializeSelectedItems();
     }
   };
@@ -413,16 +573,17 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     setIsDragging(false);
 
     const files = Array.from(e.dataTransfer.files);
-    const pdfFile = files.find(file => file.type === "application/pdf");
+    const pdfFile = files.find((file) => file.type === "application/pdf");
 
     if (pdfFile) {
       try {
         const text = await pdfToText(pdfFile);
-        setResumeText(prev => prev + (prev ? "\n\n" : "") + text);
+        setResumeText((prev) => prev + (prev ? "\n\n" : "") + text);
       } catch {
         toast({
           title: "PDF Processing Error",
-          description: "Failed to extract text from the PDF. Please try again or paste the content manually.",
+          description:
+            "Failed to extract text from the PDF. Please try again or paste the content manually.",
           variant: "destructive",
         });
       }
@@ -440,11 +601,12 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
     if (file && file.type === "application/pdf") {
       try {
         const text = await pdfToText(file);
-        setResumeText(prev => prev + (prev ? "\n\n" : "") + text);
+        setResumeText((prev) => prev + (prev ? "\n\n" : "") + text);
       } catch {
         toast({
           title: "PDF Processing Error",
-          description: "Failed to extract text from the PDF. Please try again or paste the content manually.",
+          description:
+            "Failed to extract text from the PDF. Please try again or paste the content manually.",
           variant: "destructive",
         });
       }
@@ -453,43 +615,62 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
-      <DialogContent className={cn(
-        "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
-        "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
-        "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
-        "rounded-xl"
-      )}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent
+        className={cn(
+          "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
+          "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
+          "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
+          "rounded-xl",
+        )}
+      >
         <style jsx global>{`
           @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-            20%, 40%, 60%, 80% { transform: translateX(2px); }
+            0%,
+            100% {
+              transform: translateX(0);
+            }
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+              transform: translateX(-2px);
+            }
+            20%,
+            40%,
+            60%,
+            80% {
+              transform: translateX(2px);
+            }
           }
           .shake {
-            animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both;
+            animation: shake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
           }
         `}</style>
         {/* Header Section with Icon */}
-        <div className={cn(
-          "relative px-8 pt-6 pb-4 border-b top-0 z-10 bg-white/50 backdrop-blur-xl",
-          "border-zinc-200/20"
-        )}>
+        <div
+          className={cn(
+            "relative px-8 pt-6 pb-4 border-b top-0 z-10 bg-white/50 backdrop-blur-xl",
+            "border-zinc-200/20",
+          )}
+        >
           <div className="flex items-center gap-4">
-            <div className={cn(
-              "p-3 rounded-xl transition-all duration-300",
-              "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
-            )}>
+            <div
+              className={cn(
+                "p-3 rounded-xl transition-all duration-300",
+                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
+              )}
+            >
               <FileText className="w-6 h-6 text-[#5b6949]" />
             </div>
             <div>
               <DialogTitle className="text-xl font-semibold text-zinc-950">
                 Create Base Resume
               </DialogTitle>
-              <DialogDescription className="mt-1 text-sm text-muted-foreground">
-                Create a new base resume template that you can use for multiple job applications
+              <DialogDescription className="mt-1 text-sm text-gray-700">
+                Create a new base resume template that you can use for multiple
+                job applications
               </DialogDescription>
             </div>
           </div>
@@ -499,7 +680,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
         <div className="px-8 py-6 space-y-6 bg-gradient-to-b from-zinc-50/30 to-gray-50/30">
           <div className="space-y-6">
             <div className="space-y-3">
-              <Label 
+              <Label
                 htmlFor="target-role"
                 className="text-lg font-medium text-zinc-950"
               >
@@ -511,26 +692,33 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                 value={targetRole}
                 onChange={(e) => setTargetRole(e.target.value)}
                 className={cn(
-                  "bg-white/80 border-gray-200 h-12 text-base focus:border-[#5b6949] focus:ring-[#5b6949]/20 placeholder:text-gray-400",
-                  isTargetRoleInvalid && "border-red-500 shake"
+                  "bg-white/80 border-gray-200 h-12 text-gray-800 focus:border-[#5b6949] focus:ring-[#5b6949]/20 placeholder:text-gray-400",
+                  isTargetRoleInvalid && "border-red-500 shake",
                 )}
                 required
               />
             </div>
 
             <div className="space-y-4">
-              <Label className="text-base font-medium text-zinc-950">
+              <Label className="text-gray-800 font-medium text-zinc-950">
                 Resume Content
               </Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <div>
                   <input
                     type="radio"
                     id="import-profile"
                     name="importOption"
                     value="import-profile"
-                    checked={importOption === 'import-profile'}
-                    onChange={(e) => setImportOption(e.target.value as 'import-profile' | 'scratch' | 'import-resume')}
+                    checked={importOption === "import-profile"}
+                    onChange={(e) =>
+                      setImportOption(
+                        e.target.value as
+                          | "import-profile"
+                          | "scratch"
+                          | "import-resume",
+                      )
+                    }
                     className="sr-only peer"
                   />
                   <Label
@@ -541,16 +729,61 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       "hover:border-zinc-200 hover:bg-zinc-50/50",
                       "transition-all duration-300 cursor-pointer",
                       "peer-checked:border-[#5b6949] peer-checked:bg-zinc-50",
-                      "peer-checked:shadow-md peer-checked:shadow-zinc-100"
+                      "peer-checked:shadow-md peer-checked:shadow-zinc-100",
                     )}
                   >
                     <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-zinc-50 to-gray-50 border border-zinc-100 flex items-center justify-center shrink-0">
                       <Copy className="h-5 w-5 text-[#5b6949]" />
                     </div>
                     <div className="ml-3 flex flex-col">
-                      <div className="font-medium text-sm text-zinc-950">Import from Profile</div>
+                      <div className="font-medium text-sm text-zinc-950">
+                        Import from Profile
+                      </div>
                       <span className="text-xs text-gray-600 line-clamp-2">
                         Import your experience and skills
+                      </span>
+                    </div>
+                  </Label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="import-linkedin"
+                    name="importOption"
+                    value="import-linkedin"
+                    checked={importOption === "import-linkedin"}
+                    onChange={(e) =>
+                      setImportOption(
+                        e.target.value as
+                          | "import-profile"
+                          | "scratch"
+                          | "import-resume"
+                          | "import-linkedin",
+                      )
+                    }
+                    className="sr-only peer"
+                  />
+                  <Label
+                    htmlFor="import-linkedin"
+                    className={cn(
+                      "flex items-center h-[88px] rounded-lg p-3",
+                      "bg-white border shadow-sm",
+                      "hover:border-zinc-200 hover:bg-zinc-50/50",
+                      "transition-all duration-300 cursor-pointer",
+                      "peer-checked:border-[#5b6949] peer-checked:bg-zinc-50",
+                      "peer-checked:shadow-md peer-checked:shadow-zinc-100",
+                    )}
+                  >
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-zinc-50 to-gray-50 border border-zinc-100 flex items-center justify-center shrink-0">
+                      <Globe className="h-5 w-5 text-[#5b6949]" />
+                    </div>
+                    <div className="ml-3 flex flex-col">
+                      <div className="font-medium text-sm text-zinc-950">
+                        Import from LinkedIn
+                      </div>
+                      <span className="text-xs text-gray-600 line-clamp-2">
+                        Scrape LinkedIn profile
                       </span>
                     </div>
                   </Label>
@@ -562,8 +795,15 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                     id="import-resume"
                     name="importOption"
                     value="import-resume"
-                    checked={importOption === 'import-resume'}
-                    onChange={(e) => setImportOption(e.target.value as 'import-profile' | 'scratch' | 'import-resume')}
+                    checked={importOption === "import-resume"}
+                    onChange={(e) =>
+                      setImportOption(
+                        e.target.value as
+                          | "import-profile"
+                          | "scratch"
+                          | "import-resume",
+                      )
+                    }
                     className="sr-only peer"
                   />
                   <Label
@@ -574,14 +814,16 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       "hover:border-zinc-200 hover:bg-zinc-50/50",
                       "transition-all duration-300 cursor-pointer",
                       "peer-checked:border-[#5b6949] peer-checked:bg-zinc-50",
-                      "peer-checked:shadow-md peer-checked:shadow-zinc-100"
+                      "peer-checked:shadow-md peer-checked:shadow-zinc-100",
                     )}
                   >
                     <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-zinc-50 to-gray-50 border border-zinc-100 flex items-center justify-center shrink-0">
                       <Plus className="h-5 w-5 text-[#5b6949]" />
                     </div>
                     <div className="ml-3 flex flex-col">
-                      <div className="font-medium text-sm text-zinc-950">Import from Resume</div>
+                      <div className="font-medium text-sm text-zinc-950">
+                        Import from Resume
+                      </div>
                       <span className="text-xs text-gray-600 line-clamp-2">
                         Paste your existing resume
                       </span>
@@ -595,8 +837,15 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                     id="scratch"
                     name="importOption"
                     value="scratch"
-                    checked={importOption === 'scratch'}
-                    onChange={(e) => setImportOption(e.target.value as 'import-profile' | 'scratch' | 'import-resume')}
+                    checked={importOption === "scratch"}
+                    onChange={(e) =>
+                      setImportOption(
+                        e.target.value as
+                          | "import-profile"
+                          | "scratch"
+                          | "import-resume",
+                      )
+                    }
                     className="sr-only peer"
                   />
                   <Label
@@ -607,14 +856,16 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       "hover:border-zinc-200 hover:bg-zinc-50/50",
                       "transition-all duration-300 cursor-pointer",
                       "peer-checked:border-[#5b6949] peer-checked:bg-zinc-50",
-                      "peer-checked:shadow-md peer-checked:shadow-zinc-100"
+                      "peer-checked:shadow-md peer-checked:shadow-zinc-100",
                     )}
                   >
                     <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-zinc-50 to-gray-50 border border-zinc-100 flex items-center justify-center shrink-0">
                       <Wand2 className="h-5 w-5 text-[#5b6949]" />
                     </div>
                     <div className="ml-3 flex flex-col">
-                      <div className="font-medium text-sm text-zinc-950">Start Fresh</div>
+                      <div className="font-medium text-sm text-zinc-950">
+                        Start Fresh
+                      </div>
                       <span className="text-xs text-gray-600 line-clamp-2">
                         Create a blank resume
                       </span>
@@ -623,50 +874,72 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                 </div>
               </div>
 
-              {importOption === 'import-profile' && (
+              {importOption === "import-profile" && (
                 <div className="space-y-6">
                   {/* Section Overview Cards */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('work_experience')}>
+                    <Card
+                      className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                      onClick={() => setActiveTab("work_experience")}
+                    >
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
                           <Users className="w-5 h-5 text-[#5b6949]" />
                         </div>
                         <div>
-                          <p className="text-lg font-bold text-zinc-900">{profile.work_experience.length}</p>
-                          <p className="text-sm text-zinc-600">Work Experience</p>
+                          <p className="text-lg font-bold text-zinc-900">
+                            {profile.work_experience.length}
+                          </p>
+                          <p className="text-sm text-zinc-600">
+                            Work Experience
+                          </p>
                         </div>
                       </div>
                     </Card>
-                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('education')}>
+                    <Card
+                      className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                      onClick={() => setActiveTab("education")}
+                    >
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
                           <FileText className="w-5 h-5 text-[#5b6949]" />
                         </div>
                         <div>
-                          <p className="text-lg font-bold text-zinc-900">{profile.education.length}</p>
+                          <p className="text-lg font-bold text-zinc-900">
+                            {profile.education.length}
+                          </p>
                           <p className="text-sm text-zinc-600">Education</p>
                         </div>
                       </div>
                     </Card>
-                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('skills')}>
+                    <Card
+                      className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                      onClick={() => setActiveTab("skills")}
+                    >
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
                           <Target className="w-5 h-5 text-[#5b6949]" />
                         </div>
                         <div>
-                          <p className="text-lg font-bold text-zinc-900">{profile.skills.length}</p>
+                          <p className="text-lg font-bold text-zinc-900">
+                            {profile.skills.length}
+                          </p>
                           <p className="text-sm text-zinc-600">Skills</p>
                         </div>
                       </div>
                     </Card>
-                    <Card className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group" onClick={() => setActiveTab('projects')}>
+                    <Card
+                      className="p-4 bg-white/80 border-zinc-200 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                      onClick={() => setActiveTab("projects")}
+                    >
                       <div className="flex items-center gap-3">
                         <div className="p-2 rounded-lg bg-[#5b6949]/10 group-hover:bg-[#5b6949]/20 transition-colors">
                           <Brain className="w-5 h-5 text-[#5b6949]" />
                         </div>
                         <div>
-                          <p className="text-lg font-bold text-zinc-900">{profile.projects.length}</p>
+                          <p className="text-lg font-bold text-zinc-900">
+                            {profile.projects.length}
+                          </p>
                           <p className="text-sm text-zinc-600">Projects</p>
                         </div>
                       </div>
@@ -674,28 +947,33 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                   </div>
 
                   {/* Tabbed Interface */}
-                  <Tabs value={activeTab} onValueChange={(value) => handleTabChange(value as keyof typeof selectedItems)}>
+                  <Tabs
+                    value={activeTab}
+                    onValueChange={(value) =>
+                      handleTabChange(value as keyof typeof selectedItems)
+                    }
+                  >
                     <TabsList className="grid w-full grid-cols-4 bg-white/80 border border-zinc-200 p-1 rounded-xl">
-                      <TabsTrigger 
-                        value="work_experience" 
+                      <TabsTrigger
+                        value="work_experience"
                         className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
                       >
                         Work Experience
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="education" 
+                      <TabsTrigger
+                        value="education"
                         className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
                       >
                         Education
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="skills" 
+                      <TabsTrigger
+                        value="skills"
                         className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
                       >
                         Skills
                       </TabsTrigger>
-                      <TabsTrigger 
-                        value="projects" 
+                      <TabsTrigger
+                        value="projects"
                         className="data-[state=active]:bg-[#5b6949] data-[state=active]:text-white rounded-lg transition-all duration-300"
                       >
                         Projects
@@ -704,56 +982,94 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
 
                     {/* Work Experience Tab */}
                     <TabsContent value="work_experience" className="mt-6">
-                  <div className="space-y-4">
+                      <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-[#5b6949]/10">
                               <Users className="w-5 h-5 text-[#5b6949]" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-semibold text-zinc-900">Work Experience</h3>
-                              <p className="text-sm text-zinc-600">Select positions to include in your resume</p>
+                              <h3 className="text-lg font-semibold text-zinc-900">
+                                Work Experience
+                              </h3>
+                              <p className="text-sm text-zinc-600">
+                                Select positions to include in your resume
+                              </p>
                             </div>
                           </div>
                           <Checkbox
                             id="work-experience-section"
-                            checked={isSectionSelected('work_experience')}
-                            onCheckedChange={(checked) => handleSectionSelection('work_experience', checked as boolean)}
+                            checked={isSectionSelected("work_experience")}
+                            onCheckedChange={(checked) =>
+                              handleSectionSelection(
+                                "work_experience",
+                                checked as boolean,
+                              )
+                            }
                             className={cn(
                               "mt-0.5",
-                              isSectionPartiallySelected('work_experience') && "data-[state=checked]:bg-[#5b6949]/50"
+                              isSectionPartiallySelected("work_experience") &&
+                                "data-[state=checked]:bg-[#5b6949]/50",
                             )}
                           />
-                            </div>
-                        
+                        </div>
+
                         <div className="space-y-3">
-                          {getCurrentItems(profile.work_experience).map((exp: WorkExperience, index: number) => {
-                              const id = getItemId('work_experience', exp);
+                          {getCurrentItems(profile.work_experience).map(
+                            (exp: WorkExperience, index: number) => {
+                              const id = getItemId("work_experience", exp);
                               return (
-                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
-                                <div className="flex items-start gap-3">
-                                  <Checkbox
-                                    id={id}
-                                    checked={selectedItems.work_experience.includes(id)}
-                                    onCheckedChange={() => handleItemSelection('work_experience', id)}
-                                    className="mt-1"
-                                  />
-                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('work_experience', id)}>
-                                    <div className="flex items-baseline justify-between mb-2">
-                                      <h4 className="font-semibold text-zinc-900">{exp.position}</h4>
-                                      <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{exp.date}</span>
+                                <Card
+                                  key={id}
+                                  className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300"
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <Checkbox
+                                      id={id}
+                                      checked={selectedItems.work_experience.includes(
+                                        id,
+                                      )}
+                                      onCheckedChange={() =>
+                                        handleItemSelection(
+                                          "work_experience",
+                                          id,
+                                        )
+                                      }
+                                      className="mt-1"
+                                    />
+                                    <div
+                                      className="flex-1 cursor-pointer"
+                                      onClick={() =>
+                                        handleItemSelection(
+                                          "work_experience",
+                                          id,
+                                        )
+                                      }
+                                    >
+                                      <div className="flex items-baseline justify-between mb-2">
+                                        <h4 className="font-semibold text-zinc-900">
+                                          {exp.position}
+                                        </h4>
+                                        <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">
+                                          {exp.date}
+                                        </span>
+                                      </div>
+                                      <p className="text-sm text-zinc-600 mb-2">
+                                        {exp.company}
+                                      </p>
+                                      {exp.description && (
+                                        <p className="text-xs text-zinc-500 line-clamp-2">
+                                          {exp.description}
+                                        </p>
+                                      )}
                                     </div>
-                                    <p className="text-sm text-zinc-600 mb-2">{exp.company}</p>
-                                    {exp.description && (
-                                      <p className="text-xs text-zinc-500 line-clamp-2">{exp.description}</p>
-                                    )}
                                   </div>
-                                </div>
-                              </Card>
+                                </Card>
                               );
-                            })}
-                          </div>
-                        <Pagination 
+                            },
+                          )}
+                        </div>
+                        <Pagination
                           totalPages={getTotalPages(profile.work_experience)}
                           currentPage={currentPage}
                           onPageChange={handlePageChange}
@@ -770,49 +1086,79 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                               <FileText className="w-5 h-5 text-[#5b6949]" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-semibold text-zinc-900">Education</h3>
-                              <p className="text-sm text-zinc-600">Select educational background to include</p>
+                              <h3 className="text-lg font-semibold text-zinc-900">
+                                Education
+                              </h3>
+                              <p className="text-sm text-zinc-600">
+                                Select educational background to include
+                              </p>
                             </div>
                           </div>
                           <Checkbox
                             id="education-section"
-                            checked={isSectionSelected('education')}
-                            onCheckedChange={(checked) => handleSectionSelection('education', checked as boolean)}
+                            checked={isSectionSelected("education")}
+                            onCheckedChange={(checked) =>
+                              handleSectionSelection(
+                                "education",
+                                checked as boolean,
+                              )
+                            }
                             className={cn(
                               "mt-0.5",
-                              isSectionPartiallySelected('education') && "data-[state=checked]:bg-[#5b6949]/50"
+                              isSectionPartiallySelected("education") &&
+                                "data-[state=checked]:bg-[#5b6949]/50",
                             )}
                           />
                         </div>
-                        
+
                         <div className="space-y-3">
-                          {getCurrentItems(profile.education).map((edu: Education, index: number) => {
-                            const id = getItemId('education', edu);
-                            return (
-                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
-                                <div className="flex items-start gap-3">
-                                  <Checkbox
-                                    id={id}
-                                    checked={selectedItems.education.includes(id)}
-                                    onCheckedChange={() => handleItemSelection('education', id)}
-                                    className="mt-1"
-                                  />
-                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('education', id)}>
-                                    <div className="flex items-baseline justify-between mb-2">
-                                      <h4 className="font-semibold text-zinc-900">{`${edu.degree} in ${edu.field}`}</h4>
-                                      <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{edu.date}</span>
+                          {getCurrentItems(profile.education).map(
+                            (edu: Education, index: number) => {
+                              const id = getItemId("education", edu);
+                              return (
+                                <Card
+                                  key={id}
+                                  className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300"
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <Checkbox
+                                      id={id}
+                                      checked={selectedItems.education.includes(
+                                        id,
+                                      )}
+                                      onCheckedChange={() =>
+                                        handleItemSelection("education", id)
+                                      }
+                                      className="mt-1"
+                                    />
+                                    <div
+                                      className="flex-1 cursor-pointer"
+                                      onClick={() =>
+                                        handleItemSelection("education", id)
+                                      }
+                                    >
+                                      <div className="flex items-baseline justify-between mb-2">
+                                        <h4 className="font-semibold text-zinc-900">{`${edu.degree} in ${edu.field}`}</h4>
+                                        <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">
+                                          {edu.date}
+                                        </span>
+                                      </div>
+                                      <p className="text-sm text-zinc-600 mb-2">
+                                        {edu.school}
+                                      </p>
+                                      {edu.gpa && (
+                                        <p className="text-xs text-zinc-500">
+                                          GPA: {edu.gpa}
+                                        </p>
+                                      )}
                                     </div>
-                                    <p className="text-sm text-zinc-600 mb-2">{edu.school}</p>
-                                    {edu.gpa && (
-                                      <p className="text-xs text-zinc-500">GPA: {edu.gpa}</p>
-                                    )}
                                   </div>
-                                </div>
-                              </Card>
-                            );
-                          })}
+                                </Card>
+                              );
+                            },
+                          )}
                         </div>
-                        <Pagination 
+                        <Pagination
                           totalPages={getTotalPages(profile.education)}
                           currentPage={currentPage}
                           onPageChange={handlePageChange}
@@ -829,137 +1175,239 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                               <Target className="w-5 h-5 text-[#5b6949]" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-semibold text-zinc-900">Skills</h3>
-                              <p className="text-sm text-zinc-600">Select skill categories to include</p>
+                              <h3 className="text-lg font-semibold text-zinc-900">
+                                Skills
+                              </h3>
+                              <p className="text-sm text-zinc-600">
+                                Select skill categories to include
+                              </p>
                             </div>
                           </div>
                           <Checkbox
                             id="skills-section"
-                            checked={isSectionSelected('skills')}
-                            onCheckedChange={(checked) => handleSectionSelection('skills', checked as boolean)}
+                            checked={isSectionSelected("skills")}
+                            onCheckedChange={(checked) =>
+                              handleSectionSelection(
+                                "skills",
+                                checked as boolean,
+                              )
+                            }
                             className={cn(
                               "mt-0.5",
-                              isSectionPartiallySelected('skills') && "data-[state=checked]:bg-[#5b6949]/50"
+                              isSectionPartiallySelected("skills") &&
+                                "data-[state=checked]:bg-[#5b6949]/50",
                             )}
                           />
-                            </div>
-                        
+                        </div>
+
                         <div className="space-y-3">
-                          {getCurrentItems(profile.skills).map((skill: Skill, index: number) => {
-                              const id = getItemId('skills', skill);
+                          {getCurrentItems(profile.skills).map(
+                            (skill: Skill, index: number) => {
+                              const id = getItemId("skills", skill);
                               return (
-                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
-                                <div className="flex items-start gap-3">
-                                  <Checkbox
-                                    id={id}
-                                    checked={selectedItems.skills.includes(id)}
-                                    onCheckedChange={() => handleItemSelection('skills', id)}
-                                    className="mt-1"
-                                  />
-                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('skills', id)}>
-                                    <h4 className="font-semibold text-zinc-900 mb-3">{skill.category}</h4>
-                                    <div className="flex flex-wrap gap-2">
-                                      {skill.items.map((item: string, skillIndex: number) => (
-                                        <Badge
-                                          key={skillIndex}
-                                          variant="secondary"
-                                          className="bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20 text-xs px-1.5 py-0"
-                                        >
-                                          {item}
-                                        </Badge>
-                                      ))}
+                                <Card
+                                  key={id}
+                                  className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300"
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <Checkbox
+                                      id={id}
+                                      checked={selectedItems.skills.includes(
+                                        id,
+                                      )}
+                                      onCheckedChange={() =>
+                                        handleItemSelection("skills", id)
+                                      }
+                                      className="mt-1"
+                                    />
+                                    <div
+                                      className="flex-1 cursor-pointer"
+                                      onClick={() =>
+                                        handleItemSelection("skills", id)
+                                      }
+                                    >
+                                      <h4 className="font-semibold text-zinc-900 mb-3">
+                                        {skill.category}
+                                      </h4>
+                                      <div className="flex flex-wrap gap-2">
+                                        {skill.items.map(
+                                          (
+                                            item: string,
+                                            skillIndex: number,
+                                          ) => (
+                                            <Badge
+                                              key={skillIndex}
+                                              variant="secondary"
+                                              className="bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20 text-xs px-1.5 py-0"
+                                            >
+                                              {item}
+                                            </Badge>
+                                          ),
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </Card>
+                                </Card>
                               );
-                            })}
-                          </div>
-                        <Pagination 
+                            },
+                          )}
+                        </div>
+                        <Pagination
                           totalPages={getTotalPages(profile.skills)}
                           currentPage={currentPage}
                           onPageChange={handlePageChange}
                         />
-                  </div>
+                      </div>
                     </TabsContent>
 
                     {/* Projects Tab */}
                     <TabsContent value="projects" className="mt-6">
-                  <div className="space-y-4">
+                      <div className="space-y-4">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="p-2 rounded-lg bg-[#5b6949]/10">
                               <Brain className="w-5 h-5 text-[#5b6949]" />
                             </div>
                             <div>
-                              <h3 className="text-lg font-semibold text-zinc-900">Projects</h3>
-                              <p className="text-sm text-zinc-600">Select projects to showcase</p>
+                              <h3 className="text-lg font-semibold text-zinc-900">
+                                Projects
+                              </h3>
+                              <p className="text-sm text-zinc-600">
+                                Select projects to showcase
+                              </p>
                             </div>
                           </div>
                           <Checkbox
                             id="projects-section"
-                            checked={isSectionSelected('projects')}
-                            onCheckedChange={(checked) => handleSectionSelection('projects', checked as boolean)}
+                            checked={isSectionSelected("projects")}
+                            onCheckedChange={(checked) =>
+                              handleSectionSelection(
+                                "projects",
+                                checked as boolean,
+                              )
+                            }
                             className={cn(
                               "mt-0.5",
-                              isSectionPartiallySelected('projects') && "data-[state=checked]:bg-[#5b6949]/50"
+                              isSectionPartiallySelected("projects") &&
+                                "data-[state=checked]:bg-[#5b6949]/50",
                             )}
                           />
-                            </div>
-                        
+                        </div>
+
                         <div className="space-y-3">
-                          {getCurrentItems(profile.projects).map((project: Project, index: number) => {
-                              const id = getItemId('projects', project);
+                          {getCurrentItems(profile.projects).map(
+                            (project: Project, index: number) => {
+                              const id = getItemId("projects", project);
                               return (
-                              <Card key={id} className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300">
-                                <div className="flex items-start gap-3">
-                                  <Checkbox
-                                    id={id}
-                                    checked={selectedItems.projects.includes(id)}
-                                    onCheckedChange={() => handleItemSelection('projects', id)}
-                                    className="mt-1"
-                                  />
-                                  <div className="flex-1 cursor-pointer" onClick={() => handleItemSelection('projects', id)}>
-                                    <div className="flex items-baseline justify-between mb-2">
-                                      <h4 className="font-semibold text-zinc-900">{project.name}</h4>
-                                      {project.date && (
-                                        <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{project.date}</span>
+                                <Card
+                                  key={id}
+                                  className="p-4 bg-white/80 border-zinc-200 hover:shadow-md transition-all duration-300"
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <Checkbox
+                                      id={id}
+                                      checked={selectedItems.projects.includes(
+                                        id,
+                                      )}
+                                      onCheckedChange={() =>
+                                        handleItemSelection("projects", id)
+                                      }
+                                      className="mt-1"
+                                    />
+                                    <div
+                                      className="flex-1 cursor-pointer"
+                                      onClick={() =>
+                                        handleItemSelection("projects", id)
+                                      }
+                                    >
+                                      <div className="flex items-baseline justify-between mb-2">
+                                        <h4 className="font-semibold text-zinc-900">
+                                          {project.name}
+                                        </h4>
+                                        {project.date && (
+                                          <span className="text-sm text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">
+                                            {project.date}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {project.description && (
+                                        <p className="text-sm text-zinc-600 mb-2 line-clamp-2">
+                                          {project.description}
+                                        </p>
+                                      )}
+                                      {project.technologies && (
+                                        <div className="flex flex-wrap gap-1">
+                                          {project.technologies.map(
+                                            (
+                                              tech: string,
+                                              techIndex: number,
+                                            ) => (
+                                              <Badge
+                                                key={techIndex}
+                                                variant="secondary"
+                                                className="bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20 text-xs px-1.5 py-0"
+                                              >
+                                                {tech}
+                                              </Badge>
+                                            ),
+                                          )}
+                                        </div>
                                       )}
                                     </div>
-                                    {project.description && (
-                                      <p className="text-sm text-zinc-600 mb-2 line-clamp-2">{project.description}</p>
-                                    )}
-                                    {project.technologies && (
-                                      <div className="flex flex-wrap gap-1">
-                                        {project.technologies.map((tech: string, techIndex: number) => (
-                                          <Badge
-                                            key={techIndex}
-                                            variant="secondary"
-                                            className="bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20 text-xs px-1.5 py-0"
-                                          >
-                                            {tech}
-                                          </Badge>
-                                        ))}
-                                      </div>
-                                    )}
                                   </div>
-                                </div>
-                              </Card>
+                                </Card>
                               );
-                            })}
-                          </div>
-                        <Pagination 
+                            },
+                          )}
+                        </div>
+                        <Pagination
                           totalPages={getTotalPages(profile.projects)}
                           currentPage={currentPage}
                           onPageChange={handlePageChange}
                         />
-                            </div>
+                      </div>
                     </TabsContent>
                   </Tabs>
                 </div>
               )}
 
-              {importOption === 'import-resume' && (
+              {importOption === "import-linkedin" && (
+                <div className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Globe className="w-5 h-5 text-blue-600 mt-0.5" />
+                      <div className="flex-1">
+                        <h4 className="text-sm font-medium text-blue-900 mb-1">
+                          LinkedIn Profile Scraper
+                        </h4>
+                        <p className="text-xs text-blue-700">
+                          Enter your LinkedIn profile URL below. We'll
+                          automatically extract your work experience, education,
+                          skills, and projects to create your resume.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <Label
+                      htmlFor="linkedin-url"
+                      className="text-sm font-medium text-zinc-950"
+                    >
+                      LinkedIn Profile URL{" "}
+                      <span className="text-red-500">*</span>
+                    </Label>
+                    <Input
+                      id="linkedin-url"
+                      placeholder="https://www.linkedin.com/in/your-profile"
+                      value={linkedinUrl}
+                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      className="bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {importOption === "import-resume" && (
                 <div className="space-y-4">
                   <label
                     onDragEnter={handleDrag}
@@ -970,7 +1418,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       "border-2 border-dashed rounded-lg p-8 flex flex-col items-center justify-center gap-3 transition-colors duration-200 cursor-pointer group",
                       isDragging
                         ? "border-[#5b6949] bg-zinc-50/50"
-                        : "border-gray-200 hover:border-[#5b6949]/50 hover:bg-zinc-50/10"
+                        : "border-gray-200 hover:border-[#5b6949]/50 hover:bg-zinc-50/10",
                     )}
                   >
                     <input
@@ -984,13 +1432,13 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       <p className="text-sm font-medium text-foreground">
                         Drop your PDF resume here
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-gray-700">
                         or click to browse files
                       </p>
                     </div>
                   </label>
                   <div className="relative">
-                    <div className="absolute -top-3 left-3 bg-white px-2 text-sm text-muted-foreground">
+                    <div className="absolute rounded-md border border-gray-200 -top-3 left-3 bg-white px-2 text-sm text-gray-700">
                       Or paste your resume text here
                     </div>
                     <Textarea
@@ -998,7 +1446,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                       value={resumeText}
                       onChange={(e) => setResumeText(e.target.value)}
                       placeholder="Start pasting your resume content here..."
-                      className="min-h-[200px] bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20 pt-4"
+                      className="min-h-[200px] text-gray-800 bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20 pt-4"
                     />
                   </div>
                 </div>
@@ -1009,42 +1457,44 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
 
         {/* Error Dialog */}
         <ApiErrorDialog
-        open={showErrorDialog}
-        onOpenChange={setShowErrorDialog}
-        errorMessage={errorMessage}
-        onUpgrade={() => {
-          setShowErrorDialog(false);
-          window.location.href = '/subscription';
-        }}
-        onSettings={() => {
-          setShowErrorDialog(false);
-          window.location.href = '/settings';
-        }}
-      />
+          open={showErrorDialog}
+          onOpenChange={setShowErrorDialog}
+          errorMessage={errorMessage}
+          onUpgrade={() => {
+            setShowErrorDialog(false);
+            window.location.href = "/subscription";
+          }}
+          onSettings={() => {
+            setShowErrorDialog(false);
+            window.location.href = "/settings";
+          }}
+        />
 
         {/* Footer Section */}
-        <div className={cn(
-          "px-8 py-4 border-t sticky bottom-0 z-10 bg-white/50 backdrop-blur-xl",
-          "border-zinc-200/20 bg-white/40"
-        )}>
+        <div
+          className={cn(
+            "px-8 py-4 border-t sticky bottom-0 z-10 bg-white/50 backdrop-blur-xl",
+            "border-zinc-200/20 bg-white/40",
+          )}
+        >
           <div className="flex justify-end gap-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => setOpen(false)}
               className={cn(
                 "border-gray-200 text-gray-600",
                 "hover:bg-white/60",
-                "hover:border-zinc-200"
+                "hover:border-zinc-200",
               )}
             >
               Cancel
             </Button>
-            <Button 
-              onClick={handleCreate} 
+            <Button
+              onClick={handleCreate}
               disabled={isCreating}
               className={cn(
                 "text-white shadow-lg hover:shadow-xl transition-all duration-500",
-                "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 hover:from-[#5b6949]/90 hover:to-[#5b6949]/70"
+                "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
               )}
             >
               {isCreating ? (
@@ -1053,7 +1503,7 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
                   Creating...
                 </>
               ) : (
-                'Create Resume'
+                "Create Resume"
               )}
             </Button>
           </div>
@@ -1061,4 +1511,4 @@ export function CreateBaseResumeDialog({ children, profile }: CreateBaseResumeDi
       </DialogContent>
     </Dialog>
   );
-} 
+}

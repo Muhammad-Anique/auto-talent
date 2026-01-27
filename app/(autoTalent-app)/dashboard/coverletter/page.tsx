@@ -8,7 +8,14 @@ import { useLoading } from "@/context/LoadingContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { FileText, Plus, Sparkles, ArrowRight, AlertCircle, Search } from "lucide-react";
+import {
+  FileText,
+  Plus,
+  Sparkles,
+  ArrowRight,
+  AlertCircle,
+  Search,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CoverLetter {
@@ -20,7 +27,9 @@ interface CoverLetter {
 
 const CoverLettersPage = () => {
   const [coverLetters, setCoverLetters] = useState<CoverLetter[]>([]);
-  const [filteredCoverLetters, setFilteredCoverLetters] = useState<CoverLetter[]>([]);
+  const [filteredCoverLetters, setFilteredCoverLetters] = useState<
+    CoverLetter[]
+  >([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,7 +41,7 @@ const CoverLettersPage = () => {
       .from("cover_letters")
       .select("*")
       .order("created_at", { ascending: false });
-    
+
     if (data) {
       const sortedData = data as CoverLetter[];
       setCoverLetters(sortedData);
@@ -56,7 +65,9 @@ const CoverLettersPage = () => {
     const filtered = coverLetters.filter((coverLetter) => {
       const searchLower = searchQuery.toLowerCase();
       const titleMatch = coverLetter.title.toLowerCase().includes(searchLower);
-      const contentMatch = coverLetter.context.toLowerCase().includes(searchLower);
+      const contentMatch = coverLetter.context
+        .toLowerCase()
+        .includes(searchLower);
       return titleMatch || contentMatch;
     });
 
@@ -66,22 +77,22 @@ const CoverLettersPage = () => {
   const handleCreateCoverLetter = async (
     title: string,
     jobDescription: string,
-    tone: number
+    tone: number,
   ) => {
     try {
       setLoading(true);
       setError(null);
-  
+
       // Get current user
       const {
         data: { user },
         error: userError,
       } = await supabase.auth.getUser();
-  
+
       if (userError || !user) {
         throw new Error("User not authenticated");
       }
-  
+
       const response = await fetch("/api/generate-cover-letter", {
         method: "POST",
         headers: {
@@ -89,13 +100,13 @@ const CoverLettersPage = () => {
         },
         body: JSON.stringify({ title, jobDescription, tone }),
       });
-  
+
       const result = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(result.error || "Failed to generate cover letter");
       }
-  
+
       const generatedContent = result.coverLetter || result.context;
 
       // Insert into Supabase with user_id
@@ -106,22 +117,21 @@ const CoverLettersPage = () => {
           context: generatedContent,
           user_id: user.id,
         });
-  
+
       if (insertError) {
         throw new Error("Failed to save cover letter to Supabase");
       }
-  
+
       await fetchCoverLetters();
       setIsModalOpen(false);
     } catch (err) {
       setLoading(false);
-      
+
       if (err instanceof Error) {
-          setError(err.message);
+        setError(err.message);
       } else {
-          setError('An unexpected error occurred.');
+        setError("An unexpected error occurred.");
       }
-  
     } finally {
       setLoading(false);
     }
@@ -137,28 +147,29 @@ const CoverLettersPage = () => {
             <FileText className="w-12 h-12 text-[#5b6949]" />
           </div>
         </div>
-        
+
         {/* Description */}
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold text-gray-900">
             No cover letters created yet
           </h2>
           <p className="text-gray-600 max-w-md">
-            Start building your professional profile by creating your first cover letter
+            Start building your professional profile by creating your first
+            cover letter
           </p>
         </div>
-        
+
         {/* Button */}
         <Button
           onClick={() => setIsModalOpen(true)}
           disabled={loading}
           className={cn(
             "inline-flex items-center gap-2",
-            "rounded-full text-base font-medium px-8 py-3",
+            "rounded-full text-gray-800 font-medium px-8 py-3",
             "transition-all duration-500",
             "bg-[#5b6949]",
             "text-white hover:shadow-xl hover:shadow-[#5b6949]/25",
-            "hover:-translate-y-1 hover:scale-105"
+            "hover:-translate-y-1 hover:scale-105",
           )}
         >
           <Plus className="w-5 h-5" />
@@ -174,10 +185,12 @@ const CoverLettersPage = () => {
         {/* Header Section */}
         <div className="space-y-4">
           <div className="flex items-center gap-4">
-            <div className={cn(
-              "p-3 rounded-xl transition-all duration-300",
-              "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
-            )}>
+            <div
+              className={cn(
+                "p-3 rounded-xl transition-all duration-300",
+                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
+              )}
+            >
               <FileText className="w-6 h-6 text-[#5b6949]" />
             </div>
             <div>
@@ -199,7 +212,7 @@ const CoverLettersPage = () => {
                 placeholder="Search cover letters by title or content..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-12 text-base bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                className="pl-10 h-12 text-gray-800 bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
               />
             </div>
           )}
@@ -213,7 +226,7 @@ const CoverLettersPage = () => {
                 "text-white shadow-lg hover:shadow-xl transition-all duration-500",
                 "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80",
                 "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
-                "group"
+                "group",
               )}
             >
               <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
@@ -222,7 +235,8 @@ const CoverLettersPage = () => {
 
             {coverLetters.length > 0 && (
               <div className="text-sm text-zinc-500">
-                {filteredCoverLetters.length} of {coverLetters.length} cover letter{coverLetters.length !== 1 ? 's' : ''} 
+                {filteredCoverLetters.length} of {coverLetters.length} cover
+                letter{coverLetters.length !== 1 ? "s" : ""}
                 {searchQuery && ` matching "${searchQuery}"`}
               </div>
             )}
@@ -244,7 +258,9 @@ const CoverLettersPage = () => {
           <Card className="p-6 bg-zinc-50 border-zinc-200">
             <div className="flex items-center justify-center gap-3">
               <div className="w-4 h-4 border-2 border-[#5b6949] border-t-transparent rounded-full animate-spin" />
-              <span className="text-zinc-600">Creating your cover letter...</span>
+              <span className="text-zinc-600">
+                Creating your cover letter...
+              </span>
             </div>
           </Card>
         )}
@@ -266,16 +282,18 @@ const CoverLettersPage = () => {
         )}
 
         {/* No Search Results */}
-        {coverLetters.length > 0 && filteredCoverLetters.length === 0 && searchQuery && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200">
-              <Search className="w-4 h-4 text-gray-500" />
-              <span className="text-gray-600 text-sm">
-                No cover letters found matching "{searchQuery}"
-              </span>
+        {coverLetters.length > 0 &&
+          filteredCoverLetters.length === 0 &&
+          searchQuery && (
+            <div className="text-center py-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200">
+                <Search className="w-4 h-4 text-gray-500" />
+                <span className="text-gray-600 text-sm">
+                  No cover letters found matching "{searchQuery}"
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       {/* Modal */}

@@ -10,109 +10,118 @@ interface ChatInputProps {
   onStop: () => void;
 }
 
-export default function ChatInput({ 
-    isLoading, 
-    onSubmit,
-    onStop,
-  }: ChatInputProps) {
-    const [inputValue, setInputValue] = useState("");
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+export default function ChatInput({
+  isLoading,
+  onSubmit,
+  onStop,
+}: ChatInputProps) {
+  const [inputValue, setInputValue] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    const adjustTextareaHeight = useCallback(() => {
-      const textarea = textareaRef.current;
-      if (!textarea) return;
+  const adjustTextareaHeight = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
 
-      // Reset height to auto to get the correct scrollHeight
-      textarea.style.height = 'auto';
-      
-      // Calculate new height (capped at 6 lines ~ 144px)
-      const newHeight = Math.min(textarea.scrollHeight, 144);
-      textarea.style.height = `${newHeight}px`;
-    }, []);
+    // Reset height to auto to get the correct scrollHeight
+    textarea.style.height = "auto";
 
-    // Adjust height whenever input value changes
-    useEffect(() => {
-      adjustTextareaHeight();
-    }, [inputValue, adjustTextareaHeight]);
+    // Calculate new height (capped at 6 lines ~ 144px)
+    const newHeight = Math.min(textarea.scrollHeight, 144);
+    textarea.style.height = `${newHeight}px`;
+  }, []);
 
-    const handleSubmit = useCallback((e: React.FormEvent) => {
+  // Adjust height whenever input value changes
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [inputValue, adjustTextareaHeight]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
       e.preventDefault();
       if (inputValue.trim()) {
-        const cleanedMessage = inputValue.replace(/\n+$/, '').trim();
+        const cleanedMessage = inputValue.replace(/\n+$/, "").trim();
         onSubmit(cleanedMessage);
         setInputValue("");
       }
-    }, [inputValue, onSubmit]);
+    },
+    [inputValue, onSubmit],
+  );
 
-    return (
-      <form onSubmit={handleSubmit} className={cn(
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className={cn(
         "relative z-10",
         "p-1 border-t border-zinc-200/60",
         "bg-white/40",
         "backdrop-blur-sm",
-        "flex gap-1.5"
-      )}>
-        <Textarea
-          ref={textareaRef}
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              if (!e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e);
-              } else {
-                // Ensure height is adjusted after Shift+Enter
-                requestAnimationFrame(adjustTextareaHeight);
-              }
+        "flex gap-1.5",
+      )}
+    >
+      <Textarea
+        ref={textareaRef}
+        value={inputValue}
+        onChange={(event) => setInputValue(event.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            if (!e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            } else {
+              // Ensure height is adjusted after Shift+Enter
+              requestAnimationFrame(adjustTextareaHeight);
             }
-          }}
-          placeholder="Ask me anything about your resume..."
-          rows={1}
-          className={cn(
-            "flex-1",
-            "bg-white/60",
-            "border-zinc-200/60",
-            "focus:border-[#5b6949]",
-            "focus:ring-2 focus:ring-[#5b6949]/10",
-            "placeholder:text-zinc-400",
-            "text-sm",
-            "min-h-[32px]",
-            "max-h-[144px]", // Approximately 6 lines
-            "resize-none",
-            "overflow-y-auto",
-            "px-2 py-1.5",
-            "transition-height duration-200",
-            "scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent"
-          )}
-        />
-        <Button 
-          type={isLoading ? "button" : "submit"}
-          onClick={isLoading ? onStop : undefined}
-          size="sm"
-          className={cn(
-            isLoading ? [
-              "bg-gradient-to-br from-rose-500 to-pink-500",
-              "hover:from-rose-600 hover:to-pink-600",
-            ] : [
-              "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/90",
-              "hover:from-[#5b6949]/90 hover:to-[#5b6949]/80",
-            ],
-            "text-white",
-            "border-none",
-            "shadow-md shadow-[#5b6949]/10",
-            "transition-all duration-300",
-            "hover:scale-105 hover:shadow-lg",
-            "hover:-translate-y-0.5",
-            "px-2 h-8"
-          )}
-        >
-          {isLoading ? (
-            <X className="h-3.5 w-3.5" />
-          ) : (
-            <Send className="h-3.5 w-3.5" />
-          )}
-        </Button>
-      </form>
-    );
+          }
+        }}
+        placeholder="Ask me anything about your resume..."
+        rows={1}
+        className={cn(
+          "flex-1",
+          "text-gray-800",
+          "bg-white/60",
+          "border-zinc-200/60",
+          "focus:border-[#5b6949]",
+          "focus:ring-2 focus:ring-[#5b6949]/10",
+          "placeholder:text-zinc-400",
+          "text-sm",
+          "min-h-[32px]",
+          "max-h-[144px]", // Approximately 6 lines
+          "resize-none",
+          "overflow-y-auto",
+          "px-2 py-1.5",
+          "transition-height duration-200",
+          "scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent",
+        )}
+      />
+      <Button
+        type={isLoading ? "button" : "submit"}
+        onClick={isLoading ? onStop : undefined}
+        size="sm"
+        className={cn(
+          isLoading
+            ? [
+                "bg-gradient-to-br from-rose-500 to-pink-500",
+                "hover:from-rose-600 hover:to-pink-600",
+              ]
+            : [
+                "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/90",
+                "hover:from-[#5b6949]/90 hover:to-[#5b6949]/80",
+              ],
+          "text-white",
+          "border-none",
+          "shadow-md shadow-[#5b6949]/10",
+          "transition-all duration-300",
+          "hover:scale-105 hover:shadow-lg",
+          "hover:-translate-y-0.5",
+          "px-2 h-8",
+        )}
+      >
+        {isLoading ? (
+          <X className="h-3.5 w-3.5" />
+        ) : (
+          <Send className="h-3.5 w-3.5" />
+        )}
+      </Button>
+    </form>
+  );
 }

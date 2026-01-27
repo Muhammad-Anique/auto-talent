@@ -411,18 +411,18 @@ export default function AutoApplyForm() {
           skills: Array.isArray(profile.skills)
             ? profile.skills
             : profile.skills
-            ? [profile.skills]
-            : [],
+              ? [profile.skills]
+              : [],
           workExperience: Array.isArray(profile.work_experience)
             ? profile.work_experience
             : profile.work_experience
-            ? [profile.work_experience]
-            : [],
+              ? [profile.work_experience]
+              : [],
           education: Array.isArray(profile.education)
             ? profile.education
             : profile.education
-            ? [profile.education]
-            : [],
+              ? [profile.education]
+              : [],
           projects: profile.projects || "",
           certifications: profile.certifications || "",
         };
@@ -497,7 +497,7 @@ export default function AutoApplyForm() {
         // Auto-fill form with data from the most recent resume
         const latestResume = resumes.sort(
           (a: any, b: any) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
         )[0];
 
         console.log("Latest resume:", latestResume);
@@ -518,18 +518,18 @@ export default function AutoApplyForm() {
             prev.skills.length > 0
               ? prev.skills
               : Array.isArray(latestResume.skills)
-              ? latestResume.skills
-              : latestResume.skills
-              ? [latestResume.skills]
-              : [],
+                ? latestResume.skills
+                : latestResume.skills
+                  ? [latestResume.skills]
+                  : [],
           workExperience:
             prev.workExperience.length > 0
               ? prev.workExperience
               : Array.isArray(latestResume.work_experience)
-              ? latestResume.work_experience
-              : latestResume.work_experience
-              ? [latestResume.work_experience]
-              : [],
+                ? latestResume.work_experience
+                : latestResume.work_experience
+                  ? [latestResume.work_experience]
+                  : [],
           education: prev.education || latestResume.education || "",
           projects: prev.projects || latestResume.projects || "",
           certifications:
@@ -557,7 +557,7 @@ export default function AutoApplyForm() {
   }, [supabaseClient]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value, type } = e.target;
     if (type === "checkbox") {
@@ -602,7 +602,7 @@ export default function AutoApplyForm() {
       if (!validation.isValid) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.INVALID_FORM_DATA,
-          validation.error || "Invalid file"
+          validation.error || "Invalid file",
         );
         const notification =
           AutoApplyNotificationManager.createErrorNotification(error);
@@ -629,7 +629,7 @@ export default function AutoApplyForm() {
     if (!supabaseClient) {
       const error = AutoApplyErrorHandler.createError(
         AutoApplyErrorCode.DATABASE_ERROR,
-        "System not ready. Please try again."
+        "System not ready. Please try again.",
       );
       AutoApplyErrorHandler.logError(error);
       setError(AutoApplyErrorHandler.getErrorMessage(error));
@@ -650,8 +650,8 @@ export default function AutoApplyForm() {
           AutoApplyNotificationManager.createErrorNotification(
             AutoApplyErrorHandler.createError(
               AutoApplyErrorCode.INVALID_FORM_DATA,
-              "Please fix the validation errors below"
-            )
+              "Please fix the validation errors below",
+            ),
           );
         AutoApplyNotificationManager.showNotification(notification, toast);
         return;
@@ -665,7 +665,7 @@ export default function AutoApplyForm() {
       if (authError || !user) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.AUTHENTICATION_ERROR,
-          "You must be logged in to submit a configuration"
+          "You must be logged in to submit a configuration",
         );
         AutoApplyErrorHandler.logError(error);
         const notification =
@@ -678,7 +678,7 @@ export default function AutoApplyForm() {
       if (credits < 10) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.INSUFFICIENT_CREDITS,
-          `You need at least 10 credits to submit a configuration. Current credits: ${credits}`
+          `You need at least 10 credits to submit a configuration. Current credits: ${credits}`,
         );
         AutoApplyErrorHandler.logError(error);
         const notification =
@@ -691,7 +691,7 @@ export default function AutoApplyForm() {
       if (existingForm && !searchParams.get("edit")) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.CONFIGURATION_INVALID,
-          "You can only have one configuration at a time. Please edit your existing configuration or delete it first."
+          "You can only have one configuration at a time. Please edit your existing configuration or delete it first.",
         );
         AutoApplyErrorHandler.logError(error);
         const notification =
@@ -787,7 +787,7 @@ export default function AutoApplyForm() {
       if (dbErr) {
         const error = AutoApplyErrorHandler.createError(
           AutoApplyErrorCode.DATABASE_ERROR,
-          "Failed to save configuration"
+          "Failed to save configuration",
         );
         AutoApplyErrorHandler.logError(error, { dbErr });
         const notification =
@@ -808,7 +808,7 @@ export default function AutoApplyForm() {
         if (fetchError && fetchError.code !== "PGRST116") {
           console.error(
             "Error fetching user for credit deduction:",
-            fetchError
+            fetchError,
           );
         } else {
           // Update user with reduced credits
@@ -827,7 +827,7 @@ export default function AutoApplyForm() {
               },
               {
                 onConflict: "id",
-              }
+              },
             );
 
           if (creditError) {
@@ -841,14 +841,14 @@ export default function AutoApplyForm() {
 
       const notification =
         AutoApplyNotificationManager.createConfigurationNotification(
-          !!existingForm
+          !!existingForm,
         );
       AutoApplyNotificationManager.showNotification(notification, toast);
       setTimeout(() => router.push("/dashboard/auto-apply"), 1500);
     } catch (err: any) {
       const autoApplyError = AutoApplyErrorHandler.createError(
         AutoApplyErrorCode.UNKNOWN_ERROR,
-        err?.message || "An error occurred while submitting the form"
+        err?.message || "An error occurred while submitting the form",
       );
       AutoApplyErrorHandler.logError(autoApplyError);
       const notification =
@@ -868,7 +868,7 @@ export default function AutoApplyForm() {
               <Settings className="w-8 h-8 text-primary" />
             </div>
             <h2 className="text-2xl font-bold">Welcome to Auto-Apply Setup</h2>
-            <p className="text-muted-foreground">
+            <p className="text-gray-700">
               We'll guide you through configuring your automated job application
               system. This will take about 10-15 minutes to complete all
               sections.
@@ -930,7 +930,7 @@ export default function AutoApplyForm() {
               <User className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold">Personal Information</h3>
               {loadingProfile && (
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-gray-700">
                   Loading profile data...
                 </span>
               )}
@@ -1204,7 +1204,7 @@ export default function AutoApplyForm() {
                           size="sm"
                           onClick={() => {
                             const newSkills = form.skills.filter(
-                              (_, i) => i !== index
+                              (_, i) => i !== index,
                             );
                             setForm((prev) => ({ ...prev, skills: newSkills }));
                           }}
@@ -1286,7 +1286,7 @@ export default function AutoApplyForm() {
                           size="sm"
                           onClick={() => {
                             const newExp = form.workExperience.filter(
-                              (_, i) => i !== index
+                              (_, i) => i !== index,
                             );
                             setForm((prev) => ({
                               ...prev,
@@ -1455,7 +1455,7 @@ export default function AutoApplyForm() {
                           size="sm"
                           onClick={() => {
                             const newEdu = form.education.filter(
-                              (_, i) => i !== index
+                              (_, i) => i !== index,
                             );
                             setForm((prev) => ({ ...prev, education: newEdu }));
                           }}
@@ -1652,7 +1652,7 @@ export default function AutoApplyForm() {
               <FileText className="w-5 h-5 text-primary" />
               <h3 className="text-lg font-semibold">Resume Selection</h3>
               {loadingResumes && (
-                <span className="text-sm text-muted-foreground">
+                <span className="text-sm text-gray-700">
                   Loading resumes...
                 </span>
               )}
@@ -1661,7 +1661,7 @@ export default function AutoApplyForm() {
             <div className="space-y-6">
               {/* Existing Resumes */}
               <div>
-                <Label className="text-base font-medium mb-3 block">
+                <Label className="text-gray-800 font-medium mb-3 block">
                   Select from your existing resumes:
                 </Label>
                 {userResumes.length > 0 ? (
@@ -1712,7 +1712,7 @@ export default function AutoApplyForm() {
 
               {/* Upload New Resume */}
               <div className="border-t pt-6">
-                <Label className="text-base font-medium mb-3 block">
+                <Label className="text-gray-800 font-medium mb-3 block">
                   Or upload a new resume:
                 </Label>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -2011,7 +2011,7 @@ export default function AutoApplyForm() {
             <div className="text-center">
               <CheckCircle2 className="w-12 h-12 mx-auto text-green-500 mb-4" />
               <h3 className="text-lg font-semibold">Review & Submit</h3>
-              <p className="text-muted-foreground">
+              <p className="text-gray-700">
                 Please review your configuration before submitting.
               </p>
             </div>
@@ -2068,9 +2068,7 @@ export default function AutoApplyForm() {
             <span className="text-sm font-medium">
               Step {step + 1} of {stepLabels.length}
             </span>
-            <span className="text-sm text-muted-foreground">
-              {stepLabels[step]}
-            </span>
+            <span className="text-sm text-gray-700">{stepLabels[step]}</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div

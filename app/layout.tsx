@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { LoadingProvider } from "@/context/LoadingContext";
 import LoadingOverlay from "@/context/LoadingOverlay";
+import { LocaleProvider } from "@/components/providers/locale-provider";
+import { HtmlWrapper } from "@/components/providers/html-wrapper";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -28,10 +30,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LoadingProvider>
-          <LoadingOverlay />
-          {children}
-        </LoadingProvider>
+        <LocaleProvider>
+          <HtmlWrapper>
+            <LoadingProvider>
+              <LoadingOverlay />
+              {children}
+            </LoadingProvider>
+          </HtmlWrapper>
+        </LocaleProvider>
       </body>
     </html>
   );

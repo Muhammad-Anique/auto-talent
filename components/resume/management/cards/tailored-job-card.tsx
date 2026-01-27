@@ -132,7 +132,7 @@ export function TailoredJobCard({
   };
 
   const handleJobDescriptionChange = (
-    e: React.ChangeEvent<HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLTextAreaElement>,
   ) => {
     const value = e.target.value;
     setJobDescription(value);
@@ -305,7 +305,7 @@ export function TailoredJobCard({
                   "shadow-lg shadow-pink-500/10",
                   "hover:shadow-xl hover:shadow-pink-500/20",
                   "hover:scale-105",
-                  "transition-all duration-500"
+                  "transition-all duration-500",
                 )}
                 aria-label="Create new job listing"
               >
@@ -320,13 +320,13 @@ export function TailoredJobCard({
                 "bg-gradient-to-b from-white/95 to-white/90",
                 "backdrop-blur-xl",
                 "border-pink-200/40",
-                "shadow-xl shadow-pink-500/10"
+                "shadow-xl shadow-pink-500/10",
               )}
             >
               <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-pink-600 to-rose-600 bg-clip-text text-transparent">
                 Create New Job Listing
               </DialogTitle>
-              <DialogDescription className="text-muted-foreground">
+              <DialogDescription className="text-gray-700">
                 Paste the job description below and let our AI format it
                 automatically.
               </DialogDescription>
@@ -344,7 +344,7 @@ export function TailoredJobCard({
                       "placeholder:text-gray-400",
                       validationErrors.jobDescription
                         ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-                        : "border-gray-200 focus:border-pink-500 focus:ring-pink-500/20"
+                        : "border-gray-200 focus:border-pink-500 focus:ring-pink-500/20",
                     )}
                     aria-invalid={!!validationErrors.jobDescription}
                     aria-describedby="job-description-error"
@@ -366,7 +366,7 @@ export function TailoredJobCard({
                     className={cn(
                       "border-gray-200",
                       "hover:bg-gray-50",
-                      "transition-colors duration-300"
+                      "transition-colors duration-300",
                     )}
                   >
                     Cancel
@@ -386,7 +386,7 @@ export function TailoredJobCard({
                       "shadow-lg hover:shadow-xl",
                       "disabled:opacity-50 disabled:cursor-not-allowed",
                       "disabled:hover:from-pink-500 disabled:hover:to-rose-500",
-                      "transition-all duration-300"
+                      "transition-all duration-300",
                     )}
                     aria-busy={isFormatting || isCreating}
                   >
@@ -466,7 +466,7 @@ export function TailoredJobCard({
                       "flex items-center gap-2",
                       "text-sm text-gray-600",
                       `group-hover:text-${item.color}-600`,
-                      "transition-colors duration-300"
+                      "transition-colors duration-300",
                     )}
                   >
                     <item.icon className="w-4 h-4" />
@@ -572,7 +572,7 @@ export function TailoredJobAccordion({
             <div
               className={cn(
                 "p-1 rounded-md transition-transform duration-300 group-data-[state=open]:scale-105",
-                "bg-pink-100/80"
+                "bg-pink-100/80",
               )}
             >
               <BriefcaseIcon className={cn("h-3.5 w-3.5", "text-pink-600")} />
@@ -608,7 +608,7 @@ export function TailoredJobAccordion({
                   "hover:bg-red-50/50",
                   "transition-all duration-300",
                   "rounded-lg",
-                  "gap-2"
+                  "gap-2",
                 )}
               >
                 {isDeleting ? (

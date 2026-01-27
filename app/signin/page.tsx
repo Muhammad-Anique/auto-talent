@@ -3,16 +3,17 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
-import Header from "@/components/header";
 import { BrainCircuitIcon, Loader2Icon, ArrowLeft } from "lucide-react";
 
 function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [signInMode, setSignInMode] = useState<"password" | "magic">("password");
 
   // Redirect to dashboard if already signed in
   useEffect(() => {
@@ -33,7 +34,27 @@ function SignInForm() {
     }
   }, [searchParams]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePasswordSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess(false);
+    setLoading(true);
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (signInError) {
+      setError(signInError.message);
+      setLoading(false);
+    } else {
+      // Redirect to dashboard
+      router.push("/dashboard");
+    }
+  };
+
+  const handleMagicLinkSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
@@ -43,17 +64,12 @@ function SignInForm() {
     // Ensure we have a full URL with protocol and correct callback path
     const redirectTo = `${baseUrl}/auth/callback?next=/dashboard`;
 
-    console.log("Magic link redirectTo:", redirectTo); // Debug log
-    console.log("Base URL:", baseUrl); // Debug log
-
     const { error: signInError, data } = await supabase.auth.signInWithOtp({
       email,
       options: {
         emailRedirectTo: redirectTo,
       },
     });
-
-    console.log("Sign in response:", { error: signInError, data }); // Debug log
 
     if (signInError) {
       setError(signInError.message);
@@ -86,7 +102,7 @@ function SignInForm() {
       <div className="absolute top-4 left-4">
         <button
           onClick={() => router.push("/landing")}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-2 text-gray-700 hover:text-gray-900 transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Home
@@ -96,13 +112,40 @@ function SignInForm() {
       <div className="w-full max-w-sm mx-auto flex flex-col">
         {/* Logo/Icon */}
         <div className="mb-6 mt-2 flex ">
-          <span className="inline-flex w-12 h-12 rounded-full bg-[#5b6949] bg-opacity-10 overflow-hidden items-center justify-center">
-            <BrainCircuitIcon className="text-[#ffffff] size-8" />
+          <span className="inline-flex w-12 h-12 rounded-full bg-[#5b6949] overflow-hidden items-center justify-center">
+            <BrainCircuitIcon className="text-white size-8" />
           </span>
         </div>
         <h2 className="text-3xl text-gray-900 font-bold mb-2">Sign in</h2>
-        <p className=" text-gray-500 mb-6">Enter your email to get started</p>
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
+        <p className="text-gray-600 mb-6">Enter your email and password to get started</p>
+
+        {/* Toggle between Password and Magic Link */}
+        <div className="flex gap-2 mb-4 w-full">
+          <button
+            type="button"
+            onClick={() => setSignInMode("password")}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
+              signInMode === "password"
+                ? "bg-[#5b6949] text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            Password
+          </button>
+          <button
+            type="button"
+            onClick={() => setSignInMode("magic")}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
+              signInMode === "magic"
+                ? "bg-[#5b6949] text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            Magic Link
+          </button>
+        </div>
+
+        <form onSubmit={signInMode === "password" ? handlePasswordSignIn : handleMagicLinkSignIn} className="w-full flex flex-col gap-4">
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
           {success && (
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-sm">
@@ -116,12 +159,23 @@ function SignInForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#5b6949]"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5b6949] text-gray-900"
           />
+          {signInMode === "password" && (
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#5b6949] text-gray-900"
+            />
+          )}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 text-white bg-[#5b6949] rounded-md transition disabled:opacity-50 font-medium"
+            className="w-full py-2 text-white bg-[#5b6949] rounded-md transition disabled:opacity-50 font-medium hover:bg-[#4a5438]"
           >
             {loading ? (
               <span className="flex items-center justify-center">
@@ -129,15 +183,15 @@ function SignInForm() {
                 Signing In...
               </span>
             ) : (
-              "Sign in"
+              signInMode === "password" ? "Sign in with Password" : "Send Magic Link"
             )}
           </button>
         </form>
         {/* Divider */}
         <div className="flex items-center my-6 w-full">
-          <div className="flex-grow h-px bg-gray-200" />
-          <span className="mx-3 text-gray-400 text-sm">Or continue with</span>
-          <div className="flex-grow h-px bg-gray-200" />
+          <div className="flex-grow h-px bg-gray-300" />
+          <span className="mx-3 text-gray-600 text-sm">Or continue with</span>
+          <div className="flex-grow h-px bg-gray-300" />
         </div>
         {/* Google Sign In */}
         <button
@@ -150,20 +204,20 @@ function SignInForm() {
             alt="Google"
             className="h-5 w-5"
           />
-          <span className="font-medium text-gray-900">Google</span>
+          <span className="font-medium text-gray-900">Sign in with Google</span>
         </button>
         {/* reCAPTCHA and privacy text */}
-        <div className="mt-8 text-xs text-gray-400 text-center">
+        <div className="mt-8 text-xs text-gray-500 text-center">
           <p>
             This site is protected by reCAPTCHA and the Google Privacy Policy.
           </p>
           <p className="mt-2">
             By signing in, you agree to our{" "}
-            <a href="#" className="underline text-gray-500 hover:text-blue-600">
+            <a href="#" className="underline text-gray-700 hover:text-[#5b6949]">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="#" className="underline text-gray-500 hover:text-blue-600">
+            <a href="#" className="underline text-gray-700 hover:text-[#5b6949]">
               Privacy Policy
             </a>
             .

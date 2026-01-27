@@ -64,6 +64,7 @@ export interface Resume {
   name: string;
   target_role: string;
   is_base_resume: boolean;
+  current_language?: string;
   first_name: string;
   last_name: string;
   email: string;

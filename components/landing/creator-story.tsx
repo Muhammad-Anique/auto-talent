@@ -22,32 +22,36 @@ export function CreatorStory() {
             <h2 className="text-4xl font-bold tracking-tight sm:text-uxl bg-gradient-to-r from-violet-600 via-blue-600 to-violet-600 bg-clip-text text-transparent">
               Why I Built Auto Talent
             </h2>
-            
-            <div className="space-y-4 text-lg text-muted-foreground/90 leading-relaxed">
+
+            <div className="space-y-4 text-lg text-gray-700/90 leading-relaxed">
               <p>
-                Hi, I&apos;m Alex! I&apos;m a Computer Science student at the University of British Columbia in Vancouver, 
-                and like many students, I&apos;ve been through the challenging journey of searching for tech internships.
+                Hi, I&apos;m Alex! I&apos;m a Computer Science student at the
+                University of British Columbia in Vancouver, and like many
+                students, I&apos;ve been through the challenging journey of
+                searching for tech internships.
               </p>
-              
+
               <p>
-                Auto Talent is my passion project - a free, open-source resume builder designed to help students and developers 
-                create ATS-optimized resumes without the hefty subscription costs. Because everyone deserves access to great tools.
+                Auto Talent is my passion project - a free, open-source resume
+                builder designed to help students and developers create
+                ATS-optimized resumes without the hefty subscription costs.
+                Because everyone deserves access to great tools.
               </p>
 
               <div className="flex gap-4 pt-2">
-                <a 
-                  href="https://x.com/alexfromvan" 
-                  target="_blank" 
+                <a
+                  href="https://x.com/alexfromvan"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-violet-600 transition-colors"
+                  className="text-gray-700 hover:text-violet-600 transition-colors"
                 >
                   Twitter ↗
                 </a>
-                <a 
-                  href="https://github.com/olyaiy" 
-                  target="_blank" 
+                <a
+                  href="https://github.com/olyaiy"
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-violet-600 transition-colors"
+                  className="text-gray-700 hover:text-violet-600 transition-colors"
                 >
                   GitHub ↗
                 </a>
@@ -58,4 +62,4 @@ export function CreatorStory() {
       </div>
     </div>
   );
-} 
+}

@@ -17,7 +17,7 @@ export interface ResumeScoreMetrics {
     score: number;
     reason: string;
   };
-  
+
   completeness: {
     contactInformation: {
       score: number;
@@ -28,7 +28,7 @@ export interface ResumeScoreMetrics {
       reason: string;
     };
   };
-  
+
   impactScore: {
     activeVoiceUsage: {
       score: number;
@@ -70,18 +70,18 @@ interface ResumeScorePanelProps {
   resume: Resume;
 }
 
-const LOCAL_STORAGE_KEY = 'Auto Talent-resume-scores';
+const LOCAL_STORAGE_KEY = "Auto Talent-resume-scores";
 const MAX_SCORES = 10;
 
 function getStoredScores(resumeId: string): ResumeScoreMetrics | null {
   try {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (!stored) return null;
-    
+
     const scores = new Map(JSON.parse(stored));
     return scores.get(resumeId) as ResumeScoreMetrics | null;
   } catch (error) {
-    console.error('Error reading stored scores:', error);
+    console.error("Error reading stored scores:", error);
     return null;
   }
 }
@@ -100,7 +100,7 @@ function updateStoredScores(resumeId: string, score: ResumeScoreMetrics) {
     scores.set(resumeId, score);
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(Array.from(scores)));
   } catch (error) {
-    console.error('Error storing score:', error);
+    console.error("Error storing score:", error);
   }
 }
 
@@ -122,13 +122,13 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
   const handleRecalculate = async () => {
     setIsCalculating(true);
     try {
-      const MODEL_STORAGE_KEY = 'Auto Talent-default-model';
+      const MODEL_STORAGE_KEY = "Auto Talent-default-model";
       const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
-  
-      const response = await fetch('/api/generate-resume-score', {
-        method: 'POST',
+
+      const response = await fetch("/api/generate-resume-score", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           resume: {
@@ -137,18 +137,18 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
             section_order: undefined,
           },
           config: {
-            model: selectedModel || '',
+            model: selectedModel || "",
             apiKeys: [], // Or fetch from localStorage if needed
           },
         }),
       });
-  
+
       if (!response.ok) {
         throw new Error(`Server error: ${response.statusText}`);
       }
-  
+
       const newScore = await response.json();
-  
+
       // Update state and storage
       setScoreData(newScore as ResumeScoreMetrics);
       updateStoredScores(resume.id, newScore as ResumeScoreMetrics);
@@ -158,7 +158,7 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
       setIsCalculating(false);
     }
   };
-  
+
   // If no score data is available, show the empty state
   if (!scoreData) {
     return (
@@ -169,8 +169,9 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
             <h1 className="text-3xl font-semibold mb-2 bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 bg-clip-text text-transparent">
               Resume Score Analysis
             </h1>
-            <p className="text-muted-foreground text-lg">
-              No score analysis available yet. Generate one to see how your resume measures up!
+            <p className="text-gray-700 text-lg">
+              No score analysis available yet. Generate one to see how your
+              resume measures up!
             </p>
             <Button
               onClick={handleRecalculate}
@@ -178,13 +179,12 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
               size="lg"
               className="bg-gradient-to-r from-[#5b6949] to-[#5b6949]/90 text-white hover:opacity-90"
             >
-              <RefreshCw 
-                className={cn(
-                  "mr-2 h-4 w-4",
-                  isCalculating && "animate-spin"
-                )} 
+              <RefreshCw
+                className={cn("mr-2 h-4 w-4", isCalculating && "animate-spin")}
               />
-              {isCalculating ? "Analyzing Resume..." : "Generate Score Analysis"}
+              {isCalculating
+                ? "Analyzing Resume..."
+                : "Generate Score Analysis"}
             </Button>
           </div>
         </Card>
@@ -202,11 +202,8 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
           variant="outline"
           className="bg-white/50 hover:bg-white/60 border-white/40"
         >
-          <RefreshCw 
-            className={cn(
-              "mr-2 h-4 w-4",
-              isCalculating && "animate-spin"
-            )} 
+          <RefreshCw
+            className={cn("mr-2 h-4 w-4", isCalculating && "animate-spin")}
           />
           Recalculate Score
         </Button>
@@ -222,9 +219,9 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
               text={`${scoreData.overallScore.score}%`}
               styles={buildStyles({
                 pathColor: `rgba(91, 105, 73, ${scoreData.overallScore.score / 100})`,
-                textColor: '#5b6949',
-                trailColor: '#E2E8F0',
-                pathTransitionDuration: 1
+                textColor: "#5b6949",
+                trailColor: "#E2E8F0",
+                pathTransitionDuration: 1,
               })}
             />
           </div>
@@ -232,14 +229,18 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
             <h1 className="text-3xl font-semibold mb-2 bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 bg-clip-text text-transparent">
               Resume Score Analysis
             </h1>
-            <p className="text-muted-foreground text-lg">{scoreData.overallScore.reason}</p>
+            <p className="text-gray-700 text-lg">
+              {scoreData.overallScore.reason}
+            </p>
           </div>
         </div>
       </Card>
 
       {/* Key Improvements Card */}
       <Card className="bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-xl border-white/40 p-6">
-        <h2 className="text-xl font-semibold mb-4 text-[#5b6949]">Key Improvements</h2>
+        <h2 className="text-xl font-semibold mb-4 text-[#5b6949]">
+          Key Improvements
+        </h2>
         <div className="space-y-3">
           {scoreData.overallImprovements.map((improvement, index) => (
             <motion.div
@@ -250,7 +251,7 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
               className="flex items-start gap-3"
             >
               <div className="mt-1.5 h-2 w-2 rounded-full bg-[#5b6949]" />
-              <p className="text-muted-foreground">{improvement}</p>
+              <p className="text-gray-700">{improvement}</p>
             </motion.div>
           ))}
         </div>
@@ -260,7 +261,7 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
       {Object.entries({
         Completeness: scoreData.completeness,
         "Impact Score": scoreData.impactScore,
-        "Role Match": scoreData.roleMatch
+        "Role Match": scoreData.roleMatch,
       }).map(([title, metrics]) => (
         <MetricsCard key={title} title={title} metrics={metrics} />
       ))}
@@ -268,7 +269,13 @@ export default function ResumeScorePanel({ resume }: ResumeScorePanelProps) {
   );
 }
 
-function MetricsCard({ title, metrics }: { title: string; metrics: Record<string, { score: number; reason: string }> }) {
+function MetricsCard({
+  title,
+  metrics,
+}: {
+  title: string;
+  metrics: Record<string, { score: number; reason: string }>;
+}) {
   return (
     <Card className="bg-gradient-to-br from-white/50 to-white/30 backdrop-blur-xl border-white/40 p-6">
       <h2 className="text-xl font-semibold mb-6 text-[#5b6949]">{title}</h2>
@@ -281,7 +288,15 @@ function MetricsCard({ title, metrics }: { title: string; metrics: Record<string
   );
 }
 
-function ScoreItem({ label, score, reason }: { label: string; score: number; reason: string }) {
+function ScoreItem({
+  label,
+  score,
+  reason,
+}: {
+  label: string;
+  score: number;
+  reason: string;
+}) {
   const getScoreColor = (score: number) => {
     if (score >= 90) return "bg-emerald-500";
     if (score >= 70) return "bg-[#5b6949]";
@@ -297,10 +312,14 @@ function ScoreItem({ label, score, reason }: { label: string; score: number; rea
     >
       <div className="flex justify-between items-center">
         <span className="text-sm font-medium text-gray-700">{label}</span>
-        <span className={cn(
-          "text-sm font-semibold px-2 py-1 rounded-full",
-          score >= 70 ? "bg-[#5b6949]/10 text-[#5b6949]" : "bg-yellow-100 text-yellow-700"
-        )}>
+        <span
+          className={cn(
+            "text-sm font-semibold px-2 py-1 rounded-full",
+            score >= 70
+              ? "bg-[#5b6949]/10 text-[#5b6949]"
+              : "bg-yellow-100 text-yellow-700",
+          )}
+        >
           {score}/100
         </span>
       </div>
@@ -312,7 +331,7 @@ function ScoreItem({ label, score, reason }: { label: string; score: number; rea
           className={cn("h-full rounded-full", getScoreColor(score))}
         />
       </div>
-      <p className="text-sm text-muted-foreground">{reason}</p>
+      <p className="text-sm text-gray-700">{reason}</p>
     </motion.div>
   );
 }

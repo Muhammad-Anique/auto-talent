@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { Skill } from "@/lib/types";
 import { Input } from "@/components/ui/input";
@@ -18,15 +18,25 @@ interface ProfileSkillsFormProps {
   onChange: (skills: Skill[]) => void;
 }
 
-export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) {
+export function ProfileSkillsForm({
+  skills,
+  onChange,
+}: ProfileSkillsFormProps) {
   const addSkill = () => {
-    onChange([...skills, {
-      category: "",
-      items: []
-    }]);
+    onChange([
+      ...skills,
+      {
+        category: "",
+        items: [],
+      },
+    ]);
   };
 
-  const updateSkill = (index: number, field: keyof Skill, value: Skill[typeof field]) => {
+  const updateSkill = (
+    index: number,
+    field: keyof Skill,
+    value: Skill[typeof field],
+  ) => {
     const updated = [...skills];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -36,20 +46,20 @@ export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) 
     onChange(skills.filter((_, i) => i !== index));
   };
 
-  const [skillInputs, setSkillInputs] = React.useState<{ [key: number]: string }>(
-    Object.fromEntries(skills.map((s, i) => [i, s.items?.join(', ') || '']))
-  );
+  const [skillInputs, setSkillInputs] = React.useState<{
+    [key: number]: string;
+  }>(Object.fromEntries(skills.map((s, i) => [i, s.items?.join(", ") || ""])));
 
   React.useEffect(() => {
-    setSkillInputs(Object.fromEntries(
-      skills.map((s, i) => [i, s.items?.join(', ') || ''])
-    ));
+    setSkillInputs(
+      Object.fromEntries(skills.map((s, i) => [i, s.items?.join(", ") || ""])),
+    );
   }, [skills]);
 
   return (
     <div className="space-y-3">
-      <Accordion 
-        type="multiple" 
+      <Accordion
+        type="multiple"
         className="space-y-3"
         defaultValue={skills.map((_, index) => `skill-${index}`)}
       >
@@ -80,8 +90,10 @@ export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) 
                   <div className="relative group flex-1">
                     <Input
                       value={skill.category}
-                      onChange={(e) => updateSkill(index, 'category', e.target.value)}
-                      className="text-base bg-white/50 border-zinc-200 rounded-md h-8
+                      onChange={(e) =>
+                        updateSkill(index, "category", e.target.value)
+                      }
+                      className="text-gray-800 bg-white/50 border-zinc-200 rounded-md h-8
                         focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]/20
                         hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors
                         placeholder:text-zinc-400"
@@ -91,8 +103,8 @@ export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) 
                       CATEGORY
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => removeSkill(index)}
                     className="text-zinc-400 hover:text-red-500 transition-colors duration-200 h-8 w-8"
@@ -104,38 +116,45 @@ export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) 
                 {/* Skills */}
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-baseline">
-                    <Label className="text-xs font-medium text-[#5b6949]">Skills</Label>
-                    <span className="text-[9px] text-zinc-500">Separate with commas</span>
+                    <Label className="text-xs font-medium text-[#5b6949]">
+                      Skills
+                    </Label>
+                    <span className="text-[9px] text-zinc-500">
+                      Separate with commas
+                    </span>
                   </div>
                   <Input
-                    value={skillInputs[index] || ''}
+                    value={skillInputs[index] || ""}
                     onChange={(e) => {
                       const newValue = e.target.value;
-                      setSkillInputs(prev => ({ ...prev, [index]: newValue }));
-                      
-                      if (newValue.endsWith(',')) {
+                      setSkillInputs((prev) => ({
+                        ...prev,
+                        [index]: newValue,
+                      }));
+
+                      if (newValue.endsWith(",")) {
                         const items = newValue
-                          .split(',')
-                          .map(t => t.trim())
+                          .split(",")
+                          .map((t) => t.trim())
                           .filter(Boolean);
-                        updateSkill(index, 'items', items);
+                        updateSkill(index, "items", items);
                       } else {
                         const items = newValue
-                          .split(',')
-                          .map(t => t.trim())
+                          .split(",")
+                          .map((t) => t.trim())
                           .filter(Boolean);
-                        updateSkill(index, 'items', items);
+                        updateSkill(index, "items", items);
                       }
                     }}
                     onBlur={(e) => {
                       const items = e.target.value
-                        .split(',')
-                        .map(t => t.trim())
+                        .split(",")
+                        .map((t) => t.trim())
                         .filter(Boolean);
-                      updateSkill(index, 'items', items);
-                      setSkillInputs(prev => ({ 
-                        ...prev, 
-                        [index]: items.join(', ') 
+                      updateSkill(index, "items", items);
+                      setSkillInputs((prev) => ({
+                        ...prev,
+                        [index]: items.join(", "),
                       }));
                     }}
                     placeholder="e.g., TypeScript, React, Node.js, AWS"
@@ -151,8 +170,8 @@ export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) 
         ))}
       </Accordion>
 
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         onClick={addSkill}
         className="w-full bg-zinc-50 hover:bg-zinc-100 border-dashed border-zinc-300 hover:border-[#5b6949]/40 text-zinc-700 hover:text-[#5b6949] transition-all duration-200 h-8 text-sm"
       >
@@ -161,4 +180,4 @@ export function ProfileSkillsForm({ skills, onChange }: ProfileSkillsFormProps) 
       </Button>
     </div>
   );
-} 
+}

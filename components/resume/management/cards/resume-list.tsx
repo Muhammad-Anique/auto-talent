@@ -6,7 +6,7 @@ import { format } from "date-fns";
 interface ResumeListProps {
   resumes: Resume[];
   title: string;
-  type: 'base' | 'tailored';
+  type: "base" | "tailored";
   accentColor: {
     bg: string;
     border: string;
@@ -24,7 +24,7 @@ export function ResumeList({
   accentColor,
   emptyMessage,
   className,
-  itemClassName
+  itemClassName,
 }: ResumeListProps) {
   if (!resumes || resumes.length === 0) {
     return emptyMessage;
@@ -43,18 +43,18 @@ export function ResumeList({
             `hover:border-${accentColor.hover}`,
             "shadow-sm hover:shadow-md",
             "transform hover:-translate-y-0.5",
-            itemClassName
+            itemClassName,
           )}
         >
           <div className="absolute inset-0 p-1.5">
             {/* Resume Header */}
             <div className="border-b border-gray-200/70 pb-1 mb-1">
               <div className="text-[12px] font-medium text-gray-800">
-                {type === 'base' ? resume.target_role : resume.name}
+                {type === "base" ? resume.target_role : resume.name}
               </div>
-              <div className="text-[10px] text-muted-foreground truncate mb-1 flex items-center gap-0.5">
+              <div className="text-[10px] text-gray-700 truncate mb-1 flex items-center gap-0.5">
                 <span className={`text-${accentColor.text} font-bold`}>
-                  {type === 'base' ? 'Base Resume' : 'Tailored Resume'}
+                  {type === "base" ? "Base Resume" : "Tailored Resume"}
                 </span>
               </div>
               <div className="h-1 w-12 bg-gray-200/70 rounded-full" />
@@ -95,8 +95,8 @@ export function ResumeList({
 
             {/* Date at bottom left */}
             <div className="absolute bottom-0 left-0 p-0.5">
-              <p className="text-[10px] text-muted-foreground">
-                Updated {format(new Date(resume.updated_at), 'MMM d, yyyy')}
+              <p className="text-[10px] text-gray-700">
+                Updated {format(new Date(resume.updated_at), "MMM d, yyyy")}
               </p>
             </div>
           </div>
@@ -104,4 +104,4 @@ export function ResumeList({
       ))}
     </div>
   );
-} 
+}

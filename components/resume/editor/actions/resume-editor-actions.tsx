@@ -2,7 +2,7 @@
 
 import { Resume } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2, Save } from "lucide-react";
+import { Download, Loader2, Save, Languages } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { pdf } from '@react-pdf/renderer';
 import { TextImport } from "../../text-import";
@@ -14,6 +14,10 @@ import { updateResume } from "@/utils/actions/resumes/actions";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import { LanguageSelector } from './language-selector';
+import { TranslationDialog } from '../dialogs/translation-dialog';
+import { translateResume } from '@/utils/actions/translation/actions';
+import type { TranslationLanguage } from '@/lib/translation-config';
 
 interface ResumeEditorActionsProps {
   onResumeChange: (field: keyof Resume, value: Resume[keyof Resume]) => void;
@@ -29,6 +33,9 @@ export function ResumeEditorActions({
     coverLetter: true,
     followUpEmail: true
   });
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [showTranslationDialog, setShowTranslationDialog] = useState(false);
+  const [targetLanguage, setTargetLanguage] = useState<TranslationLanguage>('en');
 
   // Save Resume
   const handleSave = async () => {
@@ -50,6 +57,63 @@ export function ResumeEditorActions({
     }
   };
 
+  // Translate Resume
+  const handleTranslate = async () => {
+    if (!targetLanguage || targetLanguage === resume.current_language) return;
+
+    setIsTranslating(true);
+    try {
+      // Get model and API key from local storage
+      const MODEL_STORAGE_KEY = 'resumelm-default-model';
+      const LOCAL_STORAGE_KEY = 'resumelm-api-keys';
+
+      const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
+      const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
+      let apiKeys = [];
+
+      try {
+        apiKeys = storedKeys ? JSON.parse(storedKeys) : [];
+      } catch (error) {
+        console.error('Error parsing API keys:', error);
+      }
+
+      const translatedResume = await translateResume(
+        state.resume,
+        targetLanguage,
+        { model: selectedModel || 'gpt-4o-mini', apiKeys }
+      );
+
+      // Update context with translated resume
+      dispatch({ type: 'UPDATE_FIELD', field: 'work_experience', value: translatedResume.work_experience });
+      dispatch({ type: 'UPDATE_FIELD', field: 'education', value: translatedResume.education });
+      dispatch({ type: 'UPDATE_FIELD', field: 'skills', value: translatedResume.skills });
+      dispatch({ type: 'UPDATE_FIELD', field: 'projects', value: translatedResume.projects });
+      dispatch({ type: 'UPDATE_FIELD', field: 'target_role', value: translatedResume.target_role });
+      dispatch({ type: 'UPDATE_FIELD', field: 'current_language', value: targetLanguage });
+
+      if (translatedResume.cover_letter) {
+        dispatch({ type: 'UPDATE_FIELD', field: 'cover_letter', value: translatedResume.cover_letter });
+      }
+      if (translatedResume.follow_up_email) {
+        dispatch({ type: 'UPDATE_FIELD', field: 'follow_up_email', value: translatedResume.follow_up_email });
+      }
+
+      toast({
+        title: "Translation complete",
+        description: "Your resume has been translated successfully.",
+      });
+    } catch (error) {
+      console.error('Translation error:', error);
+      toast({
+        title: "Translation failed",
+        description: error instanceof Error ? error.message : "Unable to translate your resume. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTranslating(false);
+      setShowTranslationDialog(false);
+    }
+  };
 
   // Dynamic color classes based on resume type
   const colors = {
@@ -90,13 +154,32 @@ export function ResumeEditorActions({
 
   return (
     <div className="px-1 py-2 @container">
-      <div className="grid grid-cols-3 gap-2">
-        {/* Text Import Button */}
-        <TextImport
-          resume={resume}
-          onResumeChange={onResumeChange}
-          className={importButtonClasses}
-        />
+      <div className="space-y-2">
+        {/* Translation Row */}
+        <div className="flex items-center gap-2 p-2 bg-zinc-50 rounded-md border border-zinc-200">
+          <Languages className="h-3.5 w-3.5 text-zinc-500" />
+          <span className="text-xs text-zinc-600 font-medium">Language:</span>
+          <LanguageSelector
+            currentLanguage={resume.current_language || 'en'}
+            onLanguageSelect={(lang) => {
+              setTargetLanguage(lang);
+              setShowTranslationDialog(true);
+            }}
+            disabled={isTranslating || isSaving}
+          />
+          {isTranslating && (
+            <Loader2 className="h-3.5 w-3.5 animate-spin text-[#5b6949]" />
+          )}
+        </div>
+
+        {/* Action Buttons Grid */}
+        <div className="grid grid-cols-3 gap-2">
+          {/* Text Import Button */}
+          <TextImport
+            resume={resume}
+            onResumeChange={onResumeChange}
+            className={importButtonClasses}
+          />
 
         {/* Download Button */}
         <TooltipProvider>
@@ -373,7 +456,17 @@ export function ResumeEditorActions({
             </>
           )}
         </Button>
+        </div>
       </div>
+
+      {/* Translation Dialog */}
+      <TranslationDialog
+        isOpen={showTranslationDialog}
+        onOpenChange={setShowTranslationDialog}
+        targetLanguage={targetLanguage}
+        currentLanguage={resume.current_language || 'en'}
+        onConfirm={handleTranslate}
+      />
     </div>
   );
 } 

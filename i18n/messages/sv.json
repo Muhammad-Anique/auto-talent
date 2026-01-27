@@ -1,0 +1,327 @@
+{
+  "header": {
+    "tools": "Verktyg",
+    "autoApply": "Automatisk ansökan",
+    "interviewBuddy": "Intervjuassistent",
+    "aiResumeBuilder": "AI CV-byggare",
+    "aiCoverLetterBuilder": "AI personligt brev-byggare",
+    "aiMockInterview": "AI övningsintervju",
+    "aiResumeScanner": "AI CV-skanner",
+    "jobBoard": "Jobbtavla",
+    "resumeTranslator": "CV-översättare",
+    "linkedinToResume": "LinkedIn till CV",
+    "resumeExamples": "CV-exempel",
+    "coverLetterExamples": "Personligt brev-exempel",
+    "hello": "Hej",
+    "dashboard": "Kontrollpanel",
+    "redirecting": "Omdirigerar",
+    "signOut": "Logga ut",
+    "logIn": "Logga in",
+    "startNow": "Börja nu"
+  },
+  "hero": {
+    "trustpilotRating": "Utmärkt",
+    "trustpilotPlatform": "Trustpilot",
+    "headlinePart1": "Förändra ditt jobbsökande",
+    "headlineHighlight": "med AI-driven automatisering",
+    "description": "Låt AI göra det tunga arbetet. Ansök automatiskt, följ framsteg och få intervjuer snabbare.",
+    "ctaPrimary": "Starta gratis provperiod",
+    "ctaSecondary": "Se demo",
+    "trustedBy": "Betrodd av",
+    "userCount": "50 000+ yrkesverksamma",
+    "partnersTitle": "Betrodd av yrkesverksamma på ledande företag",
+    "features": {
+      "atsOptimized": "ATS-optimerad",
+      "resumeCvBuilder": "CV-byggare",
+      "autoApply": "Automatisk ansökan",
+      "aiJobMatching": "AI-driven jobbmatchning",
+      "interviewAssistant": "Intervjuassistent"
+    },
+    "dashboard": {
+      "title": "Live kontrollpanel",
+      "subtitle": "Realtidsspårning av jobbansökningar",
+      "active": "Aktiv",
+      "applicationsSent": "Ansökningar skickade",
+      "thisWeek": "+23 denna vecka",
+      "interviews": "Intervjuer",
+      "successRate": "4.9% framgångsgrad",
+      "applied": "Ansökt",
+      "pending": "Väntande",
+      "perfectMatch": "Perfekt matchning",
+      "highMatch": "Hög matchning",
+      "hoursAgo": "2 timmar sedan",
+      "dayAgo": "1 dag sedan"
+    }
+  },
+  "tools": {
+    "title": "Allt du behöver för att få ditt drömjobb – snabbt",
+    "aiResumeBuilder": {
+      "title": "AI CV-byggare",
+      "description": "Skräddarsydda CV:n för varje ansökan"
+    },
+    "coverLetterGenerator": {
+      "title": "Personligt brev-generator",
+      "description": "Personliga brev för högre svarsfrekvens"
+    },
+    "autoApply": {
+      "title": "Automatisk jobbansökan",
+      "description": "Ansök till hundratals jobb med ett klick"
+    },
+    "interviewSimulator": {
+      "title": "Intervjusimulator",
+      "description": "Öva med övningsintervjuer"
+    },
+    "interviewAssistant": {
+      "title": "Realtids AI-intervjuassistent",
+      "description": "Få realtidshjälp under intervjuer"
+    },
+    "resumeTranslator": {
+      "title": "CV-översättare",
+      "description": "Översätt ditt CV till flera språk"
+    }
+  },
+  "benefits": {
+    "badge": "Varför välja AutoTalent",
+    "title": "Allt du behöver för att",
+    "titleHighlight": "få ditt drömjobb",
+    "description": "Vår omfattande plattform kombinerar AI-driven automatisering med expertinsikter för att effektivisera hela din jobbsökningsprocess.",
+    "intelligentMatching": {
+      "title": "Intelligent jobbmatchning",
+      "description": "Vårt AI-drivna system analyserar dina färdigheter, erfarenhet och preferenser för att hitta perfekta jobbmatchningar.",
+      "features": ["Smart algoritm", "Personliga resultat", "Realtidsuppdateringar"]
+    },
+    "automatedApplications": {
+      "title": "Automatiserade ansökningar",
+      "description": "Ansök till hundratals jobb med ett enda klick. Vårt system hanterar hela ansökningsprocessen.",
+      "features": ["Ett-klicks ansökan", "Massansökningar", "Tidsbesparande effektivitet"]
+    },
+    "resumeOptimization": {
+      "title": "CV-optimering",
+      "description": "Få ditt CV anpassat för varje ansökan. Vår AI säkerställer att ditt CV passerar ATS-system.",
+      "features": ["ATS-optimering", "Anpassad skräddarsömnad", "Professionell formatering"]
+    },
+    "interviewPrep": {
+      "title": "Intervjuförberedelse",
+      "description": "Klara dina intervjuer med AI-drivna övningssessioner och personliga frågor.",
+      "features": ["Övningsintervjuer", "Frågebank", "Prestationsanalys"]
+    },
+    "cta": {
+      "title": "Redo att förändra ditt jobbsökande?",
+      "description": "Gå med tusentals yrkesverksamma som redan automatiserat sitt jobbsökande.",
+      "button": "Kom igång gratis"
+    }
+  },
+  "resumeExamples": {
+    "badge": "CV-mallar",
+    "title": "CV-exempel som",
+    "titleHighlight": "ger resultat",
+    "description": "Professionellt designade och ATS-vänliga för toppbranscher",
+    "viewAll": "Visa alla CV-exempel",
+    "updated": "Uppdaterad",
+    "experience": "Erfarenhet",
+    "skills": "Färdigheter",
+    "roles": {
+      "softwareEngineer": {
+        "title": "Mjukvaruingenjör",
+        "description": "Perfekt för utvecklare, programmerare och teknikproffs"
+      },
+      "marketingManager": {
+        "title": "Marknadschef",
+        "description": "Idealisk för marknadsförare och varumärkesexperter"
+      },
+      "dataAnalyst": {
+        "title": "Dataanalytiker",
+        "description": "Skräddarsydd för datavetare och affärsanalytiker"
+      },
+      "uxDesigner": {
+        "title": "UX-designer",
+        "description": "Skapad för designers och användarupplevelse-proffs"
+      },
+      "salesManager": {
+        "title": "Försäljningschef",
+        "description": "Designad för säljare och affärsutvecklare"
+      },
+      "projectManager": {
+        "title": "Projektledare",
+        "description": "Perfekt för projektledare och teamledare"
+      }
+    }
+  },
+  "pricing": {
+    "badge": "Enkel, transparent prissättning",
+    "title": "Välj din",
+    "titleHighlight": "perfekta plan",
+    "description": "Börja gratis och skala när du växer. Alla planer inkluderar våra kärnfunktioner utan dolda avgifter.",
+    "mostPopular": "Mest populär",
+    "perMonth": "/månad",
+    "per3Months": "/3 månader",
+    "getStarted": "Kom igång",
+    "tiers": {
+      "small": {
+        "name": "Liten",
+        "price": "$49",
+        "description": "Perfekt för att komma igång",
+        "features": [
+          "Intelligent CV-byggare",
+          "Ansök till 100 jobb/månad",
+          "AI-driven jobbmatchning",
+          "Intervjuassistent"
+        ]
+      },
+      "starter": {
+        "name": "Start",
+        "price": "$99",
+        "description": "För seriösa jobbsökare",
+        "features": [
+          "Intelligent CV-byggare",
+          "Ansök till 250 jobb/månad",
+          "AI-driven jobbmatchning",
+          "Intervjuassistent"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "$199",
+        "description": "Bästa värdet för 3 månader",
+        "features": [
+          "Intelligent CV-byggare",
+          "Ansök till 250 jobb/månad",
+          "AI-driven jobbmatchning",
+          "Intervjuassistent"
+        ]
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Omdömen",
+    "title": "Betrodd av 1M+ jobbsökare",
+    "description": "Gå med tusentals som förändrat sina karriärer med AutoTalent",
+    "cta": "Gå med tusentals framgångsrika sökande"
+  },
+  "faq": {
+    "title": "Vanliga frågor",
+    "questions": {
+      "q1": {
+        "question": "Vad är AutoTalent och hur fungerar det?",
+        "answer": "AutoTalent är en AI-driven jobbsökningsassistent som hjälper dig automatisera allt från CV-byggande till jobbansökningar och intervjuförberedelser — allt på ett ställe."
+      },
+      "q2": {
+        "question": "Hur kan AutoTalent hjälpa mig bli anställd snabbare?",
+        "answer": "Genom att automatisera jobbmatchning, ansökningar och intervjuförberedelser sparar AutoTalent dig timmar och ökar dina chanser att få intervjuer snabbt."
+      },
+      "q3": {
+        "question": "Vilka verktyg ingår i AutoTalent?",
+        "answer": "AutoTalent inkluderar: AI CV-byggare, skräddarsydd personligt brev-generator, automatisk jobbansökan, realtids intervjuassistent, CV-översättare och jobbspårningspanel."
+      },
+      "q4": {
+        "question": "Behöver jag ett befintligt CV för att komma igång?",
+        "answer": "Nej! Du kan bygga ett professionellt CV från grunden med våra guidade AI-verktyg."
+      },
+      "q5": {
+        "question": "Är AutoTalent CV:n optimerade för ATS-system?",
+        "answer": "Ja. Våra CV-mallar är fullt ATS-kompatibla och designade för att passera genom spårningssystem som arbetsgivare använder."
+      },
+      "q6": {
+        "question": "Kommer mina dokument låta robotiska eller AI-genererade?",
+        "answer": "Inte alls. Vår AI är tränad att skriva som en människa. Varje CV och personligt brev är anpassat efter din ton, bransch och mål."
+      },
+      "q7": {
+        "question": "Kommer arbetsgivare veta att jag använde AutoTalent för att ansöka?",
+        "answer": "Nej. Alla ansökningar skickas på dina vägnar med din egen information. Vi avslöjar aldrig att AI-verktyg användes."
+      },
+      "q8": {
+        "question": "Finns det en gratisversion av AutoTalent?",
+        "answer": "Ja! Du kan komma igång gratis och utforska grundläggande funktioner. Premiumplaner låser upp full tillgång till automatisering, obegränsade dokument och avancerade verktyg."
+      },
+      "q9": {
+        "question": "Vad ingår i prenumerationen?",
+        "answer": "Vår Pro-plan inkluderar allt — obegränsade CV:n, personliga brev, automatiska ansökningar, intervjuverktyg och mer."
+      },
+      "q10": {
+        "question": "Behöver jag betala extra för varje funktion?",
+        "answer": "Nej. Alla funktioner är samlade i din plan — inga dolda kostnader."
+      },
+      "q11": {
+        "question": "Erbjuder ni student- eller jobbsökarrabatter?",
+        "answer": "Ja! Kontakta vår support för att begära en specialrabatt om du är arbetslös, student eller i övergång."
+      },
+      "q12": {
+        "question": "Kan jag avbryta min prenumeration när som helst?",
+        "answer": "Absolut. Du kan avbryta när som helst från din kontrollpanel — inga frågor ställda."
+      },
+      "q13": {
+        "question": "Kan jag skapa flera versioner av mitt CV och personliga brev?",
+        "answer": "Ja. Du kan skapa, spara och hantera så många versioner du vill för att anpassa för olika roller eller branscher."
+      },
+      "q14": {
+        "question": "Kan jag redigera AI-genererade dokument?",
+        "answer": "Ja! Alla CV:n och brev är 100% redigerbara och exporterbara i PDF- eller DOCX-format."
+      },
+      "q15": {
+        "question": "Kommer AutoTalent skriva mina personliga brev åt mig?",
+        "answer": "Ja — vår personligt brev-generator skapar personliga brev för varje jobbeskrivning du tillhandahåller."
+      },
+      "q16": {
+        "question": "Erbjuder AutoTalent intervjuträning?",
+        "answer": "Ja! Du får tillgång till övningsintervjusimuleringar och vår realtids intervjuassistent."
+      },
+      "q17": {
+        "question": "Kan AutoTalent ansöka om jobb åt mig?",
+        "answer": "Ja. När du aktiverar automatisk ansökan kan vi automatiskt ansöka till relevanta jobb baserat på dina filter och preferenser."
+      },
+      "q18": {
+        "question": "Vem är AutoTalent designad för?",
+        "answer": "AutoTalent är för jobbsökare på alla nivåer — studenter, karriärbytare, yrkesverksamma och chefer."
+      },
+      "q19": {
+        "question": "Hur skiljer sig AutoTalent från andra CV- eller jobbplattformar?",
+        "answer": "Vi kombinerar allt — CV:n, jobbsökningsautomatisering och AI-coachning — i en sömlös upplevelse."
+      },
+      "q20": {
+        "question": "Är min data säker med AutoTalent?",
+        "answer": "Ja. Vi följer strikt GDPR-efterlevnad, säljer inte din data och lagrar endast din information för att hjälpa dig lyckas i din jobbsökning."
+      }
+    }
+  },
+  "cta": {
+    "title": "Redo att få ditt drömjobb?",
+    "subtitle": "Gå med tusentals yrkesverksamma som automatiserat sitt jobbsökande",
+    "description": "Sluta slösa tid på manuella ansökningar. Låt AI göra det tunga arbetet medan du fokuserar på det som betyder mest.",
+    "primary": "Starta gratis provperiod",
+    "secondary": "Se demo",
+    "features": ["Inget kreditkort krävs", "14 dagars gratis provperiod", "Avbryt när som helst"],
+    "trustedBy": "Betrodd av"
+  },
+  "footer": {
+    "language": "Svenska",
+    "postJob": "Publicera ett jobb på AutoTalent",
+    "privacyPolicy": "Integritetspolicy",
+    "termsOfService": "Användarvillkor",
+    "affiliateProgram": "Affiliateprogram",
+    "studentDiscount": "Studentrabatt",
+    "googleCloudPartner": "Google Cloud Partner",
+    "tools": "VERKTYG",
+    "blog": "BLOGG",
+    "copyright": "© 2025 AutoTalent, Alla rättigheter förbehållna",
+    "toolLinks": {
+      "autoApply": "Automatisk jobbansökan",
+      "coverLetter": "AI personligt brev",
+      "resumeBuilder": "AI CV-byggare",
+      "mockInterview": "Övningsintervju",
+      "interviewBuddy": "Intervjuassistent",
+      "resumeTranslator": "CV-översättare",
+      "jobBoard": "Jobbtavla",
+      "linkedinResume": "LinkedIn till CV",
+      "resumeExamples": "CV-exempel",
+      "coverLetterExamples": "Personligt brev-exempel",
+      "resumeScanner": "AI CV-skanner"
+    },
+    "blogLinks": {
+      "resignationLetter": "Hur man skriver ett avskedsbrev",
+      "resumeObjective": "Strukturera ditt CV-mål för ett karriärbyte",
+      "reverseChronological": "Bör mitt CV vara i omvänd kronologisk ordning?",
+      "firstJob": "Hur man gör ett CV för sitt första jobb",
+      "allPosts": "Alla inlägg"
+    }
+  }
+}

@@ -1,38 +1,38 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Sparkles, Star, Trophy } from 'lucide-react';
-import { createPortalSession } from '@/app/(autoTalent-app)/dashboard/subscription/stripe-session';
-import { PricingCard, type Plan } from './pricing-card';
-import { motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Sparkles, Star, Trophy } from "lucide-react";
+import { createPortalSession } from "@/app/(autoTalent-app)/dashboard/subscription/stripe-session";
+import { PricingCard, type Plan } from "./pricing-card";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const plans: Plan[] = [
   {
-    title: 'Free',
-    priceId: '',
-    price: '$0',
+    title: "Free",
+    priceId: "",
+    price: "$0",
     features: [
-      '1 Base Resume',
-      '3 Tailored Resumes',
-      'Basic AI Assistance',
-      'Standard Templates'
-    ]
+      "1 Base Resume",
+      "3 Tailored Resumes",
+      "Basic AI Assistance",
+      "Standard Templates",
+    ],
   },
   {
-    title: 'Pro',
+    title: "Pro",
     priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_PRICE_ID!,
-    price: '$20',
+    price: "$20",
     features: [
-      'Unlimited Base Resumes',
-      'Unlimited Tailored Resumes',
-      'Advanced AI Assistance',
-      'Premium Templates',
-      'Priority Support',
-      'Custom Branding'
-    ]
-  }
+      "Unlimited Base Resumes",
+      "Unlimited Tailored Resumes",
+      "Advanced AI Assistance",
+      "Premium Templates",
+      "Priority Support",
+      "Custom Branding",
+    ],
+  },
 ];
 
 interface ProPlanDisplayProps {
@@ -48,7 +48,8 @@ interface ProPlanDisplayProps {
 
 export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const subscriptionPlan = initialProfile?.subscription_plan?.toLowerCase() || 'free';
+  const subscriptionPlan =
+    initialProfile?.subscription_plan?.toLowerCase() || "free";
 
   const handlePortalSession = async () => {
     try {
@@ -80,7 +81,7 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
         <Card className="max-w-5xl mx-auto p-12 text-center rounded-3xl border border-purple-200/50 bg-gradient-to-br from-purple-50/80 to-violet-50/80 backdrop-blur-xl mb-16 relative overflow-hidden shadow-2xl">
           {/* Subtle animated gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-purple-400/5 to-violet-400/5 animate-gradient" />
-          
+
           <div className="relative space-y-8">
             <div className="flex items-center justify-center space-x-4">
               <motion.div
@@ -89,7 +90,7 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
                 transition={{
                   type: "spring",
                   stiffness: 260,
-                  damping: 20
+                  damping: 20,
                 }}
                 className="h-16 w-16 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center transform hover:rotate-12 transition-transform duration-300"
               >
@@ -102,7 +103,7 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
                   type: "spring",
                   stiffness: 260,
                   damping: 20,
-                  delay: 0.1
+                  delay: 0.1,
                 }}
                 className="h-16 w-16 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center transform hover:-rotate-12 transition-transform duration-300"
               >
@@ -116,8 +117,10 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
                   Welcome to the Pro Experience
                 </span>
               </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                You&apos;ve unlocked our premium features and joined an exclusive community of professionals who take their career seriously.
+              <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+                You&apos;ve unlocked our premium features and joined an
+                exclusive community of professionals who take their career
+                seriously.
               </p>
             </div>
 
@@ -125,7 +128,7 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
               {[
                 { icon: Trophy, text: "Premium Features" },
                 { icon: Sparkles, text: "Priority Support" },
-                { icon: Star, text: "Exclusive Templates" }
+                { icon: Star, text: "Exclusive Templates" },
               ].map((item, i) => (
                 <motion.div
                   key={i}
@@ -135,7 +138,9 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
                   className="p-4 rounded-xl bg-white/40 backdrop-blur-sm border border-purple-100"
                 >
                   <item.icon className="h-6 w-6 text-purple-600 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-purple-900">{item.text}</p>
+                  <p className="text-sm font-medium text-purple-900">
+                    {item.text}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -149,13 +154,13 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
             key={plan.title}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              delay: plan.title === 'Pro' ? 0.2 : 0,
-              duration: 0.5
+            transition={{
+              delay: plan.title === "Pro" ? 0.2 : 0,
+              duration: 0.5,
             }}
-            className={`relative ${plan.title === 'Pro' ? 'md:-mt-4 md:mb-4' : ''}`}
+            className={`relative ${plan.title === "Pro" ? "md:-mt-4 md:mb-4" : ""}`}
           >
-            {plan.title === 'Pro' && (
+            {plan.title === "Pro" && (
               <>
                 {/* Animated glow effect */}
                 <div className="absolute -inset-[2px] bg-gradient-to-r from-purple-500 via-violet-500 to-indigo-500 rounded-2xl opacity-75 blur-lg group-hover:opacity-100 animate-pulse transition-opacity duration-500" />
@@ -177,15 +182,19 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
               isCurrentPlan={plan.title.toLowerCase() === subscriptionPlan}
               isLoading={isLoading}
               onAction={handlePortalSession}
-              buttonText={plan.title.toLowerCase() === subscriptionPlan ? 'Manage Subscription' : undefined}
+              buttonText={
+                plan.title.toLowerCase() === subscriptionPlan
+                  ? "Manage Subscription"
+                  : undefined
+              }
               variant="pro"
               className={cn(
                 "relative",
-                plan.title === 'Pro' && [
+                plan.title === "Pro" && [
                   "scale-105 shadow-2xl",
                   "hover:scale-[1.07] hover:shadow-3xl hover:shadow-purple-500/20",
-                  "transition-all duration-500"
-                ]
+                  "transition-all duration-500",
+                ],
               )}
             />
           </motion.div>
@@ -193,4 +202,4 @@ export function ProPlanDisplay({ initialProfile }: ProPlanDisplayProps) {
       </div>
     </div>
   );
-} 
+}

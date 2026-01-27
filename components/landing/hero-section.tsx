@@ -3,50 +3,30 @@
 import {
   Star,
   ArrowRight,
-  Users,
   CheckCircle,
   Zap,
   Target,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { useLocale } from "@/components/providers/locale-provider";
 
-const heroData = {
+const staticData = {
   trustpilot: {
-    rating: "Excellent",
     stars: 5,
-    platform: "Trustpilot",
   },
-  headline: {
-    part1: "Transform Your",
-    part2: "Job Search",
-    highlight: "Job Search",
-  },
-  subheadline: "with AI-Powered Automation",
-  description:
-    "Stop spending hours on applications. Our intelligent platform finds, applies, and optimizes your job applications automatically, so you can focus on what matters most - landing your dream role.",
   cta: {
-    primary: "Start Free Trial",
-    secondary: "Watch Demo",
     href: "/signup",
   },
   socialProof: {
-    userCount: "50,000+ professionals",
     stars: 5,
   },
   partners: {
-    title: "Trusted by professionals at leading companies",
     companies: ["Microsoft", "Google", "Amazon", "Meta", "Netflix", "Stripe"],
   },
-  features: [
-    "AI-Powered Job Matching",
-    "Automated Applications",
-    "Resume Optimization",
-    "Interview Prep",
-  ],
 };
 
 export function HeroSection() {
+  const { t } = useLocale();
   return (
     <section className="relative py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-yellow-50 to-emerald-50">
       {/* Background Elements */}
@@ -63,7 +43,7 @@ export function HeroSection() {
             {/* Trust Badge */}
             <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-[#5b6949]/20 mb-8">
               <div className="flex items-center gap-1">
-                {[...Array(heroData.trustpilot.stars)].map((_, i) => (
+                {[...Array(staticData.trustpilot.stars)].map((_, i) => (
                   <Star
                     key={i}
                     className="w-4 h-4 text-amber-500 fill-current"
@@ -71,32 +51,33 @@ export function HeroSection() {
                 ))}
               </div>
               <span className="text-sm font-medium text-black">
-                {heroData.trustpilot.rating} on {heroData.trustpilot.platform}
+                {t("hero.trustpilotRating")} on {t("hero.trustpilotPlatform")}
               </span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">
-              {heroData.headline.part1}
+              {t("hero.headlinePart1")}
               <br />
               <span className="bg-[#5b6949] via-[#5b6949] bg-clip-text text-transparent">
-                {heroData.headline.highlight}
+                {t("hero.headlineHighlight")}
               </span>
             </h1>
 
-            {/* Subheadline */}
-            <p className="text-lg sm:text-xl text-[#5b6949] font-semibold mb-3 sm:mb-4">
-              {heroData.subheadline}
-            </p>
-
             {/* Description */}
-            <p className="text-base sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed max-w-2xl">
-              {heroData.description}
+            <p className="text-gray-800 sm:text-lg text-gray-600 mb-6 sm:mb-8 leading-relaxed max-w-2xl">
+              {t("hero.description")}
             </p>
 
             {/* Feature Pills */}
             <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
-              {heroData.features.map((feature, index) => (
+              {[
+                t("hero.features.atsOptimized"),
+                t("hero.features.resumeCvBuilder"),
+                t("hero.features.autoApply"),
+                t("hero.features.aiJobMatching"),
+                t("hero.features.interviewAssistant"),
+              ].map((feature, index) => (
                 <div
                   key={index}
                   className="flex items-center gap-1.5 sm:gap-2 bg-white/60 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-[#5b6949]/20"
@@ -111,14 +92,14 @@ export function HeroSection() {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
-              <Link href={heroData.cta.href} className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto bg-gradient-to-r from-[#5b6949] to-[#5b6949] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:from-[#5b6949]/90 hover:to-[#5b6949]/90 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
-                  {heroData.cta.primary}
+              <Link href={staticData.cta.href} className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto bg-gradient-to-r from-[#5b6949] to-[#5b6949] text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-gray-800 sm:text-lg font-semibold hover:from-[#5b6949]/90 hover:to-[#5b6949]/90 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl">
+                  {t("hero.ctaPrimary")}
                   <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </Link>
-              <button className="w-full sm:w-auto bg-white/80 backdrop-blur-sm text-[#5b6949] px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-base sm:text-lg font-semibold hover:bg-white transition-all duration-300 flex items-center justify-center gap-2 border border-[#5b6949]/20 shadow-sm hover:shadow-md">
-                {heroData.cta.secondary}
+              <button className="w-full sm:w-auto bg-white/80 backdrop-blur-sm text-[#5b6949] px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-gray-800 sm:text-lg font-semibold hover:bg-white transition-all duration-300 flex items-center justify-center gap-2 border border-[#5b6949]/20 shadow-sm hover:shadow-md">
+                {t("hero.ctaSecondary")}
                 <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
@@ -131,14 +112,14 @@ export function HeroSection() {
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full border-2 border-white shadow-sm"></div>
               </div>
               <div className="flex items-center gap-1">
-                {[...Array(heroData.socialProof.stars)].map((_, i) => (
+                {[...Array(staticData.socialProof.stars)].map((_, i) => (
                   <Star
                     key={i}
                     className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500 fill-current"
                   />
                 ))}
-                <span className="text-sm sm:text-base text-black font-medium ml-1 sm:ml-2">
-                  Trusted by {heroData.socialProof.userCount}
+                <span className="text-sm sm:text-gray-800 text-black font-medium ml-1 sm:ml-2">
+                  {t("hero.trustedBy")} {t("hero.userCount")}
                 </span>
               </div>
             </div>
@@ -156,10 +137,10 @@ export function HeroSection() {
                 {/* Dashboard Title */}
                 <div className="text-center mb-2">
                   <h3 className="text-lg font-bold text-gray-800">
-                    Live Dashboard
+                    {t("hero.dashboard.title")}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Real-time job application tracking
+                    {t("hero.dashboard.subtitle")}
                   </p>
                 </div>
 
@@ -176,7 +157,7 @@ export function HeroSection() {
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 bg-[#5b6949] rounded-full animate-pulse"></div>
                     <span className="text-xs text-[#5b6949] font-medium">
-                      Active
+                      {t("hero.dashboard.active")}
                     </span>
                   </div>
                 </div>
@@ -194,10 +175,10 @@ export function HeroSection() {
                       247
                     </div>
                     <div className="text-sm font-medium text-[#5b6949]">
-                      Applications Sent
+                      {t("hero.dashboard.applicationsSent")}
                     </div>
                     <div className="text-xs text-[#5b6949]/70 mt-1">
-                      +23 this week
+                      {t("hero.dashboard.thisWeek")}
                     </div>
                   </div>
                   <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-6 border border-yellow-200 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -211,10 +192,10 @@ export function HeroSection() {
                       12
                     </div>
                     <div className="text-sm font-medium text-yellow-600">
-                      Interviews
+                      {t("hero.dashboard.interviews")}
                     </div>
                     <div className="text-xs text-yellow-500 mt-1">
-                      4.9% success rate
+                      {t("hero.dashboard.successRate")}
                     </div>
                   </div>
                 </div>
@@ -245,7 +226,7 @@ export function HeroSection() {
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-[#5b6949] rounded-full animate-pulse"></div>
                         <span className="text-xs text-[#5b6949] font-medium">
-                          Applied
+                          {t("hero.dashboard.applied")}
                         </span>
                       </div>
                     </div>
@@ -253,10 +234,10 @@ export function HeroSection() {
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-[#5b6949] rounded-full"></div>
                         <span className="text-xs text-gray-500">
-                          Perfect Match
+                          {t("hero.dashboard.perfectMatch")}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-500">2 hours ago</div>
+                      <div className="text-xs text-gray-500">{t("hero.dashboard.hoursAgo")}</div>
                     </div>
                   </div>
 
@@ -284,7 +265,7 @@ export function HeroSection() {
                       <div className="flex items-center gap-2">
                         <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
                         <span className="text-xs text-yellow-600 font-medium">
-                          Pending
+                          {t("hero.dashboard.pending")}
                         </span>
                       </div>
                     </div>
@@ -292,10 +273,10 @@ export function HeroSection() {
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                         <span className="text-xs text-gray-500">
-                          High Match
+                          {t("hero.dashboard.highMatch")}
                         </span>
                       </div>
-                      <div className="text-xs text-gray-500">1 day ago</div>
+                      <div className="text-xs text-gray-500">{t("hero.dashboard.dayAgo")}</div>
                     </div>
                   </div>
                 </div>
@@ -311,10 +292,10 @@ export function HeroSection() {
         {/* Partner Companies */}
         <div className="mt-12 sm:mt-16 lg:mt-20 text-center">
           <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-8 px-4">
-            {heroData.partners.title}
+            {t("hero.partnersTitle")}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 lg:gap-8 opacity-60 px-4">
-            {heroData.partners.companies.map((company, index) => (
+            {staticData.partners.companies.map((company: string, index: number) => (
               <div
                 key={index}
                 className="text-gray-400 font-semibold text-xs sm:text-sm"

@@ -7,12 +7,16 @@ interface JobDescriptionInputProps {
   isInvalid: boolean;
 }
 
-export function JobDescriptionInput({ value, onChange, isInvalid }: JobDescriptionInputProps) {
+export function JobDescriptionInput({
+  value,
+  onChange,
+  isInvalid,
+}: JobDescriptionInputProps) {
   return (
     <div className="space-y-3">
-      <Label 
+      <Label
         htmlFor="job-description"
-        className="text-base font-medium text-pink-950"
+        className="text-gray-800 font-medium text-pink-950"
       >
         Job Description <span className="text-red-500">*</span>
       </Label>
@@ -22,13 +26,13 @@ export function JobDescriptionInput({ value, onChange, isInvalid }: JobDescripti
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className={cn(
-          "w-full min-h-[120px] rounded-md bg-white/80 border-gray-200 text-base",
+          "w-full min-h-[120px] rounded-md bg-white/80 border-gray-200 text-gray-800",
           "focus:border-pink-500 focus:ring-pink-500/20 placeholder:text-gray-400",
           "resize-y p-4",
-          isInvalid && "border-red-500 shake"
+          isInvalid && "border-red-500 shake",
         )}
         required
       />
     </div>
   );
-} 
+}

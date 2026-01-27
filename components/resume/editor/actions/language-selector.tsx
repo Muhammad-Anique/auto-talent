@@ -1,0 +1,80 @@
+'use client';
+
+import { useState, useRef, useEffect } from 'react';
+import { Globe, ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { TRANSLATION_LANGUAGES, type TranslationLanguage } from '@/lib/translation-config';
+
+interface LanguageSelectorProps {
+  currentLanguage: string;
+  onLanguageSelect: (language: TranslationLanguage) => void;
+  disabled?: boolean;
+}
+
+export function LanguageSelector({
+  currentLanguage,
+  onLanguageSelect,
+  disabled = false
+}: LanguageSelectorProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const currentLang = TRANSLATION_LANGUAGES[currentLanguage as TranslationLanguage] || TRANSLATION_LANGUAGES.en;
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        disabled={disabled}
+        className={cn(
+          "flex items-center gap-1.5 px-2 py-1",
+          "bg-white border border-zinc-300 rounded-md",
+          "text-xs font-medium text-zinc-700",
+          "hover:bg-zinc-50 transition-colors",
+          "disabled:opacity-50 disabled:cursor-not-allowed",
+          "min-w-[100px]"
+        )}
+      >
+        <Globe className="w-3.5 h-3.5" />
+        <span>{currentLang.flag} {currentLang.code.toUpperCase()}</span>
+        <ChevronDown className={cn(
+          "w-3.5 h-3.5 transition-transform ml-auto",
+          isOpen && "rotate-180"
+        )} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full mt-1 right-0 bg-white rounded-md shadow-lg border border-zinc-200 py-1 min-w-[180px] z-50">
+          {Object.entries(TRANSLATION_LANGUAGES).map(([code, lang]) => (
+            <button
+              key={code}
+              onClick={() => {
+                onLanguageSelect(code as TranslationLanguage);
+                setIsOpen(false);
+              }}
+              className={cn(
+                "w-full px-3 py-2 text-left text-xs hover:bg-zinc-50 transition-colors",
+                "flex items-center gap-2",
+                currentLanguage === code && "bg-zinc-50 text-[#5b6949] font-medium"
+              )}
+            >
+              <span className="text-base">{lang.flag}</span>
+              <span>{lang.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

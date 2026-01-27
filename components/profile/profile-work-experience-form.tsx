@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { WorkExperience } from "@/lib/types";
 import { Input } from "@/components/ui/input";
@@ -18,19 +18,29 @@ interface ProfileWorkExperienceFormProps {
   onChange: (experiences: WorkExperience[]) => void;
 }
 
-export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWorkExperienceFormProps) {
+export function ProfileWorkExperienceForm({
+  experiences,
+  onChange,
+}: ProfileWorkExperienceFormProps) {
   const addExperience = () => {
-    onChange([...experiences, {
-      company: "",
-      position: "",
-      location: "",
-      date: "",
-      description: [],
-      technologies: []
-    }]);
+    onChange([
+      ...experiences,
+      {
+        company: "",
+        position: "",
+        location: "",
+        date: "",
+        description: [],
+        technologies: [],
+      },
+    ]);
   };
 
-  const updateExperience = (index: number, field: keyof WorkExperience, value: string | string[]) => {
+  const updateExperience = (
+    index: number,
+    field: keyof WorkExperience,
+    value: string | string[],
+  ) => {
     const updated = [...experiences];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -41,19 +51,23 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
   };
 
   const [techInputs, setTechInputs] = React.useState<{ [key: number]: string }>(
-    Object.fromEntries(experiences.map((exp, i) => [i, exp.technologies?.join(', ') || '']))
+    Object.fromEntries(
+      experiences.map((exp, i) => [i, exp.technologies?.join(", ") || ""]),
+    ),
   );
 
   React.useEffect(() => {
-    setTechInputs(Object.fromEntries(
-      experiences.map((exp, i) => [i, exp.technologies?.join(', ') || ''])
-    ));
+    setTechInputs(
+      Object.fromEntries(
+        experiences.map((exp, i) => [i, exp.technologies?.join(", ") || ""]),
+      ),
+    );
   }, [experiences]);
 
   return (
     <div className="space-y-3">
-      <Accordion 
-        type="multiple" 
+      <Accordion
+        type="multiple"
         className="space-y-3"
         defaultValue={experiences.map((_, index) => `experience-${index}`)}
       >
@@ -66,7 +80,8 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
             <AccordionTrigger className="px-4 py-2 hover:no-underline">
               <div className="flex items-center justify-between gap-3 flex-1">
                 <div className="flex-1 text-left text-sm font-medium text-zinc-900">
-                  {exp.position || "Untitled Position"} {exp.company && `at ${exp.company}`}
+                  {exp.position || "Untitled Position"}{" "}
+                  {exp.company && `at ${exp.company}`}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-zinc-500">
                   {exp.date && <span>{exp.date}</span>}
@@ -85,8 +100,10 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                   <div className="relative group flex-1">
                     <Input
                       value={exp.position}
-                      onChange={(e) => updateExperience(index, 'position', e.target.value)}
-                      className="text-base bg-white/50 border-zinc-200 rounded-md h-8
+                      onChange={(e) =>
+                        updateExperience(index, "position", e.target.value)
+                      }
+                      className="text-gray-800 bg-white/50 border-zinc-200 rounded-md h-8
                         focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]/20
                         hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors
                         placeholder:text-zinc-400"
@@ -96,8 +113,8 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                       POSITION
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => removeExperience(index)}
                     className="text-zinc-400 hover:text-red-500 transition-colors duration-200 h-8 w-8"
@@ -110,7 +127,9 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                 <div className="relative group">
                   <Input
                     value={exp.company}
-                    onChange={(e) => updateExperience(index, 'company', e.target.value)}
+                    onChange={(e) =>
+                      updateExperience(index, "company", e.target.value)
+                    }
                     className="bg-white/50 border-zinc-200 rounded-md h-8
                       focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]/20
                       hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors
@@ -128,7 +147,9 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                     <Input
                       type="text"
                       value={exp.date}
-                      onChange={(e) => updateExperience(index, 'date', e.target.value)}
+                      onChange={(e) =>
+                        updateExperience(index, "date", e.target.value)
+                      }
                       className="bg-white/50 border-zinc-200 rounded-md h-8
                         focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]/20
                         hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors
@@ -142,7 +163,9 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                   <div className="relative group flex-1">
                     <Input
                       value={exp.location}
-                      onChange={(e) => updateExperience(index, 'location', e.target.value)}
+                      onChange={(e) =>
+                        updateExperience(index, "location", e.target.value)
+                      }
                       className="bg-white/50 border-zinc-200 rounded-md h-8
                         focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]/20
                         hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors
@@ -158,38 +181,42 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                 {/* Technologies */}
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-baseline">
-                    <Label className="text-xs font-medium text-[#5b6949]">Technologies & Skills Used</Label>
-                    <span className="text-[9px] text-zinc-500">Separate with commas</span>
+                    <Label className="text-xs font-medium text-[#5b6949]">
+                      Technologies & Skills Used
+                    </Label>
+                    <span className="text-[9px] text-zinc-500">
+                      Separate with commas
+                    </span>
                   </div>
                   <Input
-                    value={techInputs[index] || ''}
+                    value={techInputs[index] || ""}
                     onChange={(e) => {
                       const newValue = e.target.value;
-                      setTechInputs(prev => ({ ...prev, [index]: newValue }));
-                      
-                      if (newValue.endsWith(',')) {
+                      setTechInputs((prev) => ({ ...prev, [index]: newValue }));
+
+                      if (newValue.endsWith(",")) {
                         const technologies = newValue
-                          .split(',')
-                          .map(t => t.trim())
+                          .split(",")
+                          .map((t) => t.trim())
                           .filter(Boolean);
-                        updateExperience(index, 'technologies', technologies);
+                        updateExperience(index, "technologies", technologies);
                       } else {
                         const technologies = newValue
-                          .split(',')
-                          .map(t => t.trim())
+                          .split(",")
+                          .map((t) => t.trim())
                           .filter(Boolean);
-                        updateExperience(index, 'technologies', technologies);
+                        updateExperience(index, "technologies", technologies);
                       }
                     }}
                     onBlur={(e) => {
                       const technologies = e.target.value
-                        .split(',')
-                        .map(t => t.trim())
+                        .split(",")
+                        .map((t) => t.trim())
                         .filter(Boolean);
-                      updateExperience(index, 'technologies', technologies);
-                      setTechInputs(prev => ({ 
-                        ...prev, 
-                        [index]: technologies.join(', ') 
+                      updateExperience(index, "technologies", technologies);
+                      setTechInputs((prev) => ({
+                        ...prev,
+                        [index]: technologies.join(", "),
                       }));
                     }}
                     placeholder="React, TypeScript, Node.js, etc."
@@ -203,13 +230,18 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                 {/* Description */}
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-baseline">
-                    <Label className="text-xs font-medium text-[#5b6949]">Key Responsibilities & Achievements</Label>
+                    <Label className="text-xs font-medium text-[#5b6949]">
+                      Key Responsibilities & Achievements
+                    </Label>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => {
                         const updated = [...experiences];
-                        updated[index].description = [...updated[index].description, ""];
+                        updated[index].description = [
+                          ...updated[index].description,
+                          "",
+                        ];
                         onChange(updated);
                       }}
                       className="text-[#5b6949] hover:text-[#5b6949]/80 transition-colors h-7 text-xs"
@@ -226,11 +258,12 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                             value={desc}
                             onChange={(e) => {
                               const updated = [...experiences];
-                              updated[index].description[descIndex] = e.target.value;
+                              updated[index].description[descIndex] =
+                                e.target.value;
                               onChange(updated);
                             }}
                             placeholder="Start with a strong action verb"
-                            className="bg-white/50 border-zinc-200 rounded-md h-8
+                            className="bg-white/50 text-gray-800 border-zinc-200 rounded-md h-8
                               focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]/20
                               hover:border-[#5b6949]/30 hover:bg-white/60 transition-colors
                               placeholder:text-zinc-400 text-sm"
@@ -241,7 +274,9 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                           size="sm"
                           onClick={() => {
                             const updated = [...experiences];
-                            updated[index].description = updated[index].description.filter((_, i) => i !== descIndex);
+                            updated[index].description = updated[
+                              index
+                            ].description.filter((_, i) => i !== descIndex);
                             onChange(updated);
                           }}
                           className="text-zinc-400 hover:text-red-500 transition-colors duration-200 h-8 w-8"
@@ -252,7 +287,8 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
                     ))}
                     {exp.description.length === 0 && (
                       <div className="text-xs text-zinc-500 italic">
-                        Add points to describe your responsibilities and achievements
+                        Add points to describe your responsibilities and
+                        achievements
                       </div>
                     )}
                   </div>
@@ -263,8 +299,8 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
         ))}
       </Accordion>
 
-      <Button 
-        variant="outline" 
+      <Button
+        variant="outline"
         onClick={addExperience}
         className="w-full bg-zinc-50 hover:bg-zinc-100 border-dashed border-zinc-300 hover:border-[#5b6949]/40 text-zinc-700 hover:text-[#5b6949] transition-all duration-200 h-8 text-sm"
       >
@@ -273,4 +309,4 @@ export function ProfileWorkExperienceForm({ experiences, onChange }: ProfileWork
       </Button>
     </div>
   );
-} 
+}

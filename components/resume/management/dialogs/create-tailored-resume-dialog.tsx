@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Resume, Profile } from "@/lib/types";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Sparkles,ArrowRight, Plus } from "lucide-react";
+import { Loader2, Sparkles, ArrowRight, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { createTailoredResume } from "@/utils/actions/resumes/actions";
 import { CreateBaseResumeDialog } from "./create-base-resume-dialog";
@@ -16,7 +22,7 @@ import { formatJobListing } from "@/utils/actions/jobs/ai";
 import { createJob } from "@/utils/actions/jobs/actions";
 import { MiniResumePreview } from "../../shared/mini-resume-preview";
 import { LoadingOverlay, type CreationStep } from "../loading-overlay";
-import { BaseResumeSelector } from "../base-resume-selector"; 
+import { BaseResumeSelector } from "../base-resume-selector";
 import { ImportMethodRadioGroup } from "../import-method-radio-group";
 import { JobDescriptionInput } from "../job-description-input";
 import { ApiErrorDialog } from "@/components/ui/api-error-dialog";
@@ -29,19 +35,29 @@ interface CreateTailoredResumeDialogProps {
   // company_name?:string;
 }
 
-export function CreateTailoredResumeDialog({ children, baseResumes, profile }: CreateTailoredResumeDialogProps) {
+export function CreateTailoredResumeDialog({
+  children,
+  baseResumes,
+  profile,
+}: CreateTailoredResumeDialogProps) {
   const [open, setOpen] = useState(false);
-  const [selectedBaseResume, setSelectedBaseResume] = useState<string>(baseResumes?.[0]?.id || '');
-  const [jobDescription, setJobDescription] = useState('');
+  const [selectedBaseResume, setSelectedBaseResume] = useState<string>(
+    baseResumes?.[0]?.id || "",
+  );
+  const [jobDescription, setJobDescription] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const [currentStep, setCurrentStep] = useState<CreationStep>('analyzing');
-  const [importOption, setImportOption] = useState<'import-profile' | 'ai'>('ai');
+  const [currentStep, setCurrentStep] = useState<CreationStep>("analyzing");
+  const [importOption, setImportOption] = useState<"import-profile" | "ai">(
+    "ai",
+  );
   const [isBaseResumeInvalid, setIsBaseResumeInvalid] = useState(false);
   const [isJobDescriptionInvalid, setIsJobDescriptionInvalid] = useState(false);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({ title: '', description: '' });
+  const [errorMessage, setErrorMessage] = useState({
+    title: "",
+    description: "",
+  });
   const router = useRouter();
-  
 
   const handleCreate = async () => {
     // Validate required fields
@@ -55,7 +71,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
       return;
     }
 
-    if (!jobDescription.trim() && importOption === 'ai') {
+    if (!jobDescription.trim() && importOption === "ai") {
       setIsJobDescriptionInvalid(true);
       toast({
         title: "Error",
@@ -67,25 +83,27 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
 
     try {
       setIsCreating(true);
-      setCurrentStep('analyzing');
-      
+      setCurrentStep("analyzing");
+
       // Reset validation states
       setIsBaseResumeInvalid(false);
       setIsJobDescriptionInvalid(false);
 
-      if (importOption === 'import-profile') {
+      if (importOption === "import-profile") {
         // Direct copy logic
-        const baseResume = baseResumes?.find(r => r.id === selectedBaseResume);
+        const baseResume = baseResumes?.find(
+          (r) => r.id === selectedBaseResume,
+        );
         if (!baseResume) throw new Error("Base resume not found");
 
         let jobId: string | null = null;
-        let jobTitle = 'Copied Resume';
-        let companyName = '';
+        let jobTitle = "Copied Resume";
+        let companyName = "";
 
         if (jobDescription.trim()) {
           // Get model and API key from local storage
-          const MODEL_STORAGE_KEY = 'Auto Talent-default-model';
-          const LOCAL_STORAGE_KEY = 'Auto Talent-api-keys';
+          const MODEL_STORAGE_KEY = "Auto Talent-default-model";
+          const LOCAL_STORAGE_KEY = "Auto Talent-api-keys";
 
           const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
           const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -94,37 +112,40 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
           try {
             apiKeys = storedKeys ? JSON.parse(storedKeys) : [];
           } catch (error) {
-            console.error('Error parsing API keys:', error);
+            console.error("Error parsing API keys:", error);
           }
 
           try {
-            setCurrentStep('analyzing');
+            setCurrentStep("analyzing");
             const formattedJobListing = await formatJobListing(jobDescription, {
-              model: selectedModel || '',
-              apiKeys
+              model: selectedModel || "",
+              apiKeys,
             });
 
-            setCurrentStep('formatting');
+            setCurrentStep("formatting");
             const jobEntry = await createJob(formattedJobListing);
             if (!jobEntry?.id) throw new Error("Failed to create job entry");
-            
+
             jobId = jobEntry.id;
-            jobTitle = formattedJobListing.position_title || 'Copied Resume';
-            companyName = formattedJobListing?.company || '';
+            jobTitle = formattedJobListing.position_title || "Copied Resume";
+            companyName = formattedJobListing?.company || "";
           } catch (error: Error | unknown) {
-            if (error instanceof Error && (
-                error.message.toLowerCase().includes('api key') || 
-                error.message.toLowerCase().includes('unauthorized') ||
-                error.message.toLowerCase().includes('invalid key'))
+            if (
+              error instanceof Error &&
+              (error.message.toLowerCase().includes("api key") ||
+                error.message.toLowerCase().includes("unauthorized") ||
+                error.message.toLowerCase().includes("invalid key"))
             ) {
               setErrorMessage({
                 title: "API Key Error",
-                description: "There was an issue with your API key. Please check your settings and try again."
+                description:
+                  "There was an issue with your API key. Please check your settings and try again.",
               });
             } else {
               setErrorMessage({
                 title: "Error",
-                description: "Failed to process job description. Please try again."
+                description:
+                  "Failed to process job description. Please try again.",
               });
             }
             setShowErrorDialog(true);
@@ -140,14 +161,14 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
           companyName,
           {
             work_experience: baseResume.work_experience,
-            education: baseResume.education.map(edu => ({
+            education: baseResume.education.map((edu) => ({
               ...edu,
-              gpa: edu.gpa?.toString()
+              gpa: edu.gpa?.toString(),
             })),
             skills: baseResume.skills,
             projects: baseResume.projects,
-            target_role: baseResume.target_role
-          }
+            target_role: baseResume.target_role,
+          },
         );
 
         toast({
@@ -161,8 +182,8 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
       }
 
       // Get model and API key from local storage
-      const MODEL_STORAGE_KEY = 'Auto Talent-default-model';
-      const LOCAL_STORAGE_KEY = 'Auto Talent-api-keys';
+      const MODEL_STORAGE_KEY = "Auto Talent-default-model";
+      const LOCAL_STORAGE_KEY = "Auto Talent-api-keys";
 
       const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
       const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -171,29 +192,31 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
       try {
         apiKeys = storedKeys ? JSON.parse(storedKeys) : [];
       } catch (error) {
-        console.error('Error parsing API keys:', error);
+        console.error("Error parsing API keys:", error);
       }
       // 1. Format the job listing
       let formattedJobListing;
       try {
         formattedJobListing = await formatJobListing(jobDescription, {
-          model: selectedModel || '',
-          apiKeys
+          model: selectedModel || "",
+          apiKeys,
         });
       } catch (error: Error | unknown) {
-        if (error instanceof Error && (
-            error.message.toLowerCase().includes('api key') || 
-            error.message.toLowerCase().includes('unauthorized') ||
-            error.message.toLowerCase().includes('invalid key'))
+        if (
+          error instanceof Error &&
+          (error.message.toLowerCase().includes("api key") ||
+            error.message.toLowerCase().includes("unauthorized") ||
+            error.message.toLowerCase().includes("invalid key"))
         ) {
           setErrorMessage({
             title: "API Key Error",
-            description: "There was an issue with your API key. Please check your settings and try again."
+            description:
+              "There was an issue with your API key. Please check your settings and try again.",
           });
         } else {
           setErrorMessage({
             title: "Error",
-            description: "Failed to analyze job description. Please try again."
+            description: "Failed to analyze job description. Please try again.",
           });
         }
         setShowErrorDialog(true);
@@ -201,62 +224,62 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
         return;
       }
 
-      setCurrentStep('formatting');
+      setCurrentStep("formatting");
 
       // 2. Create job in database and get ID
       const jobEntry = await createJob(formattedJobListing);
       if (!jobEntry?.id) throw new Error("Failed to create job entry");
 
-
       // 3. Get the base resume object
-      const baseResume = baseResumes?.find(r => r.id === selectedBaseResume);
+      const baseResume = baseResumes?.find((r) => r.id === selectedBaseResume);
       if (!baseResume) throw new Error("Base resume not found");
 
-      setCurrentStep('tailoring');
+      setCurrentStep("tailoring");
 
       // 4. Tailor the resume using the formatted job listing
       let tailoredContent;
 
       try {
-        const response = await fetch('/api/tailor-resume', {
-          method: 'POST',
+        const response = await fetch("/api/tailor-resume", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             resume: baseResume,
             jobListing: formattedJobListing,
             config: {
-              model: 'gpt-4o-mini',
+              model: "gpt-4o-mini",
               apiKeys: [
                 {
-                  service: 'openai',
+                  service: "openai",
                   key: process.env.NEXT_PUBLIC_OPENAI_API_KEY!, // Only use NEXT_PUBLIC if it's safe to expose
                 },
               ],
             },
           }),
-        })
+        });
         const data = await response.json();
         if (!data.success) {
-          throw new Error(data.message || 'Failed to tailor resume');
+          throw new Error(data.message || "Failed to tailor resume");
         }
         tailoredContent = data.resume;
-      
       } catch (error: Error | unknown) {
-        if (error instanceof Error && (
-            error.message.toLowerCase().includes('api key') || 
-            error.message.toLowerCase().includes('unauthorized') ||
-            error.message.toLowerCase().includes('invalid key'))
+        if (
+          error instanceof Error &&
+          (error.message.toLowerCase().includes("api key") ||
+            error.message.toLowerCase().includes("unauthorized") ||
+            error.message.toLowerCase().includes("invalid key"))
         ) {
           setErrorMessage({
             title: "API Key Error",
-            description: "There was an issue with your API key. Please check your settings and try again."
+            description:
+              "There was an issue with your API key. Please check your settings and try again.",
           });
         } else {
           setErrorMessage({
             title: "Error",
-            description: "Failed to tailor resume. Please try again."
+            description: "Failed to tailor resume. Please try again.",
           });
         }
         setShowErrorDialog(true);
@@ -264,16 +287,14 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
         return;
       }
 
+      setCurrentStep("finalizing");
 
-      setCurrentStep('finalizing');
-
-      
       // 5. Create the tailored resume with job reference
       const resume = await createTailoredResume(
         baseResume,
         jobEntry.id,
-        formattedJobListing.position_title || '',
-        formattedJobListing.company || '',
+        formattedJobListing.position_title || "",
+        formattedJobListing.company || "",
         tailoredContent,
       );
 
@@ -285,10 +306,11 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
       router.push(`/dashboard/resumes/${resume.id}`);
       setOpen(false);
     } catch (error: unknown) {
-      console.error('Failed to create resume:', error);
+      console.error("Failed to create resume:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create resume",
+        description:
+          error instanceof Error ? error.message : "Failed to create resume",
         variant: "destructive",
       });
     } finally {
@@ -300,32 +322,35 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
     if (newOpen) {
-      setJobDescription('');
-      setImportOption('ai');
-      setSelectedBaseResume(baseResumes?.[0]?.id || '');
+      setJobDescription("");
+      setImportOption("ai");
+      setSelectedBaseResume(baseResumes?.[0]?.id || "");
     }
   };
 
   if (!baseResumes || baseResumes.length === 0) {
     return (
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogTrigger asChild>
-          {children}
-        </DialogTrigger>
-        <DialogContent className={cn(
-          "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
-          "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
-          "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
-          "rounded-xl"
-        )}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent
+          className={cn(
+            "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
+            "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
+            "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
+            "rounded-xl",
+          )}
+        >
           <div className="flex flex-col items-center justify-center p-8 space-y-4">
             <div className="p-4 rounded-2xl bg-zinc-50/50 border border-zinc-100">
               <Sparkles className="w-8 h-8 text-[#5b6949]" />
             </div>
             <div className="text-center space-y-2 max-w-sm">
-              <h3 className="font-semibold text-base text-zinc-950">No Base Resumes Found</h3>
-              <p className="text-xs text-muted-foreground">
-                You need to create a base resume first before you can create a tailored version.
+              <h3 className="font-semibold text-gray-800 text-zinc-950">
+                No Base Resumes Found
+              </h3>
+              <p className="text-xs text-gray-700">
+                You need to create a base resume first before you can create a
+                tailored version.
               </p>
             </div>
             {profile ? (
@@ -334,7 +359,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                   className={cn(
                     "mt-2 text-white shadow-lg hover:shadow-xl transition-all duration-500",
                     "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80",
-                    "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70"
+                    "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
                   )}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -355,42 +380,60 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
   return (
     <>
       <Dialog open={open} onOpenChange={handleOpenChange}>
-        <DialogTrigger asChild>
-          {children}
-        </DialogTrigger>
-        <DialogContent className={cn(
-          "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
-          "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
-          "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
-          "rounded-xl"
-        )}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent
+          className={cn(
+            "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
+            "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
+            "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
+            "rounded-xl",
+          )}
+        >
           <style jsx global>{`
             @keyframes shake {
-              0%, 100% { transform: translateX(0); }
-              10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-              20%, 40%, 60%, 80% { transform: translateX(2px); }
+              0%,
+              100% {
+                transform: translateX(0);
+              }
+              10%,
+              30%,
+              50%,
+              70%,
+              90% {
+                transform: translateX(-2px);
+              }
+              20%,
+              40%,
+              60%,
+              80% {
+                transform: translateX(2px);
+              }
             }
             .shake {
-              animation: shake 0.8s cubic-bezier(.36,.07,.19,.97) both;
+              animation: shake 0.8s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
             }
           `}</style>
           {/* Header Section with Icon */}
-          <div className={cn(
-            "relative px-8 pt-6 pb-4 border-b top-0 z-10 bg-white/50 backdrop-blur-xl",
-            "border-zinc-200/20"
-          )}>
+          <div
+            className={cn(
+              "relative px-8 pt-6 pb-4 border-b top-0 z-10 bg-white/50 backdrop-blur-xl",
+              "border-zinc-200/20",
+            )}
+          >
             <div className="flex items-center gap-4">
-              <div className={cn(
-                "p-3 rounded-xl transition-all duration-300",
-                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
-              )}>
+              <div
+                className={cn(
+                  "p-3 rounded-xl transition-all duration-300",
+                  "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
+                )}
+              >
                 <Sparkles className="w-6 h-6 text-[#5b6949]" />
               </div>
               <div>
                 <DialogTitle className="text-xl font-semibold text-zinc-950">
                   Create Tailored Resume
                 </DialogTitle>
-                <DialogDescription className="mt-1 text-sm text-muted-foreground">
+                <DialogDescription className="mt-1 text-sm text-gray-700">
                   Create a tailored resume based on an existing base resume
                 </DialogDescription>
               </div>
@@ -402,9 +445,9 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
             {isCreating && <LoadingOverlay currentStep={currentStep} />}
             <div className="space-y-6">
               <div className="space-y-2">
-                <Label 
+                <Label
                   htmlFor="base-resume"
-                  className="text-base font-medium text-zinc-950"
+                  className="text-gray-800 font-medium "
                 >
                   Select Base Resume <span className="text-red-500">*</span>
                 </Label>
@@ -423,13 +466,18 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                 {selectedBaseResume && baseResumes ? (
                   <>
                     <MiniResumePreview
-                      name={baseResumes.find(r => r.id === selectedBaseResume)?.name || ''}
+                      name={
+                        baseResumes.find((r) => r.id === selectedBaseResume)
+                          ?.name || ""
+                      }
                       type="base"
                       className="w-24 hover:-translate-y-1 transition-transform duration-300"
                     />
                     <div className="flex flex-col items-center gap-1">
                       <ArrowRight className="w-6 h-6 text-[#5b6949] animate-pulse" />
-                      <span className="text-xs font-medium text-muted-foreground">Tailored For Job</span>
+                      <span className="text-xs font-medium text-gray-700">
+                        Tailored For Job
+                      </span>
                     </div>
                     <MiniResumePreview
                       name="Tailored Resume"
@@ -439,7 +487,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-dashed border-zinc-100">
-                    <div className="text-sm font-medium text-muted-foreground">
+                    <div className="text-sm font-medium text-gray-700">
                       Select a base resume to see preview
                     </div>
                   </div>
@@ -460,28 +508,30 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
           </div>
 
           {/* Footer Section */}
-          <div className={cn(
-            "px-8 py-4 border-t sticky bottom-0 z-10 bg-white/50 backdrop-blur-xl",
-            "border-zinc-200/20 bg-white/40"
-          )}>
+          <div
+            className={cn(
+              "px-8 py-4 border-t sticky bottom-0 z-10 bg-white/50 backdrop-blur-xl",
+              "border-zinc-200/20 bg-white/40",
+            )}
+          >
             <div className="flex justify-end gap-3">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => setOpen(false)}
                 className={cn(
                   "border-gray-200 text-gray-600",
                   "hover:bg-white/60",
-                  "hover:border-zinc-200"
+                  "hover:border-zinc-200",
                 )}
               >
                 Cancel
               </Button>
-              <Button 
-                onClick={handleCreate} 
+              <Button
+                onClick={handleCreate}
                 disabled={isCreating}
                 className={cn(
                   "text-white shadow-lg hover:shadow-xl transition-all duration-500",
-                  "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 hover:from-[#5b6949]/90 hover:to-[#5b6949]/70"
+                  "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
                 )}
               >
                 {isCreating ? (
@@ -490,7 +540,7 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
                     Creating...
                   </>
                 ) : (
-                  'Create Resume'
+                  "Create Resume"
                 )}
               </Button>
             </div>
@@ -505,14 +555,13 @@ export function CreateTailoredResumeDialog({ children, baseResumes, profile }: C
         errorMessage={errorMessage}
         onUpgrade={() => {
           setShowErrorDialog(false);
-          window.location.href = '/subscription';
+          window.location.href = "/subscription";
         }}
         onSettings={() => {
           setShowErrorDialog(false);
-          window.location.href = '/settings';
+          window.location.href = "/settings";
         }}
       />
-
     </>
   );
-} 
+}

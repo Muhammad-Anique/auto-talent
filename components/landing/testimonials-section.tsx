@@ -4,155 +4,173 @@ import { Star, Quote } from "lucide-react";
 
 export function TestimonialsSection() {
   const testimonials = [
+    // English Testimonials (5)
     {
       name: "Alex R",
-      role: "Recent College Graduate",
+      role: "Recent Graduate",
       avatar: "AR",
       avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
       rating: 5,
-      text: "AIApply was a lifeline. Their tools helped me identify key skills I needed to develop and connected me with the right opportunities. I landed my dream job within a month!",
-      date: "Dec 17, 2024",
-      highlights: ["lifeline"],
+      text: "AutoTalent was a lifesaver! I got hired within 3 weeks of using the auto-apply feature. Absolute game-changer for my job search.",
+      date: "Jan 15, 2025",
+      highlights: ["lifesaver", "got hired", "game-changer"],
+      lang: "en",
     },
     {
-      name: "Carlos D.",
-      role: "Mid-Career Professional",
-      avatar: "CD",
-      avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
+      name: "Sarah M",
+      role: "Marketing Professional",
+      avatar: "SM",
+      avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
       rating: 5,
-      text: "The interview prep tool from AIApply was phenomenal. It used AI to analyze my speech patterns and provided personalized feedback, making me much more confident and articulate in my interviews. It really made a difference!",
+      text: "Like magic! I applied to 200+ jobs in one click and landed 5 interviews. AutoTalent completely transformed my job hunt.",
       date: "Jan 10, 2025",
-      highlights: ["made a difference"],
+      highlights: ["magic", "transformed"],
+      lang: "en",
     },
     {
-      name: "Gab",
-      role: "",
-      avatar: "G",
-      avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
-      rating: 5,
-      text: "OMG. Game changer",
-      date: "Nov 24, 2024",
-      highlights: ["Game changer"],
-    },
-    {
-      name: "Kathy",
-      role: "",
-      avatar: "K",
+      name: "James L",
+      role: "Software Engineer",
+      avatar: "JL",
       avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
       rating: 5,
-      text: "AIApply was excellent and really helped my job hunt - thank you!",
-      date: "Mar 22, 2024",
-      highlights: ["thank you!"],
+      text: "The AI interview assistant is incredible. I felt so prepared and confident. Got my dream job at a top tech company!",
+      date: "Dec 28, 2024",
+      highlights: ["incredible", "dream job"],
+      lang: "en",
     },
     {
-      name: "Jess G",
-      role: "",
-      avatar: "JG",
-      avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
-      rating: 5,
-      text: "SO GLAD I SUBSCRIBED!! Got a job in a week using the application kit and interview help.",
-      date: "Jan 4, 2025",
-      highlights: ["Got a job in a week"],
-    },
-    {
-      name: "Maria G",
+      name: "Emily K",
       role: "Career Changer",
-      avatar: "MG",
-      avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
-      rating: 5,
-      text: "Switching careers was daunting, but AIApply made it seamless. Their tailored resumes and job recommendations helped me transition smoothly into a new field. I've never felt more confident in my professional journey!",
-      date: "Dec 15, 2024",
-      highlights: ["seamless", "transition smoothly into a new field"],
-    },
-    {
-      name: "Tim Kägy",
-      role: "",
-      avatar: "TK",
-      avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
-      rating: 5,
-      text: "I used to dread writing cover letters, but this AI tool has made it a breeze. It's like it reads my mind and knows exactly what to say. Highly recommend!",
-      date: "May 24, 2024",
-      highlights: ["made it a breeze"],
-    },
-    {
-      name: "Mia P",
-      role: "",
-      avatar: "MP",
+      avatar: "EK",
       avatarColor: "bg-gradient-to-br from-pink-400 to-pink-500",
       rating: 5,
-      text: "Landed a $180k/year job after prepping with AIApply. Finally, a smart tool that understands my job search needs!",
-      date: "Jul 22, 2024",
-      highlights: ["$180k/year job"],
-    },
-    {
-      name: "Jordan M",
-      role: "Job Seeker in Tech",
-      avatar: "JM",
-      avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
-      rating: 5,
-      text: "AIApply's AI-driven resume builder helped me craft a resume that really stood out. I got callbacks from companies I've been eyeing for years. This tool is a game-changer for anyone job hunting in the tech industry!",
-      date: "Jan 12, 2025",
-      highlights: ["game-changer"],
-    },
-    {
-      name: "Janee",
-      role: "",
-      avatar: "J",
-      avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
-      rating: 5,
-      text: "Felt so alone, applying to hundreds of jobs and not hearing back. Finally used AIApply for cover letters and to revamp my resume and like magic starting getting invited to interviews!",
+      text: "Switching careers felt impossible until I found AutoTalent. The resume builder created a perfect CV that got me hired fast!",
       date: "Jan 5, 2025",
-      highlights: ["like magic"],
+      highlights: ["got me hired"],
+      lang: "en",
     },
     {
-      name: "Nivi",
-      role: "",
-      avatar: "N",
-      avatarColor: "bg-gradient-to-br from-orange-400 to-orange-500",
-      rating: 5,
-      text: "Never thought I'd find a tool that makes job applications quite fun!",
-      date: "Nov 29, 2024",
-      highlights: ["job applications quite fun!"],
-    },
-    {
-      name: "Ali K",
-      role: "",
-      avatar: "AK",
+      name: "Michael T",
+      role: "Project Manager",
+      avatar: "MT",
       avatarColor: "bg-gradient-to-br from-indigo-400 to-indigo-500",
       rating: 5,
-      text: "Was job hunting for months until I found you guys on Tik Tok. Finally, a tool that does the tedious work for me. Thanks AIApply.",
-      date: "Jun 23, 2024",
-      highlights: ["Thanks AIApply."],
+      text: "Best investment for my career. AutoTalent's tools are a total game-changer. Highly recommend to anyone job hunting!",
+      date: "Jan 12, 2025",
+      highlights: ["game-changer"],
+      lang: "en",
     },
+    // Swedish Testimonials (5)
     {
-      name: "Sally",
-      role: "",
-      avatar: "S",
-      avatarColor: "bg-gradient-to-br from-teal-400 to-teal-500",
-      rating: 5,
-      text: "AIApply's cover letter generator is a life-saver! It helped me create a professional and personalized cover letter that caught employers' attention.",
-      date: "Dec 3, 2024",
-      highlights: ["life-saver!"],
-    },
-    {
-      name: "Liam T",
-      role: "",
-      avatar: "LT",
-      avatarColor: "bg-gradient-to-br from-red-400 to-red-500",
-      rating: 5,
-      text: "Transformed my job hunt. Seriously, it's like having a personal career coach!",
-      date: "Oct 14, 2024",
-      highlights: ["personal career coach!"],
-    },
-    {
-      name: "Liam S",
-      role: "Experienced Professional",
-      avatar: "LS",
+      name: "Erik S",
+      role: "Nyexaminerad",
+      avatar: "ES",
       avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
       rating: 5,
-      text: "AIApply's comprehensive approach to job searching is unmatched. From resume optimization to interview preparation, every tool is designed to give you the edge you need in today's competitive market.",
-      date: "Feb 8, 2025",
-      highlights: ["unmatched"],
+      text: "AutoTalent var en livräddare! Fick jobb inom två veckor. En total game-changer för mitt jobbsökande.",
+      date: "Jan 14, 2025",
+      highlights: ["livräddare", "game-changer"],
+      lang: "sv",
+    },
+    {
+      name: "Anna L",
+      role: "Marknadsförare",
+      avatar: "AL",
+      avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
+      rating: 5,
+      text: "Som magi! Sökte 150 jobb med ett klick och fick 4 intervjuer. Helt fantastiskt verktyg!",
+      date: "Jan 8, 2025",
+      highlights: ["magi", "fantastiskt"],
+      lang: "sv",
+    },
+    {
+      name: "Johan K",
+      role: "Systemutvecklare",
+      avatar: "JK",
+      avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
+      rating: 5,
+      text: "AI-intervjuassistenten är otrolig. Kände mig superförberedd. Fick mitt drömjobb tack vare AutoTalent!",
+      date: "Dec 20, 2024",
+      highlights: ["otrolig", "drömjobb"],
+      lang: "sv",
+    },
+    {
+      name: "Lisa M",
+      role: "Projektledare",
+      avatar: "LM",
+      avatarColor: "bg-gradient-to-br from-pink-400 to-pink-500",
+      rating: 5,
+      text: "Bästa investeringen för min karriär. Blev anställd på drömföretaget efter bara en månad!",
+      date: "Jan 3, 2025",
+      highlights: ["Blev anställd"],
+      lang: "sv",
+    },
+    {
+      name: "Oscar N",
+      role: "Dataanalytiker",
+      avatar: "ON",
+      avatarColor: "bg-gradient-to-br from-teal-400 to-teal-500",
+      rating: 5,
+      text: "AutoTalent förändrade allt. CV-byggaren skapade ett perfekt CV som öppnade alla dörrar. Magiskt!",
+      date: "Jan 11, 2025",
+      highlights: ["Magiskt"],
+      lang: "sv",
+    },
+    // Arabic Testimonials (5)
+    {
+      name: "أحمد م",
+      role: "خريج جديد",
+      avatar: "أم",
+      avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
+      rating: 5,
+      text: "AutoTalent كان منقذاً لحياتي المهنية! حصلت على وظيفة خلال أسبوعين. أداة رائعة غيرت قواعد اللعبة!",
+      date: "Jan 13, 2025",
+      highlights: ["منقذاً", "غيرت قواعد اللعبة"],
+      lang: "ar",
+    },
+    {
+      name: "فاطمة ع",
+      role: "مديرة تسويق",
+      avatar: "فع",
+      avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
+      rating: 5,
+      text: "كالسحر! تقدمت لـ 200 وظيفة بنقرة واحدة وحصلت على 6 مقابلات. AutoTalent حول بحثي عن عمل تماماً!",
+      date: "Jan 9, 2025",
+      highlights: ["كالسحر"],
+      lang: "ar",
+    },
+    {
+      name: "محمد ك",
+      role: "مهندس برمجيات",
+      avatar: "مك",
+      avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
+      rating: 5,
+      text: "مساعد المقابلات الذكي مذهل! شعرت بثقة كبيرة وحصلت على وظيفة أحلامي في شركة تقنية كبرى!",
+      date: "Dec 25, 2024",
+      highlights: ["مذهل", "وظيفة أحلامي"],
+      lang: "ar",
+    },
+    {
+      name: "نورة س",
+      role: "محللة بيانات",
+      avatar: "نس",
+      avatarColor: "bg-gradient-to-br from-pink-400 to-pink-500",
+      rating: 5,
+      text: "أفضل استثمار لمسيرتي المهنية. تم توظيفي بسرعة بفضل أدوات AutoTalent الرائعة!",
+      date: "Jan 6, 2025",
+      highlights: ["تم توظيفي"],
+      lang: "ar",
+    },
+    {
+      name: "خالد ر",
+      role: "مدير مشاريع",
+      avatar: "خر",
+      avatarColor: "bg-gradient-to-br from-indigo-400 to-indigo-500",
+      rating: 5,
+      text: "AutoTalent غير كل شيء! منشئ السيرة الذاتية أنشأ سيرة مثالية فتحت لي كل الأبواب. سحري!",
+      date: "Jan 10, 2025",
+      highlights: ["سحري"],
+      lang: "ar",
     },
   ];
 
@@ -162,7 +180,7 @@ export function TestimonialsSection() {
       const regex = new RegExp(`(${highlight})`, "gi");
       highlightedText = highlightedText.replace(
         regex,
-        '<mark class="bg-yellow-200 text-gray-900 font-semibold px-0.5 rounded">$1</mark>'
+        '<mark class="bg-yellow-200 text-gray-900 font-semibold px-0.5 rounded">$1</mark>',
       );
     });
     return highlightedText;
@@ -182,8 +200,8 @@ export function TestimonialsSection() {
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">
             Trusted by 1M+ job seekers
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto px-4">
-            Join thousands who've transformed their careers with AIApply
+          <p className="text-gray-800 sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto px-4">
+            Join thousands who&apos;ve transformed their careers with AutoTalent
           </p>
         </div>
 
@@ -192,7 +210,8 @@ export function TestimonialsSection() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#5b6949]/20"
+              dir={testimonial.lang === "ar" ? "rtl" : "ltr"}
+              className={`group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-[#5b6949]/20 ${testimonial.lang === "ar" ? "text-right" : ""}`}
             >
               {/* Quote Icon */}
               <div className="absolute top-4 right-4 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -236,7 +255,7 @@ export function TestimonialsSection() {
                 dangerouslySetInnerHTML={{
                   __html: highlightText(
                     testimonial.text,
-                    testimonial.highlights
+                    testimonial.highlights,
                   ),
                 }}
               />

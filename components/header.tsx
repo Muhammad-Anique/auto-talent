@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { getCurrentUser } from "@/lib/supabase/getCurrentUser";
 import type { User } from "@supabase/supabase-js";
-import { Loader2Icon } from "lucide-react";
+import { Loader2Icon, BrainCircuit } from "lucide-react";
+import { LanguageSwitcher } from "@/components/language-switcher";
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
@@ -40,9 +41,14 @@ export default function Header() {
       <header className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
         <Link
           href="/landing"
-          className="text-xl sm:text-2xl font-bold text-[#5b6949]"
+          className="flex items-center gap-2 sm:gap-3 group"
         >
-          AutoTalent
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#5b6949] rounded-full flex items-center justify-center group-hover:bg-[#4a5438] transition-colors">
+            <BrainCircuit className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+          </div>
+          <span className="text-xl sm:text-2xl font-bold text-[#5b6949] group-hover:text-[#4a5438] transition-colors">
+            AutoTalent
+          </span>
         </Link>
 
         <div className="flex items-center space-x-2 sm:space-x-4">
@@ -136,6 +142,10 @@ export default function Header() {
               </div>
             </div>
           </nav>
+
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
           {user ? (
             <>
               <span className="hidden sm:inline text-sm text-gray-600">

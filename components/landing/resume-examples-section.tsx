@@ -1,13 +1,12 @@
 "use client";
 
 import { Clock, ArrowRight, Eye } from "lucide-react";
+import { useLocale } from "@/components/providers/locale-provider";
 
-const resumeExamples = [
+const resumeExamplesStatic = [
   {
     id: 1,
-    title: "Software Engineer",
-    description: "Perfect for developers, programmers, and tech professionals",
-    updatedAt: "2 days ago",
+    roleKey: "softwareEngineer",
     preview: {
       name: "John Smith",
       position: "Software Engineer",
@@ -21,9 +20,7 @@ const resumeExamples = [
   },
   {
     id: 2,
-    title: "Marketing Manager",
-    description: "Ideal for marketing professionals and brand strategists",
-    updatedAt: "3 days ago",
+    roleKey: "marketingManager",
     preview: {
       name: "Sarah Johnson",
       position: "Marketing Manager",
@@ -37,9 +34,7 @@ const resumeExamples = [
   },
   {
     id: 3,
-    title: "Data Analyst",
-    description: "Tailored for data scientists and business analysts",
-    updatedAt: "1 week ago",
+    roleKey: "dataAnalyst",
     preview: {
       name: "Michael Chen",
       position: "Data Analyst",
@@ -53,9 +48,7 @@ const resumeExamples = [
   },
   {
     id: 4,
-    title: "UX Designer",
-    description: "Crafted for designers and user experience professionals",
-    updatedAt: "5 days ago",
+    roleKey: "uxDesigner",
     preview: {
       name: "Emma Rodriguez",
       position: "UX Designer",
@@ -69,9 +62,7 @@ const resumeExamples = [
   },
   {
     id: 5,
-    title: "Sales Manager",
-    description: "Designed for sales professionals and business development",
-    updatedAt: "4 days ago",
+    roleKey: "salesManager",
     preview: {
       name: "David Wilson",
       position: "Sales Manager",
@@ -88,9 +79,7 @@ const resumeExamples = [
   },
   {
     id: 6,
-    title: "Project Manager",
-    description: "Perfect for project managers and team leaders",
-    updatedAt: "1 day ago",
+    roleKey: "projectManager",
     preview: {
       name: "Lisa Thompson",
       position: "Project Manager",
@@ -105,6 +94,13 @@ const resumeExamples = [
 ];
 
 export function ResumeExamplesSection() {
+  const { t } = useLocale();
+
+  const resumeExamples = resumeExamplesStatic.map((example) => ({
+    ...example,
+    title: t(`resumeExamples.roles.${example.roleKey}.title`),
+    description: t(`resumeExamples.roles.${example.roleKey}.description`),
+  }));
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white/80 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto">
@@ -112,19 +108,17 @@ export function ResumeExamplesSection() {
         <div className="text-center mb-16">
           <div className="inline-flex items-center gap-2 bg-[#5b6949]/10 text-[#5b6949] px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Eye className="w-4 h-4" />
-            Professional Templates
+            {t("resumeExamples.badge")}
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6 px-4">
-            Resume examples that
+            {t("resumeExamples.title")}
             <span className="bg-gradient-to-r from-[#5b6949] to-[#5b6949] bg-clip-text text-transparent">
               {" "}
-              get results
+              {t("resumeExamples.titleHighlight")}
             </span>
           </h2>
-          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
-            Get inspired by professional resume examples tailored to your
-            industry. Each template is designed to pass ATS systems and impress
-            hiring managers.
+          <p className="text-gray-800 sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto px-4">
+            {t("resumeExamples.description")}
           </p>
         </div>
 
@@ -157,7 +151,7 @@ export function ResumeExamplesSection() {
 
                     <div className="border-t pt-1 mb-1">
                       <div className="font-semibold text-[0.5rem] mb-1">
-                        Experience
+                        {t("resumeExamples.experience")}
                       </div>
                       <div className="space-y-1">
                         {example.preview.experience.map((exp, index) => (
@@ -171,7 +165,7 @@ export function ResumeExamplesSection() {
 
                     <div className="border-t pt-1">
                       <div className="font-semibold text-[0.5rem] mb-1">
-                        Skills
+                        {t("resumeExamples.skills")}
                       </div>
                       <div className="flex flex-wrap gap-0.5">
                         {example.preview.skills.map((skill, skillIndex) => (
@@ -196,7 +190,7 @@ export function ResumeExamplesSection() {
                 </p>
                 <div className="flex items-center text-sm text-gray-500">
                   <Clock className="w-4 h-4 mr-1" />
-                  Updated {example.updatedAt}
+                  {t("resumeExamples.updated")}
                 </div>
               </div>
             </a>
@@ -206,7 +200,7 @@ export function ResumeExamplesSection() {
         {/* Call to Action */}
         <div className="text-center">
           <button className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#5b6949] to-[#5b6949] text-white font-semibold rounded-xl hover:from-[#5b6949]/90 hover:to-[#5b6949]/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-            View All Resume Examples
+            {t("resumeExamples.viewAll")}
             <ArrowRight className="w-5 h-5" />
           </button>
         </div>

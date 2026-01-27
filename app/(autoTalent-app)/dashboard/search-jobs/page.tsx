@@ -1,13 +1,23 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { createClient } from '@/utils/supabase/client';
-import { useLoading } from '../../../../context/LoadingContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search, MapPin, Building2, Calendar, Clock, Heart, Bookmark, Briefcase, Zap } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
+import { useLoading } from "../../../../context/LoadingContext";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Search,
+  MapPin,
+  Building2,
+  Calendar,
+  Clock,
+  Heart,
+  Bookmark,
+  Briefcase,
+  Zap,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Job = {
   id: string;
@@ -22,44 +32,44 @@ type Job = {
 };
 
 const LOCATIONS = [
-  { name: 'Italy', value: '92000000' },
-  { name: 'United States', value: '103644278' },
-  { name: 'United Kingdom', value: '101165590' },
-  { name: 'Germany', value: '101282230' },
-  { name: 'France', value: '105015875' },
-  { name: 'Spain', value: '105646813' },
-  { name: 'Netherlands', value: '102890719' },
-  { name: 'Canada', value: '101174742' },
-  { name: 'Australia', value: '101452733' },
-  { name: 'Japan', value: '101355337' },
+  { name: "Italy", value: "92000000" },
+  { name: "United States", value: "103644278" },
+  { name: "United Kingdom", value: "101165590" },
+  { name: "Germany", value: "101282230" },
+  { name: "France", value: "105015875" },
+  { name: "Spain", value: "105646813" },
+  { name: "Netherlands", value: "102890719" },
+  { name: "Canada", value: "101174742" },
+  { name: "Australia", value: "101452733" },
+  { name: "Japan", value: "101355337" },
 ];
 
 const DATE_OPTIONS = [
-  { name: 'Any Time', value: 'anyTime' },
-  { name: 'Past Week', value: 'pastWeek' },
-  { name: 'Past Month', value: 'pastMonth' },
+  { name: "Any Time", value: "anyTime" },
+  { name: "Past Week", value: "pastWeek" },
+  { name: "Past Month", value: "pastMonth" },
 ];
 
 const SORT_OPTIONS = [
-  { name: 'Most Relevant', value: 'mostRelevant' },
-  { name: 'Most Recent', value: 'mostRecent' },
+  { name: "Most Relevant", value: "mostRelevant" },
+  { name: "Most Recent", value: "mostRecent" },
 ];
 
 export default function JobsPage() {
-  const [keywords, setKeywords] = useState('');
-  const [locationId, setLocationId] = useState('92000000'); // Default to Italy
-  const [datePosted, setDatePosted] = useState('anyTime');
-  const [sort, setSort] = useState('mostRelevant');
+  const [keywords, setKeywords] = useState("");
+  const [locationId, setLocationId] = useState("92000000"); // Default to Italy
+  const [datePosted, setDatePosted] = useState("anyTime");
+  const [sort, setSort] = useState("mostRelevant");
   const [jobs, setJobs] = useState<Job[]>([]);
   const [savedJobs, setSavedJobs] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const { setIsLoading } = useLoading();
-  
+
   const [searched, setSearched] = useState(false);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [showDateDropdown, setShowDateDropdown] = useState(false);
   const [showSortDropdown, setShowSortDropdown] = useState(false);
-  
+
   const locationRef = useRef<HTMLDivElement>(null);
   const dateRef = useRef<HTMLDivElement>(null);
   const sortRef = useRef<HTMLDivElement>(null);
@@ -74,9 +84,9 @@ export default function JobsPage() {
       if (!userId) return;
 
       const { data, error } = await supabase
-        .from('saved_jobs')
-        .select('job')
-        .eq('user_id', userId);
+        .from("saved_jobs")
+        .select("job")
+        .eq("user_id", userId);
 
       if (data) {
         const savedIds = data.map((entry) => entry.job.id);
@@ -91,7 +101,10 @@ export default function JobsPage() {
   // Handle clicking outside dropdowns
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
+      if (
+        locationRef.current &&
+        !locationRef.current.contains(event.target as Node)
+      ) {
         setShowLocationDropdown(false);
       }
       if (dateRef.current && !dateRef.current.contains(event.target as Node)) {
@@ -102,8 +115,8 @@ export default function JobsPage() {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -114,16 +127,16 @@ export default function JobsPage() {
     try {
       const res = await fetch(
         `/api/linkedin/job?keywords=${encodeURIComponent(
-          keywords
-        )}&locationId=${locationId}&datePosted=${datePosted}&sort=${sort}`
+          keywords,
+        )}&locationId=${locationId}&datePosted=${datePosted}&sort=${sort}`,
       );
       const data = await res.json();
 
       const jobList = data?.data?.data ?? [];
-      console.log('Fetched jobs:', jobList);
+      console.log("Fetched jobs:", jobList);
       setJobs(jobList);
     } catch (error) {
-      console.error('Error fetching jobs:', error);
+      console.error("Error fetching jobs:", error);
       setJobs([]);
     } finally {
       setLoading(false);
@@ -134,7 +147,7 @@ export default function JobsPage() {
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
     if (!userId) {
-      alert('Please log in to save jobs.');
+      alert("Please log in to save jobs.");
       return;
     }
 
@@ -142,14 +155,14 @@ export default function JobsPage() {
       return;
     }
 
-    const { error } = await supabase.from('saved_jobs').insert({
+    const { error } = await supabase.from("saved_jobs").insert({
       user_id: userId,
       job: job,
     });
 
     if (error) {
-      console.error('Error saving job:', error);
-      alert('Failed to save job.');
+      console.error("Error saving job:", error);
+      alert("Failed to save job.");
     } else {
       setSavedJobs((prev) => [...prev, job.id]);
     }
@@ -161,18 +174,18 @@ export default function JobsPage() {
   };
 
   const getSelectedLocationName = () => {
-    const location = LOCATIONS.find(loc => loc.value === locationId);
-    return location?.name || 'Italy';
+    const location = LOCATIONS.find((loc) => loc.value === locationId);
+    return location?.name || "Italy";
   };
 
   const getSelectedDateName = () => {
-    const date = DATE_OPTIONS.find(date => date.value === datePosted);
-    return date?.name || 'Any Time';
+    const date = DATE_OPTIONS.find((date) => date.value === datePosted);
+    return date?.name || "Any Time";
   };
 
   const getSelectedSortName = () => {
-    const sortOption = SORT_OPTIONS.find(option => option.value === sort);
-    return sortOption?.name || 'Most Relevant';
+    const sortOption = SORT_OPTIONS.find((option) => option.value === sort);
+    return sortOption?.name || "Most Relevant";
   };
 
   return (
@@ -210,7 +223,7 @@ export default function JobsPage() {
               <Input
                 type="text"
                 placeholder="Enter job keywords (e.g., React, Python, Product Manager)"
-                className="pl-10 h-12 text-base bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                className="pl-10 h-12 text-gray-800 bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
                 value={keywords}
                 onChange={(e) => setKeywords(e.target.value)}
                 required
@@ -227,18 +240,31 @@ export default function JobsPage() {
                   className={cn(
                     "w-full flex items-center justify-between p-3 h-12 rounded-lg border transition-all duration-200",
                     "bg-white/80 border-gray-200 hover:border-[#5b6949]/50 focus:border-[#5b6949]",
-                    showLocationDropdown && "border-[#5b6949] ring-2 ring-[#5b6949]/20"
+                    showLocationDropdown &&
+                      "border-[#5b6949] ring-2 ring-[#5b6949]/20",
                   )}
                 >
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-gray-500" />
-                    <span className="text-gray-700">{getSelectedLocationName()}</span>
+                    <span className="text-gray-700">
+                      {getSelectedLocationName()}
+                    </span>
                   </div>
-                  <svg className="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-4 h-4 text-gray-400 transition-transform duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
-                
+
                 {showLocationDropdown && (
                   <div className="absolute z-[200] top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
                     {LOCATIONS.map((location) => (
@@ -251,7 +277,8 @@ export default function JobsPage() {
                         }}
                         className={cn(
                           "w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors",
-                          locationId === location.value && "bg-[#5b6949]/10 text-[#5b6949] font-medium"
+                          locationId === location.value &&
+                            "bg-[#5b6949]/10 text-[#5b6949] font-medium",
                         )}
                       >
                         {location.name}
@@ -269,18 +296,31 @@ export default function JobsPage() {
                   className={cn(
                     "w-full flex items-center justify-between p-3 h-12 rounded-lg border transition-all duration-200",
                     "bg-white/80 border-gray-200 hover:border-[#5b6949]/50 focus:border-[#5b6949]",
-                    showDateDropdown && "border-[#5b6949] ring-2 ring-[#5b6949]/20"
+                    showDateDropdown &&
+                      "border-[#5b6949] ring-2 ring-[#5b6949]/20",
                   )}
                 >
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-gray-500" />
-                    <span className="text-gray-700">{getSelectedDateName()}</span>
+                    <span className="text-gray-700">
+                      {getSelectedDateName()}
+                    </span>
                   </div>
-                  <svg className="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-4 h-4 text-gray-400 transition-transform duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
-                
+
                 {showDateDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     {DATE_OPTIONS.map((option) => (
@@ -293,7 +333,8 @@ export default function JobsPage() {
                         }}
                         className={cn(
                           "w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors",
-                          datePosted === option.value && "bg-[#5b6949]/10 text-[#5b6949] font-medium"
+                          datePosted === option.value &&
+                            "bg-[#5b6949]/10 text-[#5b6949] font-medium",
                         )}
                       >
                         {option.name}
@@ -311,18 +352,31 @@ export default function JobsPage() {
                   className={cn(
                     "w-full flex items-center justify-between p-3 h-12 rounded-lg border transition-all duration-200",
                     "bg-white/80 border-gray-200 hover:border-[#5b6949]/50 focus:border-[#5b6949]",
-                    showSortDropdown && "border-[#5b6949] ring-2 ring-[#5b6949]/20"
+                    showSortDropdown &&
+                      "border-[#5b6949] ring-2 ring-[#5b6949]/20",
                   )}
                 >
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-gray-500" />
-                    <span className="text-gray-700">{getSelectedSortName()}</span>
+                    <span className="text-gray-700">
+                      {getSelectedSortName()}
+                    </span>
                   </div>
-                  <svg className="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  <svg
+                    className="w-4 h-4 text-gray-400 transition-transform duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </button>
-                
+
                 {showSortDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     {SORT_OPTIONS.map((option) => (
@@ -335,7 +389,8 @@ export default function JobsPage() {
                         }}
                         className={cn(
                           "w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors",
-                          sort === option.value && "bg-[#5b6949]/10 text-[#5b6949] font-medium"
+                          sort === option.value &&
+                            "bg-[#5b6949]/10 text-[#5b6949] font-medium",
                         )}
                       >
                         {option.name}
@@ -351,11 +406,11 @@ export default function JobsPage() {
               type="submit"
               disabled={loading}
               className={cn(
-                "w-full h-12 text-base font-medium",
+                "w-full h-12 text-gray-800 font-medium",
                 "bg-[#5b6949]",
                 "text-white hover:shadow-lg hover:shadow-[#5b6949]/25",
                 "transition-all duration-500 hover:-translate-y-0.5",
-                "disabled:opacity-50 disabled:cursor-not-allowed"
+                "disabled:opacity-50 disabled:cursor-not-allowed",
               )}
             >
               {loading ? (
@@ -378,7 +433,9 @@ export default function JobsPage() {
           <div className="text-center py-12">
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#5b6949]/10 to-gray-500/10 border border-[#5b6949]/20">
               <div className="w-4 h-4 border-2 border-[#5b6949]/30 border-t-[#5b6949] rounded-full animate-spin"></div>
-              <span className="text-gray-700 font-medium">Searching for jobs...</span>
+              <span className="text-gray-700 font-medium">
+                Searching for jobs...
+              </span>
             </div>
           </div>
         )}
@@ -386,7 +443,9 @@ export default function JobsPage() {
         {!loading && searched && jobs.length === 0 && (
           <div className="text-center py-12">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200">
-              <span className="text-red-600 font-medium">No jobs found. Try adjusting your search criteria.</span>
+              <span className="text-red-600 font-medium">
+                No jobs found. Try adjusting your search criteria.
+              </span>
             </div>
           </div>
         )}
@@ -395,10 +454,10 @@ export default function JobsPage() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-gray-900">
-                Found {jobs.length} job{jobs.length !== 1 ? 's' : ''}
+                Found {jobs.length} job{jobs.length !== 1 ? "s" : ""}
               </h2>
             </div>
-            
+
             <div className="grid gap-4">
               {jobs.map((job) => (
                 <div
@@ -409,7 +468,9 @@ export default function JobsPage() {
                   <button
                     onClick={() => saveJob(job)}
                     className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100/80 hover:bg-[#5b6949]/10 transition-colors"
-                    title={savedJobs.includes(job.id) ? 'Job saved' : 'Save job'}
+                    title={
+                      savedJobs.includes(job.id) ? "Job saved" : "Save job"
+                    }
                   >
                     {savedJobs.includes(job.id) ? (
                       <Heart className="w-5 h-5 text-red-500 fill-current" />
@@ -434,7 +495,7 @@ export default function JobsPage() {
                           />
                         </div>
                       )}
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-2">
                           <Briefcase className="w-4 h-4 text-[#5b6949]" />
@@ -442,7 +503,7 @@ export default function JobsPage() {
                             {job.title}
                           </h3>
                         </div>
-                        
+
                         <div className="flex items-center gap-4 text-sm text-gray-600 mb-2">
                           <div className="flex items-center gap-1">
                             <Building2 className="w-4 h-4" />
@@ -453,7 +514,7 @@ export default function JobsPage() {
                             <span>{job.location}</span>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <Calendar className="w-4 h-4" />
                           <span>Posted: {formatDate(job.postAt)}</span>

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
@@ -7,20 +7,22 @@ import { LoadingDots } from "@/components/ui/loading-dots";
 
 // Define the creation steps
 export const CREATION_STEPS = [
-  { id: 'analyzing', label: 'Analyzing Job Description' },
-  { id: 'formatting', label: 'Formatting Requirements' },
-  { id: 'tailoring', label: 'Tailoring Resume Content' },
-  { id: 'finalizing', label: 'Finalizing Resume' },
+  { id: "analyzing", label: "Analyzing Job Description" },
+  { id: "formatting", label: "Formatting Requirements" },
+  { id: "tailoring", label: "Tailoring Resume Content" },
+  { id: "finalizing", label: "Finalizing Resume" },
 ] as const;
 
-export type CreationStep = typeof CREATION_STEPS[number]['id'];
+export type CreationStep = (typeof CREATION_STEPS)[number]["id"];
 
 interface LoadingOverlayProps {
   currentStep: CreationStep;
 }
 
 export function LoadingOverlay({ currentStep }: LoadingOverlayProps) {
-  const currentStepIndex = CREATION_STEPS.findIndex(step => step.id === currentStep);
+  const currentStepIndex = CREATION_STEPS.findIndex(
+    (step) => step.id === currentStep,
+  );
   const progress = ((currentStepIndex + 1) / CREATION_STEPS.length) * 100;
 
   return (
@@ -28,7 +30,7 @@ export function LoadingOverlay({ currentStep }: LoadingOverlayProps) {
       <div className="max-w-md w-full space-y-8 p-8">
         {/* Progress bar */}
         <div className="space-y-3">
-          <div className="flex justify-between text-sm text-muted-foreground">
+          <div className="flex justify-between text-sm text-gray-700">
             <span>Creating Resume</span>
             <span>{Math.round(progress)}%</span>
           </div>
@@ -40,14 +42,14 @@ export function LoadingOverlay({ currentStep }: LoadingOverlayProps) {
           {CREATION_STEPS.map((step, index) => {
             const isActive = step.id === currentStep;
             const isCompleted = index < currentStepIndex;
-            
+
             return (
               <div
                 key={step.id}
                 className={cn(
                   "flex items-center gap-3 p-3 rounded-lg transition-colors duration-300",
                   isActive && "bg-pink-50 text-pink-900",
-                  isCompleted && "text-muted-foreground"
+                  isCompleted && "text-gray-700",
                 )}
               >
                 {isCompleted ? (
@@ -59,11 +61,13 @@ export function LoadingOverlay({ currentStep }: LoadingOverlayProps) {
                 ) : (
                   <div className="h-5 w-5 rounded-full border-2 border-muted" />
                 )}
-                <span className={cn(
-                  "text-sm font-medium",
-                  isActive && "text-pink-900",
-                  !isActive && !isCompleted && "text-muted-foreground"
-                )}>
+                <span
+                  className={cn(
+                    "text-sm font-medium",
+                    isActive && "text-pink-900",
+                    !isActive && !isCompleted && "text-gray-700",
+                  )}
+                >
                   {step.label}
                 </span>
               </div>
@@ -73,14 +77,17 @@ export function LoadingOverlay({ currentStep }: LoadingOverlayProps) {
 
         {/* Current action description */}
         <div className="text-center">
-          <p className="text-sm text-muted-foreground animate-pulse">
-            {currentStep === 'analyzing' && "Reading and understanding the job requirements..."}
-            {currentStep === 'formatting' && "Structuring the job information..."}
-            {currentStep === 'tailoring' && "Optimizing your resume for the best match..."}
-            {currentStep === 'finalizing' && "Putting the final touches..."}
+          <p className="text-sm text-gray-700 animate-pulse">
+            {currentStep === "analyzing" &&
+              "Reading and understanding the job requirements..."}
+            {currentStep === "formatting" &&
+              "Structuring the job information..."}
+            {currentStep === "tailoring" &&
+              "Optimizing your resume for the best match..."}
+            {currentStep === "finalizing" && "Putting the final touches..."}
           </p>
         </div>
       </div>
     </div>
   );
-} 
+}

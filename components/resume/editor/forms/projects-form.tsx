@@ -1,11 +1,19 @@
-'use client';
+"use client";
 
 import { Project, Profile } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical, Loader2, Sparkles, Check, X } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  GripVertical,
+  Loader2,
+  Sparkles,
+  Check,
+  X,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ImportFromProfileDialog } from "../../management/dialogs/import-from-profile-dialog";
 import { useState, useRef, useEffect, memo } from "react";
@@ -16,7 +24,10 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { AISuggestions } from "../../shared/ai-suggestions";
-import { generateProjectPoints, improveProject } from "@/utils/actions/resumes/ai";
+import {
+  generateProjectPoints,
+  improveProject,
+} from "@/utils/actions/resumes/ai";
 import { Badge } from "@/components/ui/badge";
 import { KeyboardEvent } from "react";
 import Tiptap from "@/components/ui/tiptap";
@@ -46,7 +57,7 @@ interface ProjectsFormProps {
 
 function areProjectsPropsEqual(
   prevProps: ProjectsFormProps,
-  nextProps: ProjectsFormProps
+  nextProps: ProjectsFormProps,
 ) {
   return (
     JSON.stringify(prevProps.projects) === JSON.stringify(nextProps.projects) &&
@@ -57,19 +68,36 @@ function areProjectsPropsEqual(
 export const ProjectsForm = memo(function ProjectsFormComponent({
   projects,
   onChange,
-  profile
+  profile,
 }: ProjectsFormProps) {
-  const [aiSuggestions, setAiSuggestions] = useState<{ [key: number]: AISuggestion[] }>({});
+  const [aiSuggestions, setAiSuggestions] = useState<{
+    [key: number]: AISuggestion[];
+  }>({});
   const [loadingAI, setLoadingAI] = useState<{ [key: number]: boolean }>({});
-  const [loadingPointAI, setLoadingPointAI] = useState<{ [key: number]: { [key: number]: boolean } }>({});
-  const [aiConfig, setAiConfig] = useState<{ [key: number]: { numPoints: number; customPrompt: string } }>({});
-  const [popoverOpen, setPopoverOpen] = useState<{ [key: number]: boolean }>({});
-  const [improvedPoints, setImprovedPoints] = useState<{ [key: number]: { [key: number]: ImprovedPoint } }>({});
-  const [improvementConfig, setImprovementConfig] = useState<ImprovementConfig>({});
+  const [loadingPointAI, setLoadingPointAI] = useState<{
+    [key: number]: { [key: number]: boolean };
+  }>({});
+  const [aiConfig, setAiConfig] = useState<{
+    [key: number]: { numPoints: number; customPrompt: string };
+  }>({});
+  const [popoverOpen, setPopoverOpen] = useState<{ [key: number]: boolean }>(
+    {},
+  );
+  const [improvedPoints, setImprovedPoints] = useState<{
+    [key: number]: { [key: number]: ImprovedPoint };
+  }>({});
+  const [improvementConfig, setImprovementConfig] = useState<ImprovementConfig>(
+    {},
+  );
   const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState({ title: '', description: '' });
+  const [errorMessage, setErrorMessage] = useState({
+    title: "",
+    description: "",
+  });
   const textareaRefs = useRef<{ [key: number]: HTMLTextAreaElement }>({});
-  const [newTechnologies, setNewTechnologies] = useState<{ [key: number]: string }>({});
+  const [newTechnologies, setNewTechnologies] = useState<{
+    [key: number]: string;
+  }>({});
 
   // Effect to focus textarea when popover opens
   useEffect(() => {
@@ -84,17 +112,24 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
   }, [popoverOpen]);
 
   const addProject = () => {
-    onChange([{
-      name: "",
-      description: [],
-      technologies: [],
-      date: "",
-      url: "",
-      github_url: ""
-    }, ...projects]);
+    onChange([
+      {
+        name: "",
+        description: [],
+        technologies: [],
+        date: "",
+        url: "",
+        github_url: "",
+      },
+      ...projects,
+    ]);
   };
 
-  const updateProject = (index: number, field: keyof Project, value: Project[keyof Project]) => {
+  const updateProject = (
+    index: number,
+    field: keyof Project,
+    value: Project[keyof Project],
+  ) => {
     const updated = [...projects];
     updated[index] = { ...updated[index], [field]: value };
     onChange(updated);
@@ -110,14 +145,14 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
 
   const generateAIPoints = async (index: number) => {
     const project = projects[index];
-    const config = aiConfig[index] || { numPoints: 3, customPrompt: '' };
-    setLoadingAI(prev => ({ ...prev, [index]: true }));
-    setPopoverOpen(prev => ({ ...prev, [index]: false }));
-    
+    const config = aiConfig[index] || { numPoints: 3, customPrompt: "" };
+    setLoadingAI((prev) => ({ ...prev, [index]: true }));
+    setPopoverOpen((prev) => ({ ...prev, [index]: false }));
+
     try {
       // Get model and API key from local storage
-      const MODEL_STORAGE_KEY = 'Auto Talent-default-model';
-      const LOCAL_STORAGE_KEY = 'Auto Talent-api-keys';
+      const MODEL_STORAGE_KEY = "Auto Talent-default-model";
+      const LOCAL_STORAGE_KEY = "Auto Talent-api-keys";
 
       const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
       const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -126,7 +161,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
       try {
         apiKeys = storedKeys ? JSON.parse(storedKeys) : [];
       } catch (error) {
-        console.error('Error parsing API keys:', error);
+        console.error("Error parsing API keys:", error);
       }
 
       const result = await generateProjectPoints(
@@ -136,59 +171,67 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
         config.numPoints,
         config.customPrompt,
         {
-          model: selectedModel || '',
-          apiKeys
-        }
+          model: selectedModel || "",
+          apiKeys,
+        },
       );
-      
+
       const suggestions = result.points.map((point: string) => ({
         id: Math.random().toString(36).substr(2, 9),
-        point
+        point,
       }));
-      
-      setAiSuggestions(prev => ({
+
+      setAiSuggestions((prev) => ({
         ...prev,
-        [index]: suggestions
+        [index]: suggestions,
       }));
     } catch (error: Error | unknown) {
-      if (error instanceof Error && (
-          error.message.toLowerCase().includes('api key') || 
-          error.message.toLowerCase().includes('unauthorized') ||
-          error.message.toLowerCase().includes('invalid key') ||
-          error.message.toLowerCase().includes('invalid x-api-key'))
+      if (
+        error instanceof Error &&
+        (error.message.toLowerCase().includes("api key") ||
+          error.message.toLowerCase().includes("unauthorized") ||
+          error.message.toLowerCase().includes("invalid key") ||
+          error.message.toLowerCase().includes("invalid x-api-key"))
       ) {
         setErrorMessage({
           title: "API Key Error",
-          description: "There was an issue with your API key. Please check your settings and try again."
+          description:
+            "There was an issue with your API key. Please check your settings and try again.",
         });
       } else {
         setErrorMessage({
           title: "Error",
-          description: "Failed to generate AI points. Please try again."
+          description: "Failed to generate AI points. Please try again.",
         });
       }
       setShowErrorDialog(true);
     } finally {
-      setLoadingAI(prev => ({ ...prev, [index]: false }));
+      setLoadingAI((prev) => ({ ...prev, [index]: false }));
     }
   };
 
-  const approveSuggestion = (projectIndex: number, suggestion: AISuggestion) => {
+  const approveSuggestion = (
+    projectIndex: number,
+    suggestion: AISuggestion,
+  ) => {
     const updated = [...projects];
-    updated[projectIndex].description = [...updated[projectIndex].description, suggestion.point];
+    updated[projectIndex].description = [
+      ...updated[projectIndex].description,
+      suggestion.point,
+    ];
     onChange(updated);
-    
+
     // Remove the suggestion after approval
-    setAiSuggestions(prev => ({
+    setAiSuggestions((prev) => ({
       ...prev,
-      [projectIndex]: prev[projectIndex].filter(s => s.id !== suggestion.id)
+      [projectIndex]: prev[projectIndex].filter((s) => s.id !== suggestion.id),
     }));
   };
 
   const deleteSuggestion = (projectIndex: number, suggestionId: string) => {
-    setAiSuggestions(prev => ({
+    setAiSuggestions((prev) => ({
       ...prev,
-      [projectIndex]: prev[projectIndex].filter(s => s.id !== suggestionId)
+      [projectIndex]: prev[projectIndex].filter((s) => s.id !== suggestionId),
     }));
   };
 
@@ -196,15 +239,15 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
     const project = projects[projectIndex];
     const point = project.description[pointIndex];
     const customPrompt = improvementConfig[projectIndex]?.[pointIndex];
-    
-    setLoadingPointAI(prev => ({
+
+    setLoadingPointAI((prev) => ({
       ...prev,
-      [projectIndex]: { ...(prev[projectIndex] || {}), [pointIndex]: true }
+      [projectIndex]: { ...(prev[projectIndex] || {}), [pointIndex]: true },
     }));
-    
+
     try {
-      const MODEL_STORAGE_KEY = 'Auto Talent-default-model';
-      const LOCAL_STORAGE_KEY = 'Auto Talent-api-keys';
+      const MODEL_STORAGE_KEY = "Auto Talent-default-model";
+      const LOCAL_STORAGE_KEY = "Auto Talent-api-keys";
 
       const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY);
       const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -213,50 +256,52 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
       try {
         apiKeys = storedKeys ? JSON.parse(storedKeys) : [];
       } catch (error) {
-        console.error('Error parsing API keys:', error);
+        console.error("Error parsing API keys:", error);
       }
 
       const improvedPoint = await improveProject(point, customPrompt, {
-        model: selectedModel || '',
-        apiKeys
+        model: selectedModel || "",
+        apiKeys,
       });
 
-      setImprovedPoints(prev => ({
+      setImprovedPoints((prev) => ({
         ...prev,
         [projectIndex]: {
           ...(prev[projectIndex] || {}),
           [pointIndex]: {
             original: point,
-            improved: improvedPoint
-          }
-        }
+            improved: improvedPoint,
+          },
+        },
       }));
 
       const updated = [...projects];
       updated[projectIndex].description[pointIndex] = improvedPoint;
       onChange(updated);
     } catch (error: unknown) {
-      if (error instanceof Error && (
-        error.message.toLowerCase().includes('api key') || 
-        error.message.toLowerCase().includes('unauthorized') ||
-        error.message.toLowerCase().includes('invalid key') ||
-        error.message.toLowerCase().includes('invalid x-api-key'))
+      if (
+        error instanceof Error &&
+        (error.message.toLowerCase().includes("api key") ||
+          error.message.toLowerCase().includes("unauthorized") ||
+          error.message.toLowerCase().includes("invalid key") ||
+          error.message.toLowerCase().includes("invalid x-api-key"))
       ) {
         setErrorMessage({
           title: "API Key Error",
-          description: "There was an issue with your API key. Please check your settings and try again."
+          description:
+            "There was an issue with your API key. Please check your settings and try again.",
         });
       } else {
         setErrorMessage({
           title: "Error",
-          description: "Failed to improve point. Please try again."
+          description: "Failed to improve point. Please try again.",
         });
       }
       setShowErrorDialog(true);
     } finally {
-      setLoadingPointAI(prev => ({
+      setLoadingPointAI((prev) => ({
         ...prev,
-        [projectIndex]: { ...(prev[projectIndex] || {}), [pointIndex]: false }
+        [projectIndex]: { ...(prev[projectIndex] || {}), [pointIndex]: false },
       }));
     }
   };
@@ -267,9 +312,9 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
       const updated = [...projects];
       updated[projectIndex].description[pointIndex] = improvedPoint.original;
       onChange(updated);
-      
+
       // Remove the improvement from state
-      setImprovedPoints(prev => {
+      setImprovedPoints((prev) => {
         const newState = { ...prev };
         if (newState[projectIndex]) {
           delete newState[projectIndex][pointIndex];
@@ -288,19 +333,22 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
 
     const updated = [...projects];
     const currentTechnologies = updated[projectIndex].technologies || [];
-    
+
     if (!currentTechnologies.includes(techToAdd)) {
       updated[projectIndex] = {
         ...updated[projectIndex],
-        technologies: [...currentTechnologies, techToAdd]
+        technologies: [...currentTechnologies, techToAdd],
       };
       onChange(updated);
     }
-    setNewTechnologies({ ...newTechnologies, [projectIndex]: '' });
+    setNewTechnologies({ ...newTechnologies, [projectIndex]: "" });
   };
 
-  const handleTechKeyPress = (e: KeyboardEvent<HTMLInputElement>, projectIndex: number) => {
-    if (e.key === 'Enter') {
+  const handleTechKeyPress = (
+    e: KeyboardEvent<HTMLInputElement>,
+    projectIndex: number,
+  ) => {
+    if (e.key === "Enter") {
       e.preventDefault();
       addTechnology(projectIndex);
     }
@@ -308,8 +356,9 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
 
   const removeTechnology = (projectIndex: number, techIndex: number) => {
     const updated = [...projects];
-    updated[projectIndex].technologies = (updated[projectIndex].technologies || [])
-      .filter((_, i) => i !== techIndex);
+    updated[projectIndex].technologies = (
+      updated[projectIndex].technologies || []
+    ).filter((_, i) => i !== techIndex);
     onChange(updated);
   };
 
@@ -317,12 +366,14 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
     <>
       <div className="space-y-2 sm:space-y-3">
         <div className="@container">
-          <div className={cn(
-            "flex flex-col @[400px]:flex-row gap-2",
-            "transition-all duration-300 ease-in-out"
-          )}>
-            <Button 
-              variant="outline" 
+          <div
+            className={cn(
+              "flex flex-col @[400px]:flex-row gap-2",
+              "transition-all duration-300 ease-in-out",
+            )}
+          >
+            <Button
+              variant="outline"
               onClick={addProject}
               className={cn(
                 "flex-1 h-9 min-w-[120px]",
@@ -332,7 +383,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                 "text-[#5b6949] hover:text-[#5b6949] hover:text-violet-800",
                 "transition-all duration-300",
                 "rounded-xl",
-                "whitespace-nowrap text-[11px] @[300px]:text-sm"
+                "whitespace-nowrap text-[11px] @[300px]:text-sm",
               )}
             >
               <Plus className="h-4 w-4 mr-2 shrink-0" />
@@ -351,20 +402,20 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                 "text-[#5b6949] hover:text-[#5b6949] hover:text-violet-800",
                 "transition-all duration-300",
                 "rounded-xl",
-                "whitespace-nowrap text-[11px] @[300px]:text-sm"
+                "whitespace-nowrap text-[11px] @[300px]:text-sm",
               )}
             />
           </div>
         </div>
 
         {projects.map((project, index) => (
-          <Card 
-            key={index} 
+          <Card
+            key={index}
             className={cn(
               "relative group transition-all duration-300",
               "bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-zinc-100/5",
               "backdrop-blur-md border-2 border-[#5b6949]/30",
-              "shadow-sm"
+              "shadow-sm",
             )}
           >
             <div className="absolute -left-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -372,7 +423,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                 <GripVertical className="h-4 w-4 text-[#5b6949]" />
               </div>
             </div>
-            
+
             <CardContent className="p-3 sm:p-4 space-y-3 sm:space-y-4">
               {/* Header with Delete Button */}
               <div className="space-y-2 sm:space-y-3">
@@ -381,13 +432,15 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                   <div className="relative flex-1">
                     <Input
                       value={project.name}
-                      onChange={(e) => updateProject(index, 'name', e.target.value)}
+                      onChange={(e) =>
+                        updateProject(index, "name", e.target.value)
+                      }
                       className={cn(
                         "text-sm font-semibold tracking-tight h-9",
                         "bg-white border-2 border-dashed border-zinc-300 hover:border-zinc-400",
                         "focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200",
                         "hover:border-zinc-400 hover:bg-zinc-100 transition-colors",
-                        "placeholder:text-gray-400"
+                        "placeholder:text-gray-400",
                       )}
                       placeholder="Project Name"
                     />
@@ -395,8 +448,8 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                       PROJECT NAME
                     </div>
                   </div>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="icon"
                     onClick={() => removeProject(index)}
                     className="text-gray-400 hover:text-red-500 transition-colors duration-300"
@@ -409,13 +462,15 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                   <div className="relative">
                     <Input
-                      value={project.url || ''}
-                      onChange={(e) => updateProject(index, 'url', e.target.value)}
+                      value={project.url || ""}
+                      onChange={(e) =>
+                        updateProject(index, "url", e.target.value)
+                      }
                       className={cn(
                         "text-sm font-medium bg-white border-2 border-dashed border-zinc-300 hover:border-zinc-400",
                         "focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200",
                         "hover:border-zinc-400 hover:bg-zinc-100 transition-colors",
-                        "placeholder:text-gray-400"
+                        "placeholder:text-gray-400",
                       )}
                       placeholder="Live URL"
                     />
@@ -425,13 +480,15 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                   </div>
                   <div className="relative">
                     <Input
-                      value={project.github_url || ''}
-                      onChange={(e) => updateProject(index, 'github_url', e.target.value)}
+                      value={project.github_url || ""}
+                      onChange={(e) =>
+                        updateProject(index, "github_url", e.target.value)
+                      }
                       className={cn(
                         "h-9 bg-white border-2 border-dashed border-zinc-300 hover:border-zinc-400",
                         "focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200",
                         "hover:border-zinc-400 hover:bg-zinc-100 transition-colors",
-                        "placeholder:text-gray-400"
+                        "placeholder:text-gray-400",
                       )}
                       placeholder="GitHub URL"
                     />
@@ -445,14 +502,16 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                 <div className="relative group">
                   <Input
                     type="text"
-                    value={project.date || ''}
-                    onChange={(e) => updateProject(index, 'date', e.target.value)}
+                    value={project.date || ""}
+                    onChange={(e) =>
+                      updateProject(index, "date", e.target.value)
+                    }
                     className={cn(
                       "w-full bg-white border-2 border-dashed border-zinc-300 hover:border-zinc-400",
                       "focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200",
-                      "hover:border-zinc-400 hover:bg-zinc-100 transition-colors"
+                      "hover:border-zinc-400 hover:bg-zinc-100 transition-colors",
                     )}
-                    placeholder="e.g., &apos;Jan 2023 - Present&apos; or &apos;2020 - 2022&apos;"
+                    placeholder="e.g., 'Jan 2023 - Present' or '2020 - 2022'"
                   />
                   <div className="absolute -top-2 left-2 px-1 bg-[#5b6949]/5text-[7px] sm:text-[9px] font-medium text-[#5b6949]">
                     DATE
@@ -466,21 +525,27 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                   </Label>
                   <div className="space-y-2 pl-0">
                     {project.description.map((desc, descIndex) => (
-                      <div key={descIndex} className="flex gap-1 items-start group/item">
+                      <div
+                        key={descIndex}
+                        className="flex gap-1 items-start group/item"
+                      >
                         <div className="flex-1">
                           <Tiptap
-                            content={desc} 
+                            content={desc}
                             onChange={(newContent) => {
                               const updated = [...projects];
-                              updated[index].description[descIndex] = newContent;
+                              updated[index].description[descIndex] =
+                                newContent;
                               onChange(updated);
 
                               if (improvedPoints[index]?.[descIndex]) {
-                                setImprovedPoints(prev => {
+                                setImprovedPoints((prev) => {
                                   const newState = { ...prev };
                                   if (newState[index]) {
                                     delete newState[index][descIndex];
-                                    if (Object.keys(newState[index]).length === 0) {
+                                    if (
+                                      Object.keys(newState[index]).length === 0
+                                    ) {
                                       delete newState[index];
                                     }
                                   }
@@ -497,8 +562,8 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                 "border-zinc-400",
                                 "bg-gradient-to-r from-[#5b6949]/80 to-indigo-50/80",
                                 "shadow-[0_0_15px_-3px_rgba(168,85,247,0.2)]",
-                                "hover:bg-gradient-to-r hover:from-[#5b6949]/90 hover:to-indigo-50/90"
-                              ]
+                                "hover:bg-gradient-to-r hover:from-[#5b6949]/90 hover:to-indigo-50/90",
+                              ],
                             )}
                           />
 
@@ -519,11 +584,14 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                 size="icon"
                                 onClick={() => {
                                   // Remove the improvement state after accepting
-                                  setImprovedPoints(prev => {
+                                  setImprovedPoints((prev) => {
                                     const newState = { ...prev };
                                     if (newState[index]) {
                                       delete newState[index][descIndex];
-                                      if (Object.keys(newState[index]).length === 0) {
+                                      if (
+                                        Object.keys(newState[index]).length ===
+                                        0
+                                      ) {
                                         delete newState[index];
                                       }
                                     }
@@ -539,7 +607,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                   "shadow-sm",
                                   "transition-all duration-300",
                                   "hover:scale-105 hover:shadow-md",
-                                  "hover:-translate-y-0.5"
+                                  "hover:-translate-y-0.5",
                                 )}
                               >
                                 <Check className="h-4 w-4" />
@@ -547,7 +615,9 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                onClick={() => undoImprovement(index, descIndex)}
+                                onClick={() =>
+                                  undoImprovement(index, descIndex)
+                                }
                                 className={cn(
                                   "p-0 group-hover/item:opacity-100",
                                   "h-8 w-8 rounded-lg",
@@ -557,7 +627,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                   "shadow-sm",
                                   "transition-all duration-300",
                                   "hover:scale-105 hover:shadow-md",
-                                  "hover:-translate-y-0.5"
+                                  "hover:-translate-y-0.5",
                                 )}
                               >
                                 <X className="h-4 w-4" />
@@ -570,7 +640,11 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                 size="icon"
                                 onClick={() => {
                                   const updated = [...projects];
-                                  updated[index].description = updated[index].description.filter((_, i) => i !== descIndex);
+                                  updated[index].description = updated[
+                                    index
+                                  ].description.filter(
+                                    (_, i) => i !== descIndex,
+                                  );
                                   onChange(updated);
                                 }}
                                 className="p-0 group-hover/item:opacity-100 text-gray-400 hover:text-red-500 transition-all duration-300"
@@ -583,8 +657,12 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                     <Button
                                       variant="ghost"
                                       size="icon"
-                                      onClick={() => rewritePoint(index, descIndex)}
-                                      disabled={loadingPointAI[index]?.[descIndex]}
+                                      onClick={() =>
+                                        rewritePoint(index, descIndex)
+                                      }
+                                      disabled={
+                                        loadingPointAI[index]?.[descIndex]
+                                      }
                                       className={cn(
                                         "p-0 group-hover/item:opacity-100",
                                         "h-8 w-8 rounded-lg",
@@ -594,7 +672,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                         "shadow-sm",
                                         "transition-all duration-300",
                                         "hover:scale-105 hover:shadow-md",
-                                        "hover:-translate-y-0.5"
+                                        "hover:-translate-y-0.5",
                                       )}
                                     >
                                       {loadingPointAI[index]?.[descIndex] ? (
@@ -604,8 +682,8 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                       )}
                                     </Button>
                                   </TooltipTrigger>
-                                  <TooltipContent 
-                                    side="bottom" 
+                                  <TooltipContent
+                                    side="bottom"
                                     align="start"
                                     sideOffset={2}
                                     className={cn(
@@ -613,20 +691,29 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                                       "bg-[#5b6949]/10",
                                       "border-2 border-[#5b6949]/30",
                                       "shadow-lg shadow-[#5b6949]/10",
-                                      "rounded-lg"
+                                      "rounded-lg",
                                     )}
                                   >
                                     <AIImprovementPrompt
-                                      value={improvementConfig[index]?.[descIndex] || ''}
-                                      onChange={(value) => setImprovementConfig(prev => ({
-                                        ...prev,
-                                        [index]: {
-                                          ...(prev[index] || {}),
-                                          [descIndex]: value
-                                        }
-                                      }))}
-                                      onSubmit={() => rewritePoint(index, descIndex)}
-                                      isLoading={loadingPointAI[index]?.[descIndex]}
+                                      value={
+                                        improvementConfig[index]?.[descIndex] ||
+                                        ""
+                                      }
+                                      onChange={(value) =>
+                                        setImprovementConfig((prev) => ({
+                                          ...prev,
+                                          [index]: {
+                                            ...(prev[index] || {}),
+                                            [descIndex]: value,
+                                          },
+                                        }))
+                                      }
+                                      onSubmit={() =>
+                                        rewritePoint(index, descIndex)
+                                      }
+                                      isLoading={
+                                        loadingPointAI[index]?.[descIndex]
+                                      }
                                     />
                                   </TooltipContent>
                                 </Tooltip>
@@ -640,15 +727,21 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                     {/* AI Suggestions */}
                     <AISuggestions
                       suggestions={aiSuggestions[index] || []}
-                      onApprove={(suggestion) => approveSuggestion(index, suggestion)}
-                      onDelete={(suggestionId) => deleteSuggestion(index, suggestionId)}
+                      onApprove={(suggestion) =>
+                        approveSuggestion(index, suggestion)
+                      }
+                      onDelete={(suggestionId) =>
+                        deleteSuggestion(index, suggestionId)
+                      }
                     />
 
-                    {project.description.length === 0 && !aiSuggestions[index]?.length && (
-                      <div className="text-[10px] sm:text-xs text-gray-500 italic px-4 py-3 bg-gray-50/50 rounded-lg">
-                        Add points to describe your project&apos;s features and achievements
-                      </div>
-                    )}
+                    {project.description.length === 0 &&
+                      !aiSuggestions[index]?.length && (
+                        <div className="text-[10px] sm:text-xs text-gray-500 italic px-4 py-3 bg-gray-50/50 rounded-lg">
+                          Add points to describe your project&apos;s features
+                          and achievements
+                        </div>
+                      )}
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
@@ -657,32 +750,40 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                       size="sm"
                       onClick={() => {
                         const updated = [...projects];
-                        updated[index].description = [...updated[index].description, ""];
+                        updated[index].description = [
+                          ...updated[index].description,
+                          "",
+                        ];
                         onChange(updated);
                       }}
                       className={cn(
                         "flex-1 text-[#5b6949] hover:text-[#5b6949] transition-colors text-[10px] sm:text-xs",
-                        "border-[#5b6949] hover:border-[#5b6949] hover:bg-[#5b6949]/50"
+                        "border-[#5b6949] hover:border-[#5b6949] hover:bg-[#5b6949]/50",
                       )}
                     >
                       <Plus className="h-4 w-4 mr-1" />
                       Add Point
                     </Button>
 
-                    
                     <AIGenerationSettingsTooltip
                       index={index}
                       loadingAI={loadingAI[index]}
                       generateAIPoints={generateAIPoints}
-                      aiConfig={aiConfig[index] || { numPoints: 3, customPrompt: '' }}
-                      onNumPointsChange={(value) => setAiConfig(prev => ({
-                        ...prev,
-                        [index]: { ...prev[index], numPoints: value }
-                      }))}
-                      onCustomPromptChange={(value) => setAiConfig(prev => ({
-                        ...prev,
-                        [index]: { ...prev[index], customPrompt: value }
-                      }))}
+                      aiConfig={
+                        aiConfig[index] || { numPoints: 3, customPrompt: "" }
+                      }
+                      onNumPointsChange={(value) =>
+                        setAiConfig((prev) => ({
+                          ...prev,
+                          [index]: { ...prev[index], numPoints: value },
+                        }))
+                      }
+                      onCustomPromptChange={(value) =>
+                        setAiConfig((prev) => ({
+                          ...prev,
+                          [index]: { ...prev[index], customPrompt: value },
+                        }))
+                      }
                       colorClass={{
                         button: "text-[#5b6949]",
                         border: "border-[#5b6949]",
@@ -692,7 +793,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                         tooltipBorder: "border-2 border-[#5b6949]/30",
                         tooltipShadow: "shadow-lg shadow-[#5b6949]/10",
                         text: "[#5b6949]",
-                        hoverText: "hover:text-[#5b6949]"
+                        hoverText: "hover:text-[#5b6949]",
                       }}
                     />
                   </div>
@@ -703,7 +804,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                   <Label className="text-[10px] sm:text-xs font-medium text-[#5b6949]">
                     Technologies & Tools Used
                   </Label>
-                  
+
                   <div className="space-y-2">
                     {/* Technologies Display */}
                     <div className="flex flex-wrap gap-1.5">
@@ -713,7 +814,7 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                           variant="secondary"
                           className={cn(
                             "bg-[#5b6949]/60 hover:bg-[#5b6949]/80 text-[#5b6949] border border-[#5b6949]/20 py-0.5",
-                            "transition-all duration-300 group/badge cursor-default text-[10px] sm:text-xs"
+                            "transition-all duration-300 group/badge cursor-default text-[10px] sm:text-xs",
                           )}
                         >
                           {tech}
@@ -730,15 +831,20 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
                     {/* New Technology Input */}
                     <div className="relative group flex gap-2">
                       <Input
-                        value={newTechnologies[index] || ''}
-                        onChange={(e) => setNewTechnologies({ ...newTechnologies, [index]: e.target.value })}
+                        value={newTechnologies[index] || ""}
+                        onChange={(e) =>
+                          setNewTechnologies({
+                            ...newTechnologies,
+                            [index]: e.target.value,
+                          })
+                        }
                         onKeyPress={(e) => handleTechKeyPress(e, index)}
                         className={cn(
                           "h-9 bg-white border-2 border-dashed border-zinc-300 hover:border-zinc-400",
                           "focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200",
                           "hover:border-zinc-400 hover:bg-zinc-100 transition-colors",
                           "placeholder:text-gray-400",
-                          "text-[10px] sm:text-xs"
+                          "text-[10px] sm:text-xs",
                         )}
                         placeholder="Type a technology and press Enter or click +"
                       />
@@ -769,13 +875,13 @@ export const ProjectsForm = memo(function ProjectsFormComponent({
         errorMessage={errorMessage}
         onUpgrade={() => {
           setShowErrorDialog(false);
-          window.location.href = '/subscription';
+          window.location.href = "/subscription";
         }}
         onSettings={() => {
           setShowErrorDialog(false);
-          window.location.href = '/settings';
+          window.location.href = "/settings";
         }}
       />
     </>
   );
-}, areProjectsPropsEqual); 
+}, areProjectsPropsEqual);

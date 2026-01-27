@@ -1,0 +1,327 @@
+{
+  "header": {
+    "tools": "Tools",
+    "autoApply": "Auto Apply",
+    "interviewBuddy": "Interview Buddy",
+    "aiResumeBuilder": "AI Resume Builder",
+    "aiCoverLetterBuilder": "AI Cover Letter Builder",
+    "aiMockInterview": "AI Mock Interview",
+    "aiResumeScanner": "AI Resume Scanner",
+    "jobBoard": "Job Board",
+    "resumeTranslator": "Resume Translator",
+    "linkedinToResume": "LinkedIn to Resume",
+    "resumeExamples": "Resume Examples",
+    "coverLetterExamples": "Cover Letter Examples",
+    "hello": "Hello",
+    "dashboard": "Dashboard",
+    "redirecting": "Redirecting",
+    "signOut": "Sign Out",
+    "logIn": "Log in",
+    "startNow": "Start now"
+  },
+  "hero": {
+    "trustpilotRating": "Excellent",
+    "trustpilotPlatform": "Trustpilot",
+    "headlinePart1": "Transform Your Job Search",
+    "headlineHighlight": "AI-Powered Automation",
+    "description": "Let AI handle the heavy lifting. Apply automatically, track progress, and land interviews faster.",
+    "ctaPrimary": "Start Free Trial",
+    "ctaSecondary": "Watch Demo",
+    "trustedBy": "Trusted by",
+    "userCount": "50,000+ professionals",
+    "partnersTitle": "Trusted by professionals at leading companies",
+    "features": {
+      "atsOptimized": "ATS-optimized",
+      "resumeCvBuilder": "Resume & CV Builder",
+      "autoApply": "Auto-Apply",
+      "aiJobMatching": "AI-Powered Job Matching",
+      "interviewAssistant": "Interview Assistant"
+    },
+    "dashboard": {
+      "title": "Live Dashboard",
+      "subtitle": "Real-time job application tracking",
+      "active": "Active",
+      "applicationsSent": "Applications Sent",
+      "thisWeek": "+23 this week",
+      "interviews": "Interviews",
+      "successRate": "4.9% success rate",
+      "applied": "Applied",
+      "pending": "Pending",
+      "perfectMatch": "Perfect Match",
+      "highMatch": "High Match",
+      "hoursAgo": "2 hours ago",
+      "dayAgo": "1 day ago"
+    }
+  },
+  "tools": {
+    "title": "Everything You Need to Land Your Dream Job – Fast",
+    "aiResumeBuilder": {
+      "title": "AI Resume Builder",
+      "description": "Tailored resumes for each application"
+    },
+    "coverLetterGenerator": {
+      "title": "Cover Letter Generator",
+      "description": "Personalized letters to boost response rate"
+    },
+    "autoApply": {
+      "title": "Auto Apply to Jobs",
+      "description": "Apply to hundreds of jobs in one click"
+    },
+    "interviewSimulator": {
+      "title": "Interview Simulator",
+      "description": "Practice with mock interviews"
+    },
+    "interviewAssistant": {
+      "title": "Real-Time AI Interview Assistant",
+      "description": "Get real-time help during interviews"
+    },
+    "resumeTranslator": {
+      "title": "Resume Translator",
+      "description": "Translate resume into multiple languages"
+    }
+  },
+  "benefits": {
+    "badge": "Why Choose AutoTalent",
+    "title": "Everything you need to",
+    "titleHighlight": "land your dream job",
+    "description": "Our comprehensive platform combines AI-powered automation with expert insights to streamline your entire job search process.",
+    "intelligentMatching": {
+      "title": "Intelligent Job Matching",
+      "description": "Our AI-powered system analyzes your skills, experience, and preferences to find the perfect job matches. No more endless scrolling through irrelevant postings.",
+      "features": ["Smart Algorithm", "Personalized Results", "Real-time Updates"]
+    },
+    "automatedApplications": {
+      "title": "Automated Applications",
+      "description": "Apply to hundreds of jobs with a single click. Our system handles the entire application process while you focus on preparing for interviews.",
+      "features": ["One-Click Apply", "Bulk Applications", "Time-Saving Efficiency"]
+    },
+    "resumeOptimization": {
+      "title": "Resume Optimization",
+      "description": "Get your resume tailored for each application. Our AI ensures your resume passes ATS systems and stands out to hiring managers.",
+      "features": ["ATS Optimization", "Custom Tailoring", "Professional Formatting"]
+    },
+    "interviewPrep": {
+      "title": "Interview Preparation",
+      "description": "Ace your interviews with AI-powered mock sessions, personalized questions, and expert guidance tailored to your target role.",
+      "features": ["Mock Interviews", "Question Bank", "Performance Analytics"]
+    },
+    "cta": {
+      "title": "Ready to transform your job search?",
+      "description": "Join thousands of professionals who have already automated their job search and landed their dream roles.",
+      "button": "Get Started Free"
+    }
+  },
+  "resumeExamples": {
+    "badge": "Resume Templates",
+    "title": "Resume Examples That",
+    "titleHighlight": "Get Results",
+    "description": "Professionally designed and ATS-friendly for top industries",
+    "viewAll": "View All Resume Examples",
+    "updated": "Updated",
+    "experience": "Experience",
+    "skills": "Skills",
+    "roles": {
+      "softwareEngineer": {
+        "title": "Software Engineer",
+        "description": "Perfect for developers, programmers, and tech professionals"
+      },
+      "marketingManager": {
+        "title": "Marketing Manager",
+        "description": "Ideal for marketing professionals and brand strategists"
+      },
+      "dataAnalyst": {
+        "title": "Data Analyst",
+        "description": "Tailored for data scientists and business analysts"
+      },
+      "uxDesigner": {
+        "title": "UX Designer",
+        "description": "Crafted for designers and user experience professionals"
+      },
+      "salesManager": {
+        "title": "Sales Manager",
+        "description": "Designed for sales professionals and business development"
+      },
+      "projectManager": {
+        "title": "Project Manager",
+        "description": "Perfect for project managers and team leaders"
+      }
+    }
+  },
+  "pricing": {
+    "badge": "Simple, Transparent Pricing",
+    "title": "Choose your",
+    "titleHighlight": "perfect plan",
+    "description": "Start free and scale as you grow. All plans include our core features with no hidden fees.",
+    "mostPopular": "Most Popular",
+    "perMonth": "/month",
+    "per3Months": "/3 months",
+    "getStarted": "Get Started",
+    "tiers": {
+      "small": {
+        "name": "Small",
+        "price": "$49",
+        "description": "Perfect for getting started",
+        "features": [
+          "Intelligent Resume & CV builder",
+          "Apply to 100 jobs/month",
+          "AI-Powered Job Matching",
+          "Interview Assistant"
+        ]
+      },
+      "starter": {
+        "name": "Starter",
+        "price": "$99",
+        "description": "For serious job seekers",
+        "features": [
+          "Intelligent Resume & CV builder",
+          "Apply to 250 jobs/month",
+          "AI-Powered Job Matching",
+          "Interview Assistant"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "price": "$199",
+        "description": "Best value for 3 months",
+        "features": [
+          "Intelligent Resume & CV builder",
+          "Apply to 250 jobs/month",
+          "AI-Powered Job Matching",
+          "Interview Assistant"
+        ]
+      }
+    }
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "Trusted by 1M+ job seekers",
+    "description": "Join thousands who've transformed their careers with AutoTalent",
+    "cta": "Join thousands of successful applicants"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": {
+      "q1": {
+        "question": "What is AutoTalent and how does it work?",
+        "answer": "AutoTalent is an AI-powered job search assistant that helps you automate everything from resume building to job applications and interview preparation — all in one place."
+      },
+      "q2": {
+        "question": "How can AutoTalent help me get hired faster?",
+        "answer": "By automating job matching, applications, and interview prep, AutoTalent saves you hours and boosts your chances of landing interviews quickly."
+      },
+      "q3": {
+        "question": "What tools are included in AutoTalent?",
+        "answer": "AutoTalent includes: AI Resume Builder, Tailored Cover Letter Generator, Auto-Apply Job Automation, Real-time Interview Assistant, Resume Translator, and Job Tracking Dashboard."
+      },
+      "q4": {
+        "question": "Do I need an existing resume to get started?",
+        "answer": "Nope! You can build a professional resume from scratch using our guided AI tools."
+      },
+      "q5": {
+        "question": "Are AutoTalent resumes optimized for ATS systems?",
+        "answer": "Yes. Our resume templates are fully ATS-compliant and designed to pass through applicant tracking systems used by employers."
+      },
+      "q6": {
+        "question": "Will my documents sound robotic or AI-generated?",
+        "answer": "Not at all. Our AI is trained to write like a human. Every resume and cover letter is tailored to your tone, industry, and goals."
+      },
+      "q7": {
+        "question": "Will employers know I used AutoTalent to apply?",
+        "answer": "No. All applications are submitted on your behalf using your own information. We never disclose that AI tools were used."
+      },
+      "q8": {
+        "question": "Is there a free version of AutoTalent?",
+        "answer": "Yes! You can get started for free and explore basic features. Premium plans unlock full access to automation, unlimited documents, and advanced tools."
+      },
+      "q9": {
+        "question": "What does the subscription include?",
+        "answer": "Our Pro plan includes everything — unlimited resumes, cover letters, auto-applications, interview tools, and more. See our pricing page for full details."
+      },
+      "q10": {
+        "question": "Do I need to pay extra for each feature?",
+        "answer": "No. All features are bundled into your plan — no hidden costs."
+      },
+      "q11": {
+        "question": "Do you offer student or jobseeker discounts?",
+        "answer": "Yes! Contact our support to request a special discount if you're currently unemployed, a student, or in transition."
+      },
+      "q12": {
+        "question": "Can I cancel my subscription anytime?",
+        "answer": "Of course. You can cancel anytime from your dashboard — no questions asked."
+      },
+      "q13": {
+        "question": "Can I make multiple versions of my resume and cover letter?",
+        "answer": "Yes. You can create, save, and manage as many versions as you'd like to tailor for different roles or industries."
+      },
+      "q14": {
+        "question": "Can I edit the AI-generated documents?",
+        "answer": "Yes! All resumes and letters are 100% editable and exportable in PDF or DOCX formats."
+      },
+      "q15": {
+        "question": "Will AutoTalent write my cover letters for me?",
+        "answer": "Yes — our Cover Letter Generator crafts personalized letters for each job description you provide."
+      },
+      "q16": {
+        "question": "Does AutoTalent offer interview training?",
+        "answer": "Yes! You'll get access to mock interview simulations and our real-time Interview Assistant extension."
+      },
+      "q17": {
+        "question": "Can AutoTalent apply for jobs on my behalf?",
+        "answer": "Yes. Once you enable Auto-Apply, we can automatically apply to relevant jobs based on your filters and preferences."
+      },
+      "q18": {
+        "question": "Who is AutoTalent designed for?",
+        "answer": "AutoTalent is for job seekers of all levels — students, career switchers, professionals, and executives."
+      },
+      "q19": {
+        "question": "How is AutoTalent different from other resume or job platforms?",
+        "answer": "We combine everything — resumes, job search automation, and AI coaching — in one seamless experience."
+      },
+      "q20": {
+        "question": "Is my data safe with AutoTalent?",
+        "answer": "Yes. We follow strict GDPR compliance, do not sell your data, and only store your information to help you succeed in your job hunt."
+      }
+    }
+  },
+  "cta": {
+    "title": "Ready to Land Your Dream Job?",
+    "subtitle": "Join thousands of professionals who've automated their job search",
+    "description": "Stop wasting time on manual applications. Let AI handle the heavy lifting while you focus on what matters most.",
+    "primary": "Start Free Trial",
+    "secondary": "Watch Demo",
+    "features": ["No credit card required", "14-day free trial", "Cancel anytime"],
+    "trustedBy": "Trusted by"
+  },
+  "footer": {
+    "language": "English",
+    "postJob": "Post a Job on AutoTalent",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "affiliateProgram": "Affiliate Program",
+    "studentDiscount": "Student discount",
+    "googleCloudPartner": "Google Cloud Partner",
+    "tools": "TOOLS",
+    "blog": "BLOG",
+    "copyright": "© 2025 AutoTalent, All rights reserved",
+    "toolLinks": {
+      "autoApply": "Auto Apply To Jobs",
+      "coverLetter": "AI Cover Letter",
+      "resumeBuilder": "AI Resume Builder",
+      "mockInterview": "Mock Job Interview",
+      "interviewBuddy": "Interview Buddy",
+      "resumeTranslator": "Resume Translator",
+      "jobBoard": "Job Board",
+      "linkedinResume": "LinkedIn to Resume",
+      "resumeExamples": "Resume Examples",
+      "coverLetterExamples": "Cover Letter Examples",
+      "resumeScanner": "AI Resume Scanner"
+    },
+    "blogLinks": {
+      "resignationLetter": "How to write a resignation letter",
+      "resumeObjective": "Structuring your resume objective for a career change",
+      "reverseChronological": "Should my resume be in reverse chronological order?",
+      "firstJob": "How to make a resume for your first job",
+      "allPosts": "All Posts"
+    }
+  }
+}
