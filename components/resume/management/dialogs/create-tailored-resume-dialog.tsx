@@ -335,31 +335,30 @@ export function CreateTailoredResumeDialog({
         <DialogContent
           className={cn(
             "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
-            "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
-            "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
+            "bg-white border shadow-lg",
+            "border-zinc-200",
             "rounded-xl",
           )}
         >
           <div className="flex flex-col items-center justify-center p-8 space-y-4">
-            <div className="p-4 rounded-2xl bg-zinc-50/50 border border-zinc-100">
-              <Sparkles className="w-8 h-8 text-[#5b6949]" />
+            <div className="p-4 rounded-2xl bg-zinc-100 border border-zinc-200">
+              <Sparkles className="w-8 h-8 text-zinc-700" />
             </div>
             <div className="text-center space-y-2 max-w-sm">
-              <h3 className="font-semibold text-gray-800 text-zinc-950">
+              <h3 className="font-semibold text-zinc-900">
                 No Base Resumes Found
               </h3>
-              <p className="text-xs text-gray-700">
-                You need to create a base resume first before you can create a
-                tailored version.
+              <p className="text-sm text-zinc-600">
+                You need to create a base resume first before you can create an
+                application kit.
               </p>
             </div>
             {profile ? (
               <CreateBaseResumeDialog profile={profile}>
                 <Button
                   className={cn(
-                    "mt-2 text-white shadow-lg hover:shadow-xl transition-all duration-500",
-                    "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80",
-                    "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
+                    "mt-2 text-white transition-all duration-300",
+                    "bg-[#5b6949] hover:bg-[#5b6949]/90",
                   )}
                 >
                   <Plus className="w-4 h-4 mr-2" />
@@ -384,8 +383,8 @@ export function CreateTailoredResumeDialog({
         <DialogContent
           className={cn(
             "sm:max-w-[800px] p-0 max-h-[90vh] overflow-y-auto",
-            "bg-gradient-to-b backdrop-blur-2xl border-white/40 shadow-2xl",
-            "from-zinc-50/95 to-gray-50/90 border-zinc-200/40",
+            "bg-white border shadow-lg",
+            "border-zinc-200",
             "rounded-xl",
           )}
         >
@@ -416,40 +415,40 @@ export function CreateTailoredResumeDialog({
           {/* Header Section with Icon */}
           <div
             className={cn(
-              "relative px-8 pt-6 pb-4 border-b top-0 z-10 bg-white/50 backdrop-blur-xl",
-              "border-zinc-200/20",
+              "relative px-8 pt-6 pb-4 border-b bg-white",
+              "border-zinc-200",
             )}
           >
             <div className="flex items-center gap-4">
               <div
                 className={cn(
-                  "p-3 rounded-xl transition-all duration-300",
-                  "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
+                  "p-3 rounded-lg",
+                  "bg-zinc-100 border border-zinc-200",
                 )}
               >
-                <Sparkles className="w-6 h-6 text-[#5b6949]" />
+                <Sparkles className="w-6 h-6 text-zinc-700" />
               </div>
               <div>
-                <DialogTitle className="text-xl font-semibold text-zinc-950">
-                  Create Tailored Resume
+                <DialogTitle className="text-xl font-semibold text-zinc-900">
+                  Create Application Kit
                 </DialogTitle>
-                <DialogDescription className="mt-1 text-sm text-gray-700">
-                  Create a tailored resume based on an existing base resume
+                <DialogDescription className="mt-1 text-sm text-zinc-600">
+                  Create a complete application kit based on an existing base resume
                 </DialogDescription>
               </div>
             </div>
           </div>
 
           {/* Content Section */}
-          <div className="px-8 py-6 space-y-6 bg-gradient-to-b from-zinc-50/30 to-gray-50/30 relative">
+          <div className="px-8 py-6 space-y-6 bg-white relative">
             {isCreating && <LoadingOverlay currentStep={currentStep} />}
             <div className="space-y-6">
               <div className="space-y-2">
                 <Label
                   htmlFor="base-resume"
-                  className="text-gray-800 font-medium "
+                  className="text-zinc-900 font-medium"
                 >
-                  Select Base Resume <span className="text-red-500">*</span>
+                  Select Base Resume <span className="text-zinc-500">*</span>
                 </Label>
 
                 {/* Base Resume Selector */}
@@ -462,7 +461,7 @@ export function CreateTailoredResumeDialog({
               </div>
 
               {/* Resume Selection Visualization */}
-              <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center justify-center gap-6">
                 {selectedBaseResume && baseResumes ? (
                   <>
                     <MiniResumePreview
@@ -471,23 +470,23 @@ export function CreateTailoredResumeDialog({
                           ?.name || ""
                       }
                       type="base"
-                      className="w-24 hover:-translate-y-1 transition-transform duration-300"
+                      className="w-40 hover:-translate-y-1 transition-transform duration-300"
                     />
-                    <div className="flex flex-col items-center gap-1">
-                      <ArrowRight className="w-6 h-6 text-[#5b6949] animate-pulse" />
-                      <span className="text-xs font-medium text-gray-700">
-                        Tailored For Job
+                    <div className="flex flex-col items-center gap-2">
+                      <ArrowRight className="w-8 h-8 text-zinc-600" />
+                      <span className="text-sm font-medium text-zinc-600">
+                        Creates
                       </span>
                     </div>
                     <MiniResumePreview
-                      name="Tailored Resume"
+                      name="Application Kit"
                       type="tailored"
-                      className="w-24 hover:-translate-y-1 transition-transform duration-300"
+                      className="w-40 hover:-translate-y-1 transition-transform duration-300"
                     />
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-dashed border-zinc-100">
-                    <div className="text-sm font-medium text-gray-700">
+                  <div className="flex flex-col items-center justify-center p-4 rounded-lg border-2 border-dashed border-zinc-200">
+                    <div className="text-sm font-medium text-zinc-600">
                       Select a base resume to see preview
                     </div>
                   </div>
@@ -510,8 +509,8 @@ export function CreateTailoredResumeDialog({
           {/* Footer Section */}
           <div
             className={cn(
-              "px-8 py-4 border-t sticky bottom-0 z-10 bg-white/50 backdrop-blur-xl",
-              "border-zinc-200/20 bg-white/40",
+              "px-8 py-4 border-t bg-white",
+              "border-zinc-200",
             )}
           >
             <div className="flex justify-end gap-3">
@@ -519,9 +518,8 @@ export function CreateTailoredResumeDialog({
                 variant="outline"
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "border-gray-200 text-gray-600",
-                  "hover:bg-white/60",
-                  "hover:border-zinc-200",
+                  "border-zinc-200 text-zinc-600",
+                  "hover:bg-zinc-50",
                 )}
               >
                 Cancel
@@ -530,8 +528,8 @@ export function CreateTailoredResumeDialog({
                 onClick={handleCreate}
                 disabled={isCreating}
                 className={cn(
-                  "text-white shadow-lg hover:shadow-xl transition-all duration-500",
-                  "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
+                  "text-white shadow-lg hover:shadow-xl transition-all duration-300",
+                  "bg-[#5b6949] hover:bg-[#5b6949]/90",
                 )}
               >
                 {isCreating ? (
@@ -540,7 +538,7 @@ export function CreateTailoredResumeDialog({
                     Creating...
                   </>
                 ) : (
-                  "Create Resume"
+                  "Create Application Kit"
                 )}
               </Button>
             </div>

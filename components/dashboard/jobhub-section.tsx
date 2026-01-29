@@ -24,6 +24,7 @@ import {
 import { cn } from "@/lib/utils";
 import { MiniResumePreview } from "@/components/resume/shared/mini-resume-preview";
 import { CreateResumeDialog } from "@/components/resume/management/dialogs/create-resume-dialog";
+import { ApplicationKitCard } from "@/components/resume/management/cards/application-kit-card";
 import {
   ResumeSortControls,
   type SortOption,
@@ -123,22 +124,13 @@ export function JobHubSection({
     >
       <button
         className={cn(
-          "aspect-[8.5/11] rounded-lg",
+          "w-full rounded-lg p-8",
           "relative overflow-hidden",
-          "border-2 border-dashed transition-all duration-500",
+          "border-2 border-dashed transition-all duration-300",
           "group/new-resume flex flex-col items-center justify-center gap-4",
-          type === "base"
-            ? "border-blue-300/70 hover:border-blue-400"
-            : "border-[#5b6949]/70 hover:border-[#5b6949]/40",
-          type === "base"
-            ? "bg-gradient-to-br from-blue-50/80 via-blue-50/40 to-blue-100/60"
-            : "bg-gradient-to-br from-[#5b6949]/20 via-[#5b6949]/0 to-[#5b6949]/20",
-          "hover:shadow-lg hover:shadow-purple-100/50 hover:-translate-y-1",
-          "after:absolute after:inset-0 after:bg-gradient-to-br",
-          type === "base"
-            ? "after:from-[#5b6949]/[0.03] after:to-blue-600/[0.03]"
-            : "after:from-[#5b6949]/[0.03] after:to-[#5b6949]/[0.03]",
-          "after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-500 w-full sm:w-auto mr-8 sm:mr-0",
+          "border-zinc-300 hover:border-zinc-400",
+          "bg-zinc-50",
+          "hover:shadow-md hover:-translate-y-1",
         )}
       >
         <div
@@ -152,18 +144,16 @@ export function JobHubSection({
             className={cn(
               "h-12 w-12 rounded-xl",
               "flex items-center justify-center",
-              "transform transition-all duration-500",
+              "transform transition-all duration-300",
               "shadow-sm group-hover/new-resume:shadow-md",
-              type === "base"
-                ? "bg-gradient-to-br from-white to-white"
-                : "bg-gradient-to-br from-white to-white",
+              "bg-white",
               "group-hover/new-resume:scale-110",
             )}
           >
             <config.icon
               className={cn(
-                "h-5 w-5 transition-all duration-500",
-                type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
+                "h-5 w-5 transition-all duration-300",
+                "text-zinc-700",
                 "group-hover/new-resume:scale-110",
               )}
             />
@@ -172,19 +162,19 @@ export function JobHubSection({
           <span
             className={cn(
               "mt-4 text-sm font-medium",
-              "transition-all duration-500",
-              type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
+              "transition-all duration-300",
+              "text-zinc-700",
               "group-hover/new-resume:font-semibold",
             )}
           >
-            Create {type === "base" ? "Base" : "Tailored"} Resume
+            Create {type === "base" ? "Base Resume" : "Application Kit"}
           </span>
 
           <span
             className={cn(
               "mt-2 text-xs",
-              "transition-all duration-500 opacity-0",
-              type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
+              "transition-all duration-300 opacity-0",
+              "text-zinc-600",
               "group-hover/new-resume:opacity-70",
             )}
           >
@@ -200,27 +190,22 @@ export function JobHubSection({
     <Link
       href="/dashboard/subscription"
       className={cn(
-        "group/limit block",
+        "group/limit block w-full",
         "cursor-pointer",
-        "transition-all duration-500",
-        "hover:-translate-y-1",
+        "transition-all duration-300",
       )}
     >
       <div
         className={cn(
-          "aspect-[8.5/11] rounded-lg",
+          "w-full rounded-lg p-8",
           "relative overflow-hidden",
           "border-2 border-dashed",
           "flex flex-col items-center justify-center gap-4",
-          "border-amber-600/80",
-          "bg-gradient-to-br from-amber-50/80 via-amber-50/40 to-amber-100/60",
-          "transition-all duration-500",
-          "hover:shadow-xl hover:shadow-amber-200/20",
-          "hover:border-amber-600/90",
-          "after:absolute after:inset-0 after:bg-gradient-to-br",
-          "after:from-amber-600/[0.03] after:to-orange-600/[0.03]",
-          "after:opacity-40 after:transition-opacity after:duration-500",
-          "hover:after:opacity-60",
+          "border-zinc-300",
+          "bg-zinc-50",
+          "transition-all duration-300",
+          "hover:shadow-md",
+          "hover:border-zinc-400",
         )}
       >
         <div
@@ -234,21 +219,18 @@ export function JobHubSection({
             className={cn(
               "h-12 w-12 rounded-xl",
               "flex items-center justify-center",
-              "bg-gradient-to-br from-amber-100 to-amber-50",
-              "text-amber-600",
+              "bg-white",
+              "text-zinc-700",
               "shadow-md",
-              "transition-all duration-500",
+              "transition-all duration-300",
               "group-hover/limit:shadow-lg",
-              "group-hover/limit:bg-gradient-to-br",
-              "group-hover/limit:from-amber-200",
-              "group-hover/limit:to-amber-100",
               "group-hover/limit:-translate-y-1",
             )}
           >
             <config.icon
               className={cn(
                 "h-5 w-5",
-                "transition-all duration-500",
+                "transition-all duration-300",
                 "group-hover/limit:scale-110",
               )}
             />
@@ -256,20 +238,20 @@ export function JobHubSection({
           <span
             className={cn(
               "mt-4 text-sm font-medium",
-              "text-amber-600",
-              "transition-all duration-500",
-              "group-hover/limit:text-amber-700",
+              "text-zinc-700",
+              "transition-all duration-300",
+              "group-hover/limit:text-zinc-900",
             )}
           >
-            {type === "base" ? "Base" : "Tailored"} Limit Reached
+            {type === "base" ? "Base" : "Application Kit"} Limit Reached
           </span>
           <span
             className={cn(
               "mt-2 text-xs",
-              "text-amber-600/70",
+              "text-zinc-600",
               "underline underline-offset-4",
               "transition-all duration-300",
-              "group-hover/limit:text-amber-700/90",
+              "group-hover/limit:text-zinc-700",
             )}
           >
             Upgrade to create more
@@ -384,212 +366,44 @@ export function JobHubSection({
       </div>
 
       <div className="relative pb-6">
-        {/* Mobile View */}
+        {/* Mobile View - Full Width Cards */}
         <div className="md:hidden w-full space-y-6">
-          {/* Mobile Create Resume Button Row */}
+          {/* Mobile Create Button Row */}
           {canCreateMore ? (
-            <div className="px-2 w-full  flex">
+            <div className="w-full">
               <CreateResumeCard />
             </div>
           ) : (
-            <div className="px-4 w-full">
+            <div className="w-full">
               <LimitReachedCard />
             </div>
           )}
 
-          {/* Mobile Resumes Carousel */}
-          {paginatedResumes.length > 0 && (
-            <div className="w-full">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {paginatedResumes.map((resume) => (
-                    <CarouselItem key={resume.id} className="basis-[85%] pl-4">
-                      <div className="group relative">
-                        <AlertDialog>
-                          <div className="relative">
-                            <Link href={`/dashboard/resumes/${resume.id}`}>
-                              <MiniResumePreview
-                                name={resume.name}
-                                type={type}
-                                target_role={resume.target_role}
-                                createdAt={resume.created_at}
-                                className="hover:-translate-y-1 transition-transform duration-300"
-                              />
-                            </Link>
-                            <div className="absolute bottom-2 left-2 flex gap-2">
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className={cn(
-                                    "h-8 w-8 rounded-lg",
-                                    "bg-rose-50/80 hover:bg-rose-100/80",
-                                    "text-rose-600 hover:text-rose-700",
-                                    "border border-rose-200/60",
-                                    "shadow-sm",
-                                    "transition-all duration-300",
-                                    "hover:scale-105 hover:shadow-md",
-                                    "hover:-translate-y-0.5",
-                                  )}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </AlertDialogTrigger>
-                              <form
-                                action={async () => {
-                                  await copyResume(resume.id);
-                                }}
-                              >
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  type="submit"
-                                  className={cn(
-                                    "h-8 w-8 rounded-lg",
-                                    "bg-teal-50/80 hover:bg-teal-100/80",
-                                    "text-teal-600 hover:text-teal-700",
-                                    "border border-teal-200/60",
-                                    "shadow-sm",
-                                    "transition-all duration-300",
-                                    "hover:scale-105 hover:shadow-md",
-                                    "hover:-translate-y-0.5",
-                                  )}
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </Button>
-                              </form>
-                            </div>
-                          </div>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Resume</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete &quot;
-                                {resume.name}&quot;? This action cannot be
-                                undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <form
-                                action={async () => {
-                                  await deleteResume(resume.id);
-                                }}
-                              >
-                                <AlertDialogAction
-                                  type="submit"
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Delete
-                                </AlertDialogAction>
-                              </form>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <div className="hidden sm:block">
-                  <CarouselPrevious className="absolute -left-12 top-1/2" />
-                  <CarouselNext className="absolute -right-12 top-1/2" />
-                </div>
-              </Carousel>
-            </div>
-          )}
+          {/* Mobile Application Kit Cards */}
+          {paginatedResumes.map((resume) => (
+            <ApplicationKitCard key={resume.id} resume={resume} />
+          ))}
         </div>
 
-        {/* Desktop Grid View */}
-        <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {canCreateMore ? <CreateResumeCard /> : <LimitReachedCard />}
+        {/* Desktop View - Full Width Cards */}
+        <div className="hidden md:flex md:flex-col gap-6">
+          {/* Create Button Row */}
+          <div className="w-full">
+            {canCreateMore ? (
+              <div className="w-full">
+                <CreateResumeCard />
+              </div>
+            ) : (
+              <div className="w-full">
+                <LimitReachedCard />
+              </div>
+            )}
+          </div>
 
+          {/* Application Kit Cards */}
           {paginatedResumes.map((resume) => (
-            <div key={resume.id} className="group relative">
-              <AlertDialog>
-                <div className="relative">
-                  <Link href={`/dashboard/resumes/${resume.id}`}>
-                    <MiniResumePreview
-                      name={resume.name}
-                      type={type}
-                      target_role={resume.target_role}
-                      createdAt={resume.created_at}
-                      className="hover:-translate-y-1 transition-transform duration-300"
-                    />
-                  </Link>
-                  <div className="absolute bottom-2 left-2 flex gap-2">
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className={cn(
-                          "h-8 w-8 rounded-lg",
-                          "bg-rose-50/80 hover:bg-rose-100/80",
-                          "text-rose-600 hover:text-rose-700",
-                          "border border-rose-200/60",
-                          "shadow-sm",
-                          "transition-all duration-300",
-                          "hover:scale-105 hover:shadow-md",
-                          "hover:-translate-y-0.5",
-                        )}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <form
-                      action={async () => {
-                        await copyResume(resume.id);
-                      }}
-                    >
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        type="submit"
-                        className={cn(
-                          "h-8 w-8 rounded-lg",
-                          "bg-teal-50/80 hover:bg-teal-100/80",
-                          "text-teal-600 hover:text-teal-700",
-                          "border border-teal-200/60",
-                          "shadow-sm",
-                          "transition-all duration-300",
-                          "hover:scale-105 hover:shadow-md",
-                          "hover:-translate-y-0.5",
-                        )}
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </form>
-                  </div>
-                </div>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Resume</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Are you sure you want to delete &quot;{resume.name}&quot;?
-                      This action cannot be undone.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <form
-                      action={async () => {
-                        await deleteResume(resume.id);
-                      }}
-                    >
-                      <AlertDialogAction
-                        type="submit"
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </form>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-            </div>
+            <ApplicationKitCard key={resume.id} resume={resume} />
           ))}
-          {resumes.length === 0 && resumes.length + 1 < 4 && (
-            <div className="col-span-2 md:col-span-1" />
-          )}
         </div>
       </div>
     </div>

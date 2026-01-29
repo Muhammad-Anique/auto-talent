@@ -28,23 +28,18 @@ export function MiniResumePreview({
     });
   }
 
-  // const accentBorder = type === 'base' ? 'purple-200' : 'pink-200';
-  const accentBg = type === 'base' ? 'purple-50' : 'pink-50';
-  const accentText = type === 'base' ? 'blue-600' : '[#5b6949]/90';
-  const glowColor = type === 'base' 
-    ? 'shadow-purple-500/20 hover:shadow-purple-500/30' 
-    : 'shadow-rose-500/20 hover:shadow-rose-500/30';
+  const accentBg = type === 'base' ? 'zinc-100' : 'zinc-100';
+  const accentText = type === 'base' ? 'zinc-700' : 'zinc-700';
 
   return (
     <div className={cn(
       "relative w-full aspect-[8.5/11]",
       "rounded-lg overflow-hidden",
-      "border shadow-lg",
-      `border-[#5b6949]`,
+      "border shadow-md",
+      "border-zinc-300",
       "bg-white",
       "transition-all duration-300",
-      "hover:shadow-xl hover:-translate-y-1",
-      glowColor,
+      "hover:shadow-lg hover:-translate-y-1",
       "group",
       className
     )}>
@@ -62,7 +57,7 @@ export function MiniResumePreview({
             "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium",
             `bg-${accentBg} text-${accentText}`
           )}>
-            {type === 'base' ? 'Base Resume' : 'Tailored Resume'}
+            {type === 'base' ? 'Base Resume' : 'Application Kit'}
           </div>
         </div>
 
@@ -143,14 +138,11 @@ export function MiniResumePreview({
         )}
       </div>
 
-      {/* Hover overlay with enhanced glow */}
+      {/* Hover overlay */}
       <div className={cn(
         "absolute inset-0 opacity-0 group-hover:opacity-100",
         "transition-opacity duration-300",
-        "bg-gradient-to-br",
-        type === 'base'
-          ? "from-[#5b6949]/90/5 to-[#5b6949]/90/5"
-          : "from-[#5b6949]/5 to-[#5b6949]/5"
+        "bg-zinc-50/30"
       )} />
     </div>
   );

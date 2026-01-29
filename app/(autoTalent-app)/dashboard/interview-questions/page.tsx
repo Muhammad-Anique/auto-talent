@@ -419,7 +419,7 @@ export default function InterviewPage() {
                     rows={4}
                     className={cn(
                       "w-full resize-none transition-all duration-200",
-                      "border-zinc-200 focus:border-[#5b6949]",
+                      "border-zinc-300 border focus:border-[#5b6949]",
                       "focus:ring-2 focus:ring-[#5b6949]/20",
                       "bg-white/60 backdrop-blur-sm",
                     )}
