@@ -10,8 +10,8 @@ export function generateCV21eu4002Template(resume: Resume): string {
   const fullName = `${resume.first_name} ${resume.last_name}`;
   const targetRole = resume.target_role || 'Financial & Investment Planner';
 
-  // Get profile picture or use placeholder
-  const profileImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="150" height="150"%3E%3Ccircle cx="75" cy="75" r="75" fill="%23ccc"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23666" font-size="50" font-family="Arial"%3E' + resume.first_name.charAt(0) + resume.last_name.charAt(0) + '%3C/text%3E%3C/svg%3E';
+  // Get profile picture from resume or use default
+  const profileImage = resume.profile_pic || 'https://gxvrkmueqemyudmnonji.supabase.co/storage/v1/object/public/autotalent_images/profile_pic.png';
 
   return `
 <!DOCTYPE html>

@@ -77,6 +77,7 @@ export interface Resume {
   website?: string;
   linkedin_url?: string;
   github_url?: string;
+  profile_pic?: string;
   work_experience: WorkExperience[];
   education: Education[];
   skills: Skill[];
@@ -144,6 +145,7 @@ export interface Profile {
   website: string | null;
   linkedin_url: string | null;
   github_url: string | null;
+  profile_pic?: string | null;
   credits?: number;
   work_experience: WorkExperience[];
   education: Education[];
@@ -151,7 +153,7 @@ export interface Profile {
   projects: Project[];
   created_at: string;
   updated_at: string;
-  
+
 }
 
 export interface Subscription {

@@ -4,6 +4,7 @@ import { Profile } from "@/lib/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Mail, Phone, MapPin, Globe, Linkedin, Github, User } from "lucide-react";
+import { ProfilePictureUpload } from "./profile-picture-upload";
 
 interface ProfileBasicInfoFormProps {
   profile: Profile;
@@ -13,6 +14,17 @@ interface ProfileBasicInfoFormProps {
 export function ProfileBasicInfoForm({ profile, onChange }: ProfileBasicInfoFormProps) {
   return (
     <div className="space-y-6">
+      {/* Profile Picture Section */}
+      <Card className="bg-white/80 backdrop-blur-sm border-white/40 shadow-sm">
+        <CardContent className="p-6">
+          <ProfilePictureUpload
+            currentImageUrl={profile.profile_pic || undefined}
+            userId={profile.user_id}
+            onUploadComplete={(url) => onChange('profile_pic', url)}
+          />
+        </CardContent>
+      </Card>
+
       {/* Personal Details */}
       <Card className="bg-white/80 backdrop-blur-sm border-white/40 shadow-sm">
         <CardContent className="p-6">

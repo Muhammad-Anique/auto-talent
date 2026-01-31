@@ -4,6 +4,7 @@ const withNextIntl = createNextIntlPlugin('./i18n/request.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone', // Enable standalone mode for Docker deployment
   images: {
     remotePatterns: [
       {
@@ -11,6 +12,12 @@ const nextConfig = {
         hostname: "img.freepik.com",
         port: "",
         pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "gxvrkmueqemyudmnonji.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/**",
       },
     ],
     unoptimized: true, // Add this for local development
