@@ -1,5 +1,7 @@
 import { Resume } from '@/lib/types';
 import { generateCV11eu4003Template } from './html-templates/CV-11eu400-3';
+import { generateCV21eu4002Template } from './html-templates/CV-21eu400-2';
+import { generateCV31eu5003Template } from './html-templates/CV-31eu500-3';
 
 export interface CVTemplate {
   id: string;
@@ -28,7 +30,24 @@ export const CV_TEMPLATES: CVTemplate[] = [
     category: 'professional',
     color: '#2d3e50',
   },
-  // Add more templates here as you create them
+  {
+    id: 'CV-21eu400-2',
+    name: 'Executive Red',
+    description: 'Elegant two-column layout with burgundy sidebar and cream background',
+    thumbnail: '/cv-templates/thumbnails/CV-21eu400-2.png',
+    generateHTML: generateCV21eu4002Template,
+    category: 'professional',
+    color: '#8B3A3A',
+  },
+  {
+    id: 'CV-31eu500-3',
+    name: 'Modern Orange',
+    description: 'Clean single-column design with vibrant orange accents',
+    thumbnail: '/cv-templates/thumbnails/CV-31eu500-3.png',
+    generateHTML: generateCV31eu5003Template,
+    category: 'modern',
+    color: '#E67E22',
+  },
 ];
 
 /**

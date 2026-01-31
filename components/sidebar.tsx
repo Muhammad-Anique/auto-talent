@@ -10,10 +10,8 @@ import {
   FileText,
   FileSignature,
   Mail,
-  Globe,
   Search,
   Bookmark,
-  Rocket,
   LogOut,
   Brain,
   Briefcase,
@@ -71,11 +69,6 @@ export default function Sidebar() {
       icon: <Briefcase className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Interview Buddy",
-      href: "/dashboard/interview-buddy",
-      icon: <Globe className="w-6 h-6 mr-3" />,
-    },
-    {
       name: "Search Jobs",
       href: "/dashboard/search-jobs",
       icon: <Search className="w-6 h-6 mr-3" />,
@@ -84,11 +77,6 @@ export default function Sidebar() {
       name: "Saved Jobs",
       href: "/dashboard/saved-jobs",
       icon: <Bookmark className="w-6 h-6 mr-3" />,
-    },
-    {
-      name: "Auto Apply",
-      href: "/dashboard/auto-apply",
-      icon: <Rocket className="w-6 h-6 mr-3" />,
     },
   ];
 
