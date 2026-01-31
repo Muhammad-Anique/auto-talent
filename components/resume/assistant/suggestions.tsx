@@ -533,26 +533,26 @@ export function Suggestion({
     switch (status) {
       case "accepted":
         return {
-          card: "bg-gradient-to-br from-emerald-200/95 via-emerald-200/90 to-green-200/95 border-emerald-200/60",
-          icon: "from-emerald-100/90 to-green-100/90",
+          card: "bg-emerald-50 border-emerald-200",
+          icon: "bg-emerald-100",
           iconColor: "text-emerald-600",
-          label: "text-emerald-600",
+          label: "text-emerald-700",
           text: "Accepted",
         };
       case "rejected":
         return {
-          card: "bg-gradient-to-br from-rose-200/95 via-rose-200/90 to-red-200/95 border-rose-200/60",
-          icon: "from-rose-100/90 to-red-100/90",
-          iconColor: "text-rose-600",
-          label: "text-rose-600",
+          card: "bg-red-50 border-red-200",
+          icon: "bg-red-100",
+          iconColor: "text-red-600",
+          label: "text-red-700",
           text: "Rejected",
         };
       default:
         return {
-          card: "bg-gradient-to-br from-white/95 via-purple-50/30 to-indigo-50/40 border-white/60",
-          icon: "from-purple-100/90 to-indigo-100/90",
-          iconColor: "text-purple-600",
-          label: "text-gray-900",
+          card: "bg-[#5b6949]/5 border-[#5b6949]/20",
+          icon: "bg-[#5b6949]/10",
+          iconColor: "text-[#5b6949]",
+          label: "text-zinc-900",
           text: "AI Suggestion",
         };
     }
@@ -597,72 +597,47 @@ export function Suggestion({
   return (
     <Card
       className={cn(
-        "group relative overflow-hidden",
-        "border ",
+        "relative overflow-hidden rounded-2xl",
+        "border-2",
         statusStyles.card,
-        "shadow-xl shadow-purple-500/10",
-        "transition-all duration-500 ease-in-out",
-        "hover:shadow-2xl hover:shadow-purple-500/20",
-        "backdrop-blur-xl",
+        "transition-all duration-200",
       )}
     >
-      {/* Enhanced Background Pattern */}
-      <div className="absolute inset-0  opacity-[0.15]" />
-
-      {/* Improved Floating Gradient Orbs */}
-
       {/* Content */}
-      <div className="relative ">
+      <div className="p-5">
         {/* Header */}
-        <div className="flex items-center">
-          <div className="flex items-center gap-2">
-            <div
-              className={cn("p-1.5 rounded-lg  shadow-sm", statusStyles.icon)}
-            >
-              <Sparkles className={cn("h-3.5 w-3.5", statusStyles.iconColor)} />
-            </div>
-            <span className={cn("font-semibold text-sm", statusStyles.label)}>
-              {statusStyles.text}
-            </span>
+        <div className="flex items-center gap-3 mb-4">
+          <div className={cn("p-2.5 rounded-xl", statusStyles.icon)}>
+            <Sparkles className={cn("h-5 w-5", statusStyles.iconColor)} />
           </div>
+          <span className={cn("font-semibold text-base", statusStyles.label)}>
+            {statusStyles.text}
+          </span>
         </div>
 
         {/* Main Content */}
-        <div className="bg-white from-white/80 to-white/60 rounded-lg p-3 backdrop-blur-md border border-white/60 shadow-sm">
+        <div className="bg-white rounded-xl p-5 border border-zinc-200 mb-4">
           {renderContent()}
         </div>
 
         {/* Action Buttons */}
         {status === "pending" && (
-          <div className="flex justify-end gap-2 pt-0.5">
+          <div className="flex justify-end gap-3">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleReject}
               className={cn(
-                "relative group/button overflow-hidden",
-                "h-8 px-4 text-xs",
-                "bg-gradient-to-br from-rose-50 to-rose-100/90",
-                "text-rose-700",
-                "border border-rose-200/60",
-                "shadow-sm",
-                "transition-all duration-500",
-                "hover:shadow-md hover:shadow-rose-500/10",
-                "hover:border-rose-300/80",
-                "hover:-translate-y-0.5",
-                "active:translate-y-0",
+                "h-10 px-5 text-sm rounded-xl",
+                "bg-red-50 text-red-700",
+                "border border-red-200",
+                "hover:bg-red-100",
+                "transition-colors duration-200",
+                "font-medium"
               )}
             >
-              {/* Animated background on hover */}
-              <div
-                className="absolute inset-0 -z-10 bg-gradient-to-br from-rose-100 to-rose-200/90 
-                opacity-0 group-hover/button:opacity-100 transition-opacity duration-500"
-              />
-
-              <div className="relative flex items-center justify-center gap-1.5">
-                <X className="h-3.5 w-3.5 transition-transform duration-500 group-hover/button:rotate-90" />
-                <span className="font-medium">Reject</span>
-              </div>
+              <X className="h-4 w-4 mr-2" />
+              Reject
             </Button>
 
             <Button
@@ -670,29 +645,16 @@ export function Suggestion({
               size="sm"
               onClick={handleAccept}
               className={cn(
-                "relative group/button overflow-hidden",
-                "h-8 px-4 text-xs",
-                "bg-gradient-to-br from-emerald-50 to-emerald-100/90",
-                "text-emerald-700",
-                "border border-emerald-200/60",
-                "shadow-sm",
-                "transition-all duration-500",
-                "hover:shadow-md hover:shadow-emerald-500/10",
-                "hover:border-emerald-300/80",
-                "hover:-translate-y-0.5",
-                "active:translate-y-0",
+                "h-10 px-5 text-sm rounded-xl",
+                "bg-emerald-50 text-emerald-700",
+                "border border-emerald-200",
+                "hover:bg-emerald-100",
+                "transition-colors duration-200",
+                "font-medium"
               )}
             >
-              {/* Animated background on hover */}
-              <div
-                className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-100 to-emerald-200/90 
-                opacity-0 group-hover/button:opacity-100 transition-opacity duration-500"
-              />
-
-              <div className="relative flex items-center justify-center gap-1.5">
-                <Check className="h-3.5 w-3.5 transition-transform duration-500 group-hover/button:scale-110" />
-                <span className="font-medium">Accept</span>
-              </div>
+              <Check className="h-4 w-4 mr-2" />
+              Accept
             </Button>
           </div>
         )}
@@ -720,24 +682,24 @@ export function WholeResumeSuggestion({
 
   const statusStyles = {
     pending: {
-      card: "bg-gradient-to-br from-white/95 via-purple-50/30 to-indigo-50/40 border-white/60",
-      icon: "from-purple-100/90 to-indigo-100/90",
-      iconColor: "text-purple-600",
-      label: "text-gray-900",
+      card: "bg-[#5b6949]/5 border-[#5b6949]/20",
+      icon: "bg-[#5b6949]/10",
+      iconColor: "text-[#5b6949]",
+      label: "text-zinc-900",
       text: "Modified Resume",
     },
     accepted: {
-      card: "bg-gradient-to-br from-emerald-200/95 via-emerald-200/90 to-green-200/95 border-emerald-200/60",
-      icon: "from-emerald-100/90 to-green-100/90",
+      card: "bg-emerald-50 border-emerald-200",
+      icon: "bg-emerald-100",
       iconColor: "text-emerald-600",
-      label: "text-emerald-600",
+      label: "text-emerald-700",
       text: "Changes Accepted",
     },
     rejected: {
-      card: "bg-gradient-to-br from-rose-200/95 via-rose-200/90 to-red-200/95 border-rose-200/60",
-      icon: "from-rose-100/90 to-red-100/90",
-      iconColor: "text-rose-600",
-      label: "text-rose-600",
+      card: "bg-red-50 border-red-200",
+      icon: "bg-red-100",
+      iconColor: "text-red-600",
+      label: "text-red-700",
       text: "Changes Rejected",
     },
   }[status];
@@ -745,85 +707,60 @@ export function WholeResumeSuggestion({
   return (
     <Card
       className={cn(
-        "group relative overflow-hidden p-4",
-        "border",
+        "relative overflow-hidden rounded-2xl",
+        "border-2",
         statusStyles.card,
-        "shadow-xl shadow-purple-500/10",
-        "transition-all duration-500 ease-in-out",
-        "hover:shadow-2xl hover:shadow-purple-500/20",
-        "backdrop-blur-xl",
+        "transition-all duration-200",
       )}
     >
-      <div className="flex items-center gap-2 mb-2">
-        <div className={cn("p-1.5 rounded-lg shadow-sm", statusStyles.icon)}>
-          <Sparkles className={cn("h-3.5 w-3.5", statusStyles.iconColor)} />
+      <div className="p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className={cn("p-2.5 rounded-xl", statusStyles.icon)}>
+            <Sparkles className={cn("h-5 w-5", statusStyles.iconColor)} />
+          </div>
+          <span className={cn("font-semibold text-base", statusStyles.label)}>
+            {statusStyles.text}
+          </span>
         </div>
-        <span className={cn("font-semibold text-sm", statusStyles.label)}>
-          {statusStyles.text}
-        </span>
+
+        {status === "pending" && (
+          <div className="flex justify-end gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleReject}
+              className={cn(
+                "h-10 px-5 text-sm rounded-xl",
+                "bg-red-50 text-red-700",
+                "border border-red-200",
+                "hover:bg-red-100",
+                "transition-colors duration-200",
+                "font-medium"
+              )}
+            >
+              <X className="h-4 w-4 mr-2" />
+              Undo Changes
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleAccept}
+              className={cn(
+                "h-10 px-5 text-sm rounded-xl",
+                "bg-emerald-50 text-emerald-700",
+                "border border-emerald-200",
+                "hover:bg-emerald-100",
+                "transition-colors duration-200",
+                "font-medium"
+              )}
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Keep Changes
+            </Button>
+          </div>
+        )}
       </div>
-
-      {status === "pending" && (
-        <div className="flex justify-end gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleReject}
-            className={cn(
-              "relative group/button overflow-hidden",
-              "h-8 px-4 text-xs",
-              "bg-gradient-to-br from-rose-50 to-rose-100/90",
-              "text-rose-700",
-              "border border-rose-200/60",
-              "shadow-sm",
-              "transition-all duration-500",
-              "hover:shadow-md hover:shadow-rose-500/10",
-              "hover:border-rose-300/80",
-              "hover:-translate-y-0.5",
-              "active:translate-y-0",
-            )}
-          >
-            <div
-              className="absolute inset-0 -z-10 bg-gradient-to-br from-rose-100 to-rose-200/90 
-              opacity-0 group-hover/button:opacity-100 transition-opacity duration-500"
-            />
-
-            <div className="relative flex items-center justify-center gap-1.5">
-              <X className="h-3.5 w-3.5 transition-transform duration-500 group-hover/button:rotate-90" />
-              <span className="font-medium">Undo Changes</span>
-            </div>
-          </Button>
-
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleAccept}
-            className={cn(
-              "relative group/button overflow-hidden",
-              "h-8 px-4 text-xs",
-              "bg-gradient-to-br from-emerald-50 to-emerald-100/90",
-              "text-emerald-700",
-              "border border-emerald-200/60",
-              "shadow-sm",
-              "transition-all duration-500",
-              "hover:shadow-md hover:shadow-emerald-500/10",
-              "hover:border-emerald-300/80",
-              "hover:-translate-y-0.5",
-              "active:translate-y-0",
-            )}
-          >
-            <div
-              className="absolute inset-0 -z-10 bg-gradient-to-br from-emerald-100 to-emerald-200/90 
-              opacity-0 group-hover/button:opacity-100 transition-opacity duration-500"
-            />
-
-            <div className="relative flex items-center justify-center gap-1.5">
-              <Check className="h-3.5 w-3.5 transition-transform duration-500 group-hover/button:scale-110" />
-              <span className="font-medium">Keep Changes</span>
-            </div>
-          </Button>
-        </div>
-      )}
     </Card>
   );
 }

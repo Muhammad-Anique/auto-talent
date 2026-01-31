@@ -20,19 +20,33 @@ import {
   Filter,
   SortAsc,
   ArrowRight,
+  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Job = {
   id: string;
   title: string;
+  companyName: string;
+  companyLogo?: string;
+  companyLinkedinUrl?: string;
+  companyWebsite?: string;
+  companyDescription?: string;
+  companySlogan?: string;
   location: string;
-  postAt: string;
-  url: string;
-  company: {
-    name: string;
-    logo?: string;
-  };
+  postedAt: string;
+  link: string;
+  applyUrl?: string;
+  salary?: string;
+  salaryInfo?: string[];
+  applicantsCount?: string;
+  descriptionText?: string;
+  descriptionHtml?: string;
+  seniorityLevel?: string;
+  employmentType?: string;
+  jobFunction?: string;
+  industries?: string;
+  benefits?: string[];
 };
 
 export default function SavedJobsPage() {
@@ -93,10 +107,14 @@ export default function SavedJobsPage() {
 
   // Extract unique companies and locations for dropdowns
   const companyOptions = Array.from(
-    new Set(savedJobs.map((j) => j.job.company.name)),
+    new Set(
+      savedJobs
+        .map((j) => j.job.companyName)
+        .filter((name) => name !== undefined),
+    ),
   );
   const locationOptions = Array.from(
-    new Set(savedJobs.map((j) => j.job.location)),
+    new Set(savedJobs.map((j) => j.job.location).filter((loc) => loc)),
   );
 
   // Filter + sort logic
@@ -104,14 +122,16 @@ export default function SavedJobsPage() {
     .filter(
       ({ job }) =>
         job.title.toLowerCase().includes(searchTitle.toLowerCase()) &&
-        job.company.name.toLowerCase().includes(filterCompany.toLowerCase()) &&
+        (job.companyName || "")
+          .toLowerCase()
+          .includes(filterCompany.toLowerCase()) &&
         job.location.toLowerCase().includes(filterLocation.toLowerCase()),
     )
     .sort((a, b) => {
       const titleA = a.job.title.toLowerCase();
       const titleB = b.job.title.toLowerCase();
-      const dateA = new Date(a.job.postAt).getTime();
-      const dateB = new Date(b.job.postAt).getTime();
+      const dateA = new Date(a.job.postedAt).getTime();
+      const dateB = new Date(b.job.postedAt).getTime();
 
       switch (sortBy) {
         case "az":
@@ -317,18 +337,18 @@ export default function SavedJobsPage() {
                     </button>
 
                     <Link
-                      href={job.url}
+                      href={job.link}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="block"
                     >
                       <div className="flex items-start gap-4">
                         {/* Company Logo */}
-                        {job.company?.logo && (
+                        {job.companyLogo && (
                           <div className="flex-shrink-0">
                             <img
-                              src={job.company.logo}
-                              alt={job.company.name}
+                              src={job.companyLogo}
+                              alt={job.companyName}
                               className="w-12 h-12 object-contain rounded-lg border border-zinc-200"
                             />
                           </div>
@@ -343,20 +363,39 @@ export default function SavedJobsPage() {
                             </h3>
                           </div>
 
-                          <div className="flex items-center gap-4 text-sm text-zinc-600 mb-2">
+                          <div className="flex items-center gap-4 text-sm text-zinc-600 mb-2 flex-wrap">
                             <div className="flex items-center gap-1">
                               <Building2 className="w-4 h-4" />
-                              <span>{job.company.name}</span>
+                              <span>{job.companyName}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <MapPin className="w-4 h-4" />
                               <span>{job.location}</span>
                             </div>
+                            {job.salary && (
+                              <div className="flex items-center gap-1">
+                                <span className="text-[#5b6949] font-medium">
+                                  {job.salary}
+                                </span>
+                              </div>
+                            )}
                           </div>
 
-                          <div className="flex items-center gap-1 text-sm text-zinc-500">
-                            <Calendar className="w-4 h-4" />
-                            <span>Posted: {formatDate(job.postAt)}</span>
+                          <div className="flex items-center gap-4 text-sm text-zinc-500 flex-wrap">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              <span>Posted: {formatDate(job.postedAt)}</span>
+                            </div>
+                            {job.employmentType && (
+                              <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                                {job.employmentType}
+                              </span>
+                            )}
+                            {job.seniorityLevel && (
+                              <span className="px-2 py-1 bg-gray-100 rounded text-xs">
+                                {job.seniorityLevel}
+                              </span>
+                            )}
                           </div>
                         </div>
 

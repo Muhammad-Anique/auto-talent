@@ -6,22 +6,17 @@ import { simplifiedJobSchema, simplifiedResumeSchema } from "@/lib/zod-schemas";
 import { Job, Resume } from "@/lib/types";
 import { AIConfig } from "@/utils/ai-tools";
 import { initializeAIClient } from "@/utils/ai-tools";
-import { getSubscriptionPlan } from "../stripe/actions";
-import { checkRateLimit } from "@/lib/rateLimiter";
+import { createClient } from "@/utils/supabase/server";
 
 export async function tailorResumeToJob(
   resume: Resume,
   jobListing: z.infer<typeof simplifiedJobSchema>,
   config?: AIConfig
 ) {
-  const { plan, id } = await getSubscriptionPlan(true);
-  // const isPro = plan === 'pro';
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
   const isPro = true;
-  const aiClient = isPro
-    ? initializeAIClient(config, isPro, true)
-    : initializeAIClient(config);
-  // Check rate limit
-  await checkRateLimit(id);
+  const aiClient = initializeAIClient(config, isPro, true);
 
   try {
     const { object } = await generateObject({
@@ -84,23 +79,8 @@ Transform the resume according to these principles, ensuring the final output is
 }
 
 export async function formatJobListing(jobListing: string, config?: AIConfig) {
-  const { plan, id } = await getSubscriptionPlan(true);
-  config = {
-    model: "gpt-4o-mini",
-    apiKeys: [
-      {
-        service: "openai",
-        key: process.env.OPENAI_API_KEY!,
-      },
-    ],
-  };
   const isPro = true;
-  // const isPro = plan === 'pro';
-  const aiClient = isPro
-    ? initializeAIClient(config, isPro, true)
-    : initializeAIClient(config);
-  // Check rate limit
-  await checkRateLimit(id);
+  const aiClient = initializeAIClient(config, isPro, true);
 
   try {
     const { object } = await generateObject({

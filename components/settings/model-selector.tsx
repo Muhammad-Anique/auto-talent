@@ -10,7 +10,6 @@ import {
 import { toast } from "sonner";
 import { ServiceName } from "@/lib/types";
 import Image from "next/image";
-import { getSubscriptionPlan } from "@/utils/actions/stripe/actions";
 
 const MODEL_STORAGE_KEY = "Auto Talent-default-model";
 const LOCAL_STORAGE_KEY = "Auto Talent-api-keys";
@@ -167,13 +166,9 @@ export function ModelSelector() {
     }
   }, [apiKeys, defaultModel, subscriptionPlan]);
 
-  // Add useEffect to fetch subscription status
+  // Add useEffect to set subscription status
   useEffect(() => {
-    const checkPlan = async () => {
-      const plan = await getSubscriptionPlan();
-      setSubscriptionPlan(plan);
-    };
-    checkPlan();
+    setSubscriptionPlan("pro");
   }, []);
 
   const handleModelChange = (modelId: string) => {

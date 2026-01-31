@@ -38,24 +38,24 @@ export function LanguageSelector({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={cn(
-          "flex items-center gap-1.5 px-2 py-1",
-          "bg-white border border-zinc-300 rounded-md",
+          "flex items-center gap-1.5 px-3 py-2 h-10",
+          "bg-white border border-zinc-200",
           "text-xs font-medium text-zinc-700",
-          "hover:bg-zinc-50 transition-colors",
+          "hover:bg-zinc-50 hover:border-[#5b6949] transition-colors",
           "disabled:opacity-50 disabled:cursor-not-allowed",
           "min-w-[100px]"
         )}
       >
-        <Globe className="w-3.5 h-3.5" />
+        <Globe className="w-4 h-4" />
         <span>{currentLang.flag} {currentLang.code.toUpperCase()}</span>
         <ChevronDown className={cn(
-          "w-3.5 h-3.5 transition-transform ml-auto",
+          "w-4 h-4 transition-transform ml-auto",
           isOpen && "rotate-180"
         )} />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-1 right-0 bg-white rounded-md shadow-lg border border-zinc-200 py-1 min-w-[180px] z-50">
+        <div className="absolute top-full mt-1 right-0 bg-white border border-zinc-200 py-1 min-w-[180px] z-50">
           {Object.entries(TRANSLATION_LANGUAGES).map(([code, lang]) => (
             <button
               key={code}
@@ -65,7 +65,7 @@ export function LanguageSelector({
               }}
               className={cn(
                 "w-full px-3 py-2 text-left text-xs hover:bg-zinc-50 transition-colors",
-                "flex items-center gap-2",
+                "flex items-center gap-2 text-zinc-800",
                 currentLanguage === code && "bg-zinc-50 text-[#5b6949] font-medium"
               )}
             >

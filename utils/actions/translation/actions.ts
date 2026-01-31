@@ -5,7 +5,6 @@ import { initializeAIClient, type AIConfig } from '@/utils/ai-tools';
 import { Resume } from '@/lib/types';
 import { z } from 'zod';
 import { updateResume } from '../resumes/actions';
-import { getSubscriptionPlan } from '../stripe/actions';
 import { RESUME_TRANSLATION_SYSTEM_MESSAGE } from '@/lib/prompts';
 import { TRANSLATION_LANGUAGES } from '@/lib/translation-config';
 
@@ -51,8 +50,7 @@ export async function translateResume(
   config?: AIConfig
 ): Promise<Resume> {
   try {
-    const subscriptionPlan = await getSubscriptionPlan();
-    const isPro = subscriptionPlan === 'pro';
+    const isPro = true;
 
     // Use environment API key for Pro users
     const effectiveConfig = isPro ? {

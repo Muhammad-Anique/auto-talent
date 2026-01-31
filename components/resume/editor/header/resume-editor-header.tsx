@@ -37,14 +37,14 @@ export function ResumeEditorHeader({
     textOpacity: "text-purple-600/60",
     gradientOverlay: "#f3e8ff30",
   } : {
-    gradient: "from-pink-600 via-pink-500 to-rose-600",
-    border: "border-pink-200/50",
-    background: "from-pink-50/95 via-white/95 to-pink-50/95",
-    shadow: "shadow-pink-500/10",
-    text: "text-pink-600",
-    hover: "hover:text-pink-600",
-    textOpacity: "text-pink-600/60",
-    gradientOverlay: "#fce7f330",
+    gradient: "from-[#5b6949] via-[#6b7a56] to-[#5b6949]",
+    border: "border-zinc-200/50",
+    background: "from-zinc-50/95 via-white/95 to-zinc-50/95",
+    shadow: "shadow-zinc-500/10",
+    text: "text-[#5b6949]",
+    hover: "hover:text-[#5b6949]",
+    textOpacity: "text-zinc-600/60",
+    gradientOverlay: "#e5e7eb30",
   };
 
   return (

@@ -2,8 +2,7 @@ import { LanguageModelV1, ToolInvocation, smoothStream, streamText } from 'ai';
 import { Resume, Job } from '@/lib/types';
 import { initializeAIClient, type AIConfig } from '@/utils/ai-tools';
 import { tools } from '@/lib/tools';
-import { getSubscriptionPlan } from '@/utils/actions/stripe/actions';
-import { checkRateLimit } from '@/lib/rateLimiter';
+import { createClient } from '@/utils/supabase/server';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -23,35 +22,10 @@ export async function POST(req: Request) {
   try {
     const { messages, target_role, config, job }: ChatRequest = await req.json();
 
-    // Get subscription plan and user ID
-    const { plan, id } = await getSubscriptionPlan(true);
-    const isPro = plan === 'pro';
-
-    // Apply rate limiting only for Pro users
-    if (isPro) {
-      try {
-        await checkRateLimit(id);
-      } catch (error) {
-        // Add type checking for error
-        const message = error instanceof Error ? error.message : 'Rate limit exceeded';
-        const match = message.match(/(\d+) seconds/);
-        const retryAfter = match ? parseInt(match[1], 10) : 60;
-        
-        return new Response(
-          JSON.stringify({ 
-            error: message, // Use validated message
-            expirationTimestamp: Date.now() + retryAfter * 1000
-          }),
-          {
-            status: 429,
-            headers: {
-              "Content-Type": "application/json",
-              "Retry-After": String(retryAfter),
-            },
-          }
-        );
-      }
-    }
+    // Get user
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    const isPro = true;
 
     // Initialize the AI client using the provided config and plan.
     const aiClient = initializeAIClient(config, isPro);

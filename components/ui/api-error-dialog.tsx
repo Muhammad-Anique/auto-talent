@@ -1,6 +1,6 @@
 'use client';
 
-import { AlertTriangle, Sparkles } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogHeader } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
@@ -45,45 +45,23 @@ export function ApiErrorDialog({
             </div>
 
             <div className="w-full h-px bg-red-100" />
-            
-            <div className="text-sm text-red-400 mb-2">
-              Unlock premium features and advanced AI capabilities
-            </div>
 
-            <div className="flex flex-col gap-2 w-full">
-              <Button
-                onClick={onUpgrade}
-                className={cn(
-                  "w-full",
-                  "bg-gradient-to-r from-amber-500 to-orange-500",
-                  "text-white",
-                  "border border-amber-400",
-                  "h-8",
-                  "transition-all duration-300",
-                  "hover:-translate-y-0.5",
-                  "hover:shadow-md",
-                  "hover:from-amber-600 hover:to-orange-600"
-                )}
-              >
-                <Sparkles className="w-3 h-3 mr-2" />
-                Upgrade to Pro
-              </Button>
-              
+            <div className="flex flex-col gap-2 w-full mt-4">
               <Button
                 variant="outline"
                 onClick={onSettings}
                 className={cn(
                   "w-full",
-                  "text-xs text-gray-500 hover:text-gray-600",
+                  "text-sm text-gray-700 hover:text-gray-900",
                   "hover:bg-gray-50/50",
-                  "border border-gray-200",
-                  "h-8",
+                  "border border-gray-300",
+                  "h-10",
                   "transition-all duration-300",
                   "hover:-translate-y-0.5",
                   "hover:shadow-sm"
                 )}
               >
-                Set API Keys
+                Go to Settings
               </Button>
             </div>
 

@@ -47,7 +47,7 @@ function FollowUpEmailEditor({
     content: initialData?.content as string || '<p>Start writing your Follow Up Email</p>',
     editorProps: {
       attributes: {
-        class: 'prose prose-xxs focus:outline-none h-full overflow-none max-w-none text-black ',
+        class: 'prose prose-xxs focus:outline-none h-full overflow-none max-w-none text-black text-[14px] leading-normal',
       },
     },
     onUpdate: ({ editor }) => {
@@ -77,7 +77,7 @@ function FollowUpEmailEditor({
   }, [editor])
 
   return (
-    <div className="relative w-full max-w-[816px] mx-auto shadow-lg overflow-hidden mb-12 bg-white">
+    <div className="relative w-full shadow-lg overflow-hidden mb-12 bg-white">
       {editor && (
         <BubbleMenu 
           editor={editor} 
@@ -222,8 +222,8 @@ function FollowUpEmailEditor({
           } : {}}
         >
           <div className={cn(
-            "absolute inset-0 my-12 mx-16 overflow-hidden",
-            isPrintVersion && "!my-0 !mx-8"
+            "absolute inset-0 p-12 overflow-hidden",
+            isPrintVersion && "!p-8"
           )}>
             <EditorContent 
               editor={editor} 

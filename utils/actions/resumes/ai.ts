@@ -9,7 +9,6 @@ import {
 import { generateObject } from "ai";
 import { z } from "zod";
 import { initializeAIClient, type AIConfig } from "@/utils/ai-tools";
-import { getSubscriptionPlan } from "@/utils/actions/stripe/actions";
 import {
   PROJECT_GENERATOR_MESSAGE,
   PROJECT_IMPROVER_MESSAGE,
@@ -31,8 +30,7 @@ export async function convertTextToResume(
   targetRole: string,
   config?: AIConfig
 ) {
-  const subscriptionPlan = await getSubscriptionPlan();
-  const isPro = subscriptionPlan === "pro";
+  const isPro = true;
   config = {
     model: "gpt-4o-mini",
     apiKeys: [
@@ -121,8 +119,7 @@ export async function generateWorkExperiencePoints(
   customPrompt: string = "",
   config?: AIConfig
 ) {
-  const subscriptionPlan = await getSubscriptionPlan();
-  const isPro = subscriptionPlan === "pro";
+  const isPro = true;
   config = {
     model: "gpt-4o-mini",
     apiKeys: [
@@ -160,8 +157,7 @@ export async function improveWorkExperience(
   customPrompt?: string,
   config?: AIConfig
 ) {
-  const subscriptionPlan = await getSubscriptionPlan();
-  const isPro = subscriptionPlan === "pro";
+  const isPro = true;
   config = {
     model: "gpt-4o-mini",
     apiKeys: [
@@ -196,8 +192,7 @@ export async function improveProject(
   customPrompt?: string,
   config?: AIConfig
 ) {
-  const subscriptionPlan = await getSubscriptionPlan();
-  const isPro = subscriptionPlan === "pro";
+  const isPro = true;
   config = {
     model: "gpt-4o-mini",
     apiKeys: [
@@ -234,8 +229,7 @@ export async function generateProjectPoints(
   customPrompt: string = "",
   config?: AIConfig
 ) {
-  const subscriptionPlan = await getSubscriptionPlan();
-  const isPro = subscriptionPlan === "pro";
+  const isPro = true;
   config = {
     model: "gpt-4o-mini",
     apiKeys: [
@@ -288,8 +282,6 @@ export async function modifyWorkExperience(
   prompt: string,
   config?: AIConfig
 ) {
-  const subscriptionPlan = await getSubscriptionPlan();
-  // const isPro = subscriptionPlan === 'pro';
   const isPro = true;
   const aiClient = isPro
     ? initializeAIClient(config, isPro)
@@ -320,8 +312,6 @@ export async function addTextToResume(
   existingResume: Resume,
   config?: AIConfig
 ) {
-  const subscriptionPlan = await getSubscriptionPlan();
-  // const isPro = subscriptionPlan === 'pro';
   const isPro = true;
   const aiClient = isPro
     ? initializeAIClient(config, isPro)

@@ -127,37 +127,33 @@ export function ResumeEditorActions({
     actionShadow: "shadow-[#5b6949]/20"
   };
 
-  
+
   const buttonBaseStyle = cn(
-    "transition-all duration-300",
-    "relative overflow-hidden",
-    "h-8 px-3 text-[11px] font-medium",
-    "rounded-md border-none",
-    "text-white shadow-sm",
-    "hover:shadow-md hover:-translate-y-[1px]",
-    "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:shadow-none disabled:hover:translate-y-0"
+    "transition-colors duration-200",
+    "h-10 px-3 text-xs font-medium",
+    "border-none",
+    "text-white",
+    "disabled:opacity-50 disabled:cursor-not-allowed"
   );
 
   const importButtonClasses = cn(
     buttonBaseStyle,
     colors.importBg,
-    colors.importHover,
-    colors.importShadow
+    colors.importHover
   );
 
   const actionButtonClasses = cn(
     buttonBaseStyle,
     colors.actionBg,
-    colors.actionHover,
-    colors.actionShadow
+    colors.actionHover
   );
 
   return (
-    <div className="px-1 py-2 @container">
-      <div className="space-y-2">
+    <div className="px-2 py-3 @container">
+      <div className="space-y-3">
         {/* Translation Row */}
-        <div className="flex items-center gap-2 p-2 bg-zinc-50 rounded-md border border-zinc-200">
-          <Languages className="h-3.5 w-3.5 text-zinc-500" />
+        <div className="flex items-center gap-2 p-3 bg-zinc-50 border border-zinc-200">
+          <Languages className="h-4 w-4 text-zinc-500" />
           <span className="text-xs text-zinc-600 font-medium">Language:</span>
           <LanguageSelector
             currentLanguage={resume.current_language || 'en'}
@@ -168,7 +164,7 @@ export function ResumeEditorActions({
             disabled={isTranslating || isSaving}
           />
           {isTranslating && (
-            <Loader2 className="h-3.5 w-3.5 animate-spin text-[#5b6949]" />
+            <Loader2 className="h-4 w-4 animate-spin text-[#5b6949]" />
           )}
         </div>
 

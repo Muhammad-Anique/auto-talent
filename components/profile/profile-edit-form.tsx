@@ -176,7 +176,7 @@ export function ProfileEditForm({
       setIsFetching(true);
 
       const response = await fetch(
-        `/api/linkedin/profile?profileUrl=${url.trim()}`
+        `/api/linkedin/profile?profileUrl=${url.trim()}`,
       );
       if (!response.ok) {
         throw new Error(`Error fetching LinkedIn data: ${response.status}`);
@@ -203,8 +203,7 @@ export function ProfileEditForm({
       const MODEL_STORAGE_KEY = "resumelm-default-model";
       const LOCAL_STORAGE_KEY = "resumelm-api-keys";
 
-      const selectedModel =
-        localStorage.getItem(MODEL_STORAGE_KEY) || "gpt-4o";
+      const selectedModel = localStorage.getItem(MODEL_STORAGE_KEY) || "gpt-4o";
       const storedKeys = localStorage.getItem(LOCAL_STORAGE_KEY);
       let apiKeys = [];
 
@@ -268,9 +267,9 @@ export function ProfileEditForm({
                   items: Array.isArray(skill.skills)
                     ? skill.skills
                     : Array.isArray(skill.items)
-                    ? skill.items
-                    : [],
-                })
+                      ? skill.items
+                      : [],
+                }),
               )
             : [],
           projects: Array.isArray(result.projects)
@@ -301,7 +300,7 @@ export function ProfileEditForm({
             position: "bottom-right",
             className:
               "bg-gradient-to-r from-emerald-500 to-green-500 text-white border-none",
-          }
+          },
         );
         setResumeContent("");
         setTextImportContent("");
@@ -311,7 +310,7 @@ export function ProfileEditForm({
         console.error("Resume upload error:", error);
         if (error.message.toLowerCase().includes("api key")) {
           setApiKeyError(
-            "API key required. Please add your OpenAI API key in settings or upgrade to our Pro Plan."
+            "API key required. Please add your OpenAI API key in settings or upgrade to our Pro Plan.",
           );
         } else {
           toast.error("Failed to process content: " + error.message, {
@@ -336,10 +335,12 @@ export function ProfileEditForm({
         {/* Header */}
         <div className="space-y-4">
           <div className="flex items-center gap-4">
-            <div className={cn(
-              "p-3 rounded-xl transition-all duration-300",
-              "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60"
-            )}>
+            <div
+              className={cn(
+                "p-3 rounded-xl transition-all duration-300",
+                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
+              )}
+            >
               <User className="w-6 h-6 text-[#5b6949]" />
             </div>
             <div>
@@ -428,7 +429,9 @@ export function ProfileEditForm({
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-[#5b6949]" />
-              <span className="text-sm font-medium text-zinc-700">Import Options</span>
+              <span className="text-sm font-medium text-zinc-700">
+                Import Options
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -465,7 +468,9 @@ export function ProfileEditForm({
                       Import From LinkedIn
                     </DialogTitle>
                     <DialogDescription className="text-zinc-600">
-                      Enter your LinkedIn profile URL below. Our AI will extract your public profile data and help you populate your resume.
+                      Enter your LinkedIn profile URL below. Our AI will extract
+                      your public profile data and help you populate your
+                      resume.
                     </DialogDescription>
                   </DialogHeader>
 
@@ -480,7 +485,7 @@ export function ProfileEditForm({
                         }))
                       }
                       placeholder="Paste your LinkedIn profile URL here"
-                      className="flex-1 bg-white/50 border-zinc-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20 transition-all duration-200"
+                      className="flex-1 bg-white/50 border-zinc-200 text-gray-900 focus:border-[#5b6949] focus:ring-[#5b6949]/20 transition-all duration-200"
                     />
                     <Button
                       onClick={handleFetchLinkedIn}
@@ -503,7 +508,7 @@ export function ProfileEditForm({
                       value={resumeContent}
                       onChange={(e) => setResumeContent(e.target.value)}
                       placeholder="Paste your resume content here..."
-                      className="w-full min-h-[120px] bg-white/50 border-zinc-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20 transition-all duration-200"
+                      className="w-full min-h-[120px] text-gray-900 bg-white/50 border-zinc-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20 transition-all duration-200"
                     />
                   </div>
 
@@ -567,7 +572,8 @@ export function ProfileEditForm({
                       Upload Resume Content
                     </DialogTitle>
                     <DialogDescription className="text-zinc-600">
-                      Let our AI analyze your resume and enhance your profile by adding new information.
+                      Let our AI analyze your resume and enhance your profile by
+                      adding new information.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
@@ -597,9 +603,7 @@ export function ProfileEditForm({
                             variant="outline"
                             size="sm"
                             className="text-red-600 border-red-200 hover:bg-red-50/50 w-auto mx-auto"
-                            onClick={() =>
-                              (window.location.href = "/settings")
-                            }
+                            onClick={() => (window.location.href = "/settings")}
                           >
                             Set API Keys in Settings
                           </Button>
@@ -667,7 +671,9 @@ export function ProfileEditForm({
                       Import From Text
                     </DialogTitle>
                     <DialogDescription className="text-zinc-600">
-                      Paste any text content below (resume, job description, achievements, etc.). Our AI will analyze it and enhance your profile.
+                      Paste any text content below (resume, job description,
+                      achievements, etc.). Our AI will analyze it and enhance
+                      your profile.
                     </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
@@ -697,9 +703,7 @@ export function ProfileEditForm({
                             variant="outline"
                             size="sm"
                             className="text-red-600 border-red-200 hover:bg-red-50/50 w-auto mx-auto"
-                            onClick={() =>
-                              (window.location.href = "/settings")
-                            }
+                            onClick={() => (window.location.href = "/settings")}
                           >
                             Set API Keys in Settings
                           </Button>
@@ -717,9 +721,7 @@ export function ProfileEditForm({
                     </Button>
                     <Button
                       onClick={() => handleResumeUpload(textImportContent)}
-                      disabled={
-                        isProcessingResume || !textImportContent.trim()
-                      }
+                      disabled={isProcessingResume || !textImportContent.trim()}
                       className="bg-[#5b6949] text-white hover:bg-[#5b6949]/90 transition-all duration-200"
                     >
                       {isProcessingResume ? (
@@ -816,9 +818,7 @@ export function ProfileEditForm({
                   <div className="p-6">
                     <ProfileProjectsForm
                       projects={profile.projects}
-                      onChange={(projects) =>
-                        updateField("projects", projects)
-                      }
+                      onChange={(projects) => updateField("projects", projects)}
                     />
                   </div>
                 </Card>

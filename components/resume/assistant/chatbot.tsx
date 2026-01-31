@@ -46,6 +46,7 @@ interface ChatBotProps {
   resume: Resume;
   onResumeChange: (field: keyof Resume, value: Resume[typeof field]) => void;
   job?: Job | null;
+  isAgentMode?: boolean;
 }
 
 function ScrollToBottom() {
@@ -70,7 +71,7 @@ function ScrollToBottom() {
   );
 }
 
-export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
+export default function ChatBot({ resume, onResumeChange, job, isAgentMode = false }: ChatBotProps) {
   const router = useRouter();
   const [accordionValue, setAccordionValue] = React.useState<string>("");
   const [apiKeys, setApiKeys] = React.useState<ApiKey[]>([]);
@@ -289,19 +290,282 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
     setEditContent("");
   }, [setMessages]);
 
+  // Agent mode - full screen chat interface
+  if (isAgentMode) {
+    return (
+      <div className="flex flex-col h-full bg-white">
+        {/* Chat Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-200 bg-white">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-[#5b6949] text-white rounded-xl">
+              <Bot className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-zinc-900">AI Assistant</h2>
+              <p className="text-sm text-zinc-500">Powered by Advanced AI</p>
+            </div>
+          </div>
+          <Button
+            onClick={handleClearChat}
+            disabled={messages.length === 0}
+            variant="ghost"
+            size="sm"
+            className="text-zinc-600 hover:text-[#5b6949] hover:bg-zinc-50 h-9 px-3"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Clear Chat
+          </Button>
+        </div>
+
+        {/* Messages Area */}
+        <StickToBottom className="flex-1 overflow-hidden relative" resize="smooth" initial="smooth">
+          <StickToBottom.Content className="flex flex-col px-6 py-4">
+            {messages.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="max-w-2xl w-full space-y-8">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex p-5 bg-[#5b6949]/10 text-[#5b6949] mx-auto rounded-2xl">
+                      <Bot className="h-14 w-14" />
+                    </div>
+                    <h3 className="text-3xl font-semibold text-zinc-900">How can I help you today?</h3>
+                    <p className="text-base text-zinc-500">Ask me anything about your resume or get suggestions for improvement</p>
+                  </div>
+                  <QuickSuggestions onSuggestionClick={handleSubmit} />
+                </div>
+              </div>
+            ) : (
+              <>
+                {messages.map((m: Message, index) => (
+                  <React.Fragment key={index}>
+                    {/* Regular Message Content */}
+                    {m.content && (
+                      <div className="mb-6">
+                        <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                          <div className={cn(
+                            "max-w-[85%] px-5 py-4 text-base relative group rounded-2xl",
+                            m.role === 'user' ? [
+                              "bg-[#5b6949]",
+                              "text-white",
+                              "ml-auto"
+                            ] : [
+                              "bg-zinc-50",
+                              "border border-zinc-200"
+                            ]
+                          )}>
+                            {editingMessageId === m.id ? (
+                              <div className="flex flex-col gap-3">
+                                <Textarea
+                                  value={editContent}
+                                  onChange={(e) => setEditContent(e.target.value)}
+                                  className={cn(
+                                    "w-full min-h-[120px] p-4 text-base",
+                                    "bg-white rounded-xl",
+                                    "border border-zinc-200 focus:border-[#5b6949]",
+                                    "focus:outline-none focus:ring-2 focus:ring-[#5b6949]/20"
+                                  )}
+                                />
+                                <button
+                                  onClick={() => handleSaveEdit(m.id)}
+                                  className="self-end px-5 py-2.5 text-sm bg-[#5b6949] text-white hover:bg-[#5b6949]/90 transition-colors rounded-lg font-medium"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            ) : (
+                              <MemoizedMarkdown id={m.id} content={m.content} />
+                            )}
+
+                            {/* Message Actions */}
+                            <div className="absolute -bottom-6 left-0 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                onClick={() => handleDelete(m.id)}
+                                className="text-zinc-400 hover:text-zinc-600 transition-colors"
+                                aria-label="Delete message"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleEdit(m.id, m.content)}
+                                className="text-zinc-400 hover:text-zinc-600 transition-colors"
+                                aria-label="Edit message"
+                              >
+                                <Pencil className="h-3.5 w-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tool Invocations */}
+                    {m.toolInvocations?.map((toolInvocation: ToolInvocation) => {
+                      const { toolName, toolCallId, state, args } = toolInvocation;
+                      switch (state) {
+                        case 'partial-call':
+                        case 'call':
+                          return (
+                            <div key={toolCallId} className="mb-6">
+                              <div className="flex justify-start">
+                                {toolName === 'getResume' ? (
+                                  <div className="px-5 py-4 text-base bg-zinc-50 border border-zinc-200 rounded-2xl">
+                                    Reading Resume...
+                                  </div>
+                                ) : toolName === 'modifyWholeResume' ? (
+                                  <div className="px-5 py-4 text-base bg-zinc-50 border border-zinc-200 rounded-2xl">
+                                    Preparing resume modifications...
+                                  </div>
+                                ) : toolName.startsWith('suggest_') ? (
+                                  <SuggestionSkeleton />
+                                ) : null}
+                              </div>
+                            </div>
+                          );
+
+                        case 'result':
+                          const toolConfig = {
+                            suggest_work_experience_improvement: {
+                              type: 'work_experience' as const,
+                              field: 'work_experience',
+                              content: 'improved_experience',
+                            },
+                            suggest_project_improvement: {
+                              type: 'project' as const,
+                              field: 'projects',
+                              content: 'improved_project',
+                            },
+                            suggest_skill_improvement: {
+                              type: 'skill' as const,
+                              field: 'skills',
+                              content: 'improved_skill',
+                            },
+                            suggest_education_improvement: {
+                              type: 'education' as const,
+                              field: 'education',
+                              content: 'improved_education',
+                            },
+                            modifyWholeResume: {
+                              type: 'whole_resume' as const,
+                              field: 'all',
+                              content: null,
+                            },
+                          } as const;
+                          const config = toolConfig[toolName as keyof typeof toolConfig];
+
+                          if (!config) return null;
+
+                          if (toolName === 'getResume') {
+                            return (
+                              <div key={toolCallId} className="mb-6">
+                                <div className="flex justify-start">
+                                  <div className="px-5 py-4 text-base bg-zinc-50 border border-zinc-200 rounded-2xl">
+                                    {args.message}
+                                    <p>Read Resume ✅</p>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          if (config.type === 'whole_resume') {
+                            if (!originalResume) {
+                              setOriginalResume({ ...resume });
+                            }
+
+                            return (
+                              <div key={toolCallId} className="mb-6">
+                                <WholeResumeSuggestion
+                                  onReject={() => {
+                                    if (originalResume) {
+                                      Object.keys(originalResume).forEach((key) => {
+                                        if (key !== 'id' && key !== 'created_at' && key !== 'updated_at') {
+                                          onResumeChange(key as keyof Resume, originalResume[key as keyof Resume]);
+                                        }
+                                      });
+                                      setOriginalResume(null);
+                                    }
+                                  }}
+                                />
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div key={toolCallId} className="mb-6">
+                              <Suggestion
+                                type={config.type}
+                                content={args[config.content]}
+                                currentContent={resume[config.field][args.index]}
+                                onAccept={() => onResumeChange(config.field,
+                                  resume[config.field].map((item: WorkExperience | Education | Project | Skill, i: number) =>
+                                    i === args.index ? args[config.content] : item
+                                  )
+                                )}
+                                onReject={() => {}}
+                              />
+                            </div>
+                          );
+
+                        default:
+                          return null;
+                      }
+                    })}
+
+                    {/* Loading Indicator */}
+                    {((isInitialLoading && index === messages.length - 1 && m.role === 'user') ||
+                      (isLoading && index === messages.length - 1 && m.role === 'assistant')) && (
+                      <div className="mb-6">
+                        <div className="flex justify-start">
+                          <div className="px-5 py-4 bg-zinc-50 border border-zinc-200 rounded-2xl">
+                            <LoadingDots className="text-zinc-600" />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </React.Fragment>
+                ))}
+              </>
+            )}
+
+            {error && (
+              error.message === "Rate limit exceeded. Try again later." ? (
+                <div className="p-4 text-sm bg-red-50 border border-red-200 text-red-700">
+                  <p>You&apos;ve used all your available messages. Please try again after:</p>
+                  <p className="font-medium mt-2">
+                    {new Date(Date.now() + 5 * 60 * 60 * 1000).toLocaleString()}
+                  </p>
+                </div>
+              ) : (
+                <ApiKeyErrorAlert error={error} router={router} />
+              )
+            )}
+          </StickToBottom.Content>
+
+          <ScrollToBottom />
+        </StickToBottom>
+
+        {/* Input Area */}
+        <div className="border-t border-zinc-200 bg-white px-6 py-4">
+          <ChatInput
+            isLoading={isLoading}
+            onSubmit={handleSubmit}
+            onStop={stop}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  // Original accordion mode
   return (
     <Card className={cn(
-      "flex flex-col w-full l mx-auto",
-      "bg-gradient-to-br from-zinc-100 via-zinc-50 to-zinc-50",
-      "border-2 border-zinc-200",
-      "shadow-lg shadow-zinc-500/5",
-      "transition-all duration-500",
-      "hover:shadow-xl hover:shadow-zinc-500/10",
+      "flex flex-col w-full h-full mx-auto",
+      "bg-white",
+      "border-0",
+      "transition-colors duration-200",
       "overflow-hidden",
-      "relative",
-      "data-[state=closed]:shadow-md data-[state=closed]:border data-[state=closed]:border-zinc-200/40 "
+      "relative"
     )}>
-      
+
 
       <Accordion
         type="single"
@@ -315,32 +579,17 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
           {/* Accordion Trigger */}
           <div className="relative">
             <AccordionTrigger className={cn(
-              "px-2 py-2",
+              "px-3 py-3",
               "hover:no-underline",
               "group",
-              "transition-all duration-300",
-              "data-[state=open]:border-b border-zinc-200/60",
-              "data-[state=closed]:opacity-80 data-[state=closed]:hover:opacity-100",
-              "data-[state=closed]:py-1"
+              "transition-colors duration-200",
+              "data-[state=open]:border-b border-zinc-200",
+              "bg-zinc-50 hover:bg-zinc-100"
             )}>
-              <div className={cn(
-                "flex items-center w-full",
-                "transition-transform duration-300",
-                "group-hover:scale-[0.99]",
-                "group-data-[state=closed]:scale-95"
-              )}>
-                <div className="flex items-center gap-1.5">
-                  <div className={cn(
-                    "p-1 rounded-lg",
-                    "bg-[#5b6949]/10 text-[#5b6949]",
-                    "group-hover:bg-[#5b6949]/20",
-                    "transition-colors duration-300",
-                    "group-data-[state=closed]:bg-white/60",
-                    "group-data-[state=closed]:p-0.5"
-                  )}>
-                    <Bot className="h-3 w-3" />
-                  </div>
-                  <Logo className="text-xs" asLink={false} />
+              <div className="flex items-center w-full">
+                <div className="flex items-center gap-2">
+                  <Bot className="h-4 w-4 text-[#5b6949]" />
+                  <Logo className="text-sm" asLink={false} />
                 </div>
               </div>
             </AccordionTrigger>
@@ -350,11 +599,10 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                 <Button
                   className={cn(
                     "absolute right-8 top-1/2 -translate-y-1/2",
-                    "px-3 py-1 rounded-lg",
-                    "bg-zinc-100/40 text-[#5b6949]/80 border border-[#5b6949]",
-                    "hover:bg-zinc-200/60 hover:text-[#5b6949]",
-                    "transition-all duration-300",
-                    "focus:outline-none focus:ring-2 focus:ring-[#5b6949]/40",
+                    "px-3 py-1.5 h-auto",
+                    "bg-white text-[#5b6949] border border-[#5b6949]",
+                    "hover:bg-[#5b6949] hover:text-white",
+                    "transition-colors duration-200",
                     "disabled:opacity-50",
                     "flex items-center gap-2",
                     (accordionValue !== "chat" || isAlertOpen) && "hidden",
@@ -365,7 +613,7 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                   size="sm"
                 >
                   <RefreshCw className="h-3 w-3" />
-                  <span className="text-xs font-medium">Clear Chat History</span>
+                  <span className="text-xs font-medium">Clear Chat</span>
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className={cn(
@@ -419,17 +667,15 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                           <div className="my-2">
                             <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                               <div className={cn(
-                                "rounded-2xl px-4 py-2 max-w-[90%] text-sm relative group items-center",
+                                "px-4 py-2 max-w-[90%] text-sm relative group items-center",
                                 m.role === 'user' ? [
-                                  "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/90",
+                                  "bg-[#5b6949]",
                                   "text-white",
-                                  "shadow-md shadow-[#5b6949]/10",
-                                  "ml-auto pb-0 text-white"
+                                  "ml-auto pb-0"
                                 ] : [
-                                  "bg-white/60",
-                                  "border border-zinc-200/60",
-                                  "shadow-sm",
-                                  "backdrop-blur-sm pb-0"
+                                  "bg-zinc-50",
+                                  "border border-zinc-200",
+                                  "pb-0"
                                 ]
                               )}>
 
@@ -440,19 +686,19 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                       value={editContent}
                                       onChange={(e) => setEditContent(e.target.value)}
                                       className={cn(
-                                        "w-full min-h-[100px] p-2 rounded-lg",
-                                        "bg-white/80 backdrop-blur-sm",
-                                        m.role === 'user' 
+                                        "w-full min-h-[100px] p-2",
+                                        "bg-white",
+                                        m.role === 'user'
                                           ? "text-[#5b6949] placeholder-zinc-400"
                                           : "text-gray-900 placeholder-gray-400",
-                                        "border border-zinc-200/60 focus:border-[#5b6949]/60",
-                                        "focus:outline-none focus:ring-1 focus:ring-[#5b6949]/60"
+                                        "border border-zinc-200 focus:border-[#5b6949]",
+                                        "focus:outline-none focus:ring-1 focus:ring-[#5b6949]"
                                       )}
                                     />
                                     <button
                                       onClick={() => handleSaveEdit(m.id)}
                                       className={cn(
-                                        "self-end px-3 py-1 rounded-lg text-xs",
+                                        "self-end px-3 py-1.5 text-xs h-auto",
                                         "bg-[#5b6949] text-white",
                                         "hover:bg-[#5b6949]/90",
                                         "transition-colors duration-200"
@@ -508,17 +754,15 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                   <div className="flex justify-start max-w-[90%]">
                                     {toolName === 'getResume' ? (
                                       <div className={cn(
-                                        "rounded-2xl px-4 py-2 max-w-[90%] text-sm",
-                                        "bg-white/60 border border-zinc-200/60",
-                                        "shadow-sm backdrop-blur-sm"
+                                        "px-4 py-2 max-w-[90%] text-sm",
+                                        "bg-zinc-50 border border-zinc-200"
                                       )}>
                                         Reading Resume...
                                       </div>
                                     ) : toolName === 'modifyWholeResume' ? (
                                       <div className={cn(
-                                        "w-full rounded-2xl px-4 py-2",
-                                        "bg-white/60 border border-zinc-200/60",
-                                        "shadow-sm backdrop-blur-sm"
+                                        "w-full px-4 py-2",
+                                        "bg-zinc-50 border border-zinc-200"
                                       )}>
                                         Preparing resume modifications...
                                       </div>
@@ -571,9 +815,8 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                                   <div key={toolCallId} className="mt-2 w-[90%]">
                                     <div className="flex justify-start">
                                       <div className={cn(
-                                        "rounded-2xl px-4 py-2 max-w-[90%] text-sm",
-                                        "bg-white/60 border border-zinc-200/60",
-                                        "shadow-sm backdrop-blur-sm"
+                                        "px-4 py-2 max-w-[90%] text-sm",
+                                        "bg-zinc-50 border border-zinc-200"
                                       )}>
                                         {args.message}
                                         <p>Read Resume ✅</p>
@@ -637,11 +880,9 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                           <div className="mt-2">
                             <div className="flex justify-start">
                               <div className={cn(
-                                "rounded-2xl px-4 py-2.5 min-w-[60px]",
-                                "bg-white/60",
-                                "border border-zinc-200/60",
-                                "shadow-sm",
-                                "backdrop-blur-sm"
+                                "px-4 py-2.5 min-w-[60px]",
+                                "bg-zinc-50",
+                                "border border-zinc-200"
                               )}>
                                 <LoadingDots className="text-zinc-600" />
                               </div>
@@ -656,9 +897,9 @@ export default function ChatBot({ resume, onResumeChange, job }: ChatBotProps) {
                 {error && (
                   error.message === "Rate limit exceeded. Try again later." ? (
                     <div className={cn(
-                      "rounded-lg p-4 text-sm",
-                      "bg-pink-50 border border-pink-200",
-                      "text-pink-700"
+                      "p-4 text-sm",
+                      "bg-red-50 border border-red-200",
+                      "text-red-700"
                     )}>
                       <p>You&apos;ve used all your available messages. Please try again after:</p>
                       <p className="font-medium mt-2">

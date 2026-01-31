@@ -50,13 +50,7 @@ export default function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn(
-        "relative z-10",
-        "p-1 border-t border-zinc-200/60",
-        "bg-white/40",
-        "backdrop-blur-sm",
-        "flex gap-1.5",
-      )}
+      className="relative flex gap-3 items-end"
     >
       <Textarea
         ref={textareaRef}
@@ -73,24 +67,24 @@ export default function ChatInput({
             }
           }
         }}
-        placeholder="Ask me anything about your resume..."
+        placeholder="Type your message..."
         rows={1}
         className={cn(
           "flex-1",
-          "text-gray-800",
-          "bg-white/60",
-          "border-zinc-200/60",
+          "text-zinc-900",
+          "bg-white",
+          "border border-zinc-200",
           "focus:border-[#5b6949]",
-          "focus:ring-2 focus:ring-[#5b6949]/10",
+          "focus:ring-2 focus:ring-[#5b6949]/20",
           "placeholder:text-zinc-400",
-          "text-sm",
-          "min-h-[32px]",
-          "max-h-[144px]", // Approximately 6 lines
+          "text-base",
+          "min-h-[52px]",
+          "max-h-[144px]",
           "resize-none",
           "overflow-y-auto",
-          "px-2 py-1.5",
-          "transition-height duration-200",
-          "scrollbar-thin scrollbar-thumb-zinc-200 scrollbar-track-transparent",
+          "px-5 py-3.5",
+          "transition-colors duration-200",
+          "rounded-2xl"
         )}
       />
       <Button
@@ -99,27 +93,26 @@ export default function ChatInput({
         size="sm"
         className={cn(
           isLoading
-            ? [
-                "bg-gradient-to-br from-rose-500 to-pink-500",
-                "hover:from-rose-600 hover:to-pink-600",
-              ]
-            : [
-                "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/90",
-                "hover:from-[#5b6949]/90 hover:to-[#5b6949]/80",
-              ],
+            ? "bg-red-500 hover:bg-red-600"
+            : "bg-[#5b6949] hover:bg-[#5b6949]/90",
           "text-white",
           "border-none",
-          "shadow-md shadow-[#5b6949]/10",
-          "transition-all duration-300",
-          "hover:scale-105 hover:shadow-lg",
-          "hover:-translate-y-0.5",
-          "px-2 h-8",
+          "transition-colors duration-200",
+          "h-[52px] px-6",
+          "font-medium",
+          "rounded-2xl"
         )}
       >
         {isLoading ? (
-          <X className="h-3.5 w-3.5" />
+          <>
+            <X className="h-4 w-4 mr-2" />
+            Stop
+          </>
         ) : (
-          <Send className="h-3.5 w-3.5" />
+          <>
+            <Send className="h-4 w-4 mr-2" />
+            Send
+          </>
         )}
       </Button>
     </form>

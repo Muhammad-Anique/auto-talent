@@ -9,7 +9,6 @@ import { AIConfig } from "@/utils/ai-tools";
 import { generateObject } from "ai";
 import { initializeAIClient } from "@/utils/ai-tools";
 import { resumeScoreSchema } from "@/lib/zod-schemas";
-import { getSubscriptionPlan } from "../stripe/actions";
 
 
 //  SUPABASE ACTIONS
@@ -393,9 +392,7 @@ export async function generateResumeScore(
   
 
 
-  const subscriptionPlan = await getSubscriptionPlan();
-  // const isPro = subscriptionPlan === 'pro';
-  const isPro = true; // TODO: REMOVE THIS LINE LATER
+  const isPro = true;
   config = {
     model: "gpt-4o-mini",
     apiKeys: [

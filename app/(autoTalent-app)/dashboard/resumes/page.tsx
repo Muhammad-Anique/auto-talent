@@ -11,16 +11,9 @@ import type {
 } from "@/components/resume/management/resume-sort-controls";
 import IsLoadingFalseforDashboard from "@/components/dashboard/isLoadingFalseforDashboard";
 import { CreateBaseResumeDialog } from "@/components/resume/management/dialogs/create-base-resume-dialog";
+import { CreateTailoredResumeDialog } from "@/components/resume/management/dialogs/create-tailored-resume-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  FileText,
-  Mail,
-  Plus,
-  Sparkles,
-  Target,
-  Users,
-  Zap,
-} from "lucide-react";
+import { FileText, Mail, Plus, Sparkles, Target } from "lucide-react";
 
 const RESUMES_PER_PAGE = 12;
 
@@ -35,40 +28,38 @@ export default async function ResumesPage({
 
   const { baseResumes, tailoredResumes, profile } = await getDashboardData();
 
-  // Combine and sort resumes
-  const allResumes = [...baseResumes, ...tailoredResumes];
   const currentPage = Number(params.page) || 1;
   const sort = (params.sort as SortOption) || "createdAt";
   const direction = (params.direction as SortDirection) || "desc";
 
-  // Sort resumes
-  const sortedResumes = allResumes.sort((a, b) => {
-    const modifier = direction === "asc" ? 1 : -1;
-    switch (sort) {
-      case "name":
-        return modifier * a.name.localeCompare(b.name);
-      case "jobTitle":
-        return (
-          modifier * (a.target_role?.localeCompare(b.target_role || "") || 0)
-        );
-      case "createdAt":
-      default:
-        return (
-          modifier *
-          (new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-        );
-    }
-  });
+  // Sort function
+  const sortResumes = (resumes: typeof baseResumes) => {
+    return resumes.sort((a, b) => {
+      const modifier = direction === "asc" ? 1 : -1;
+      switch (sort) {
+        case "name":
+          return modifier * a.name.localeCompare(b.name);
+        case "jobTitle":
+          return (
+            modifier * (a.target_role?.localeCompare(b.target_role || "") || 0)
+          );
+        case "createdAt":
+        default:
+          return (
+            modifier *
+            (new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime())
+          );
+      }
+    });
+  };
 
-  // Paginate resumes
-  const totalPages = Math.ceil(sortedResumes.length / RESUMES_PER_PAGE);
-  const paginatedResumes = sortedResumes.slice(
-    (currentPage - 1) * RESUMES_PER_PAGE,
-    currentPage * RESUMES_PER_PAGE,
-  );
+  // Sort both arrays separately
+  const sortedBaseResumes = sortResumes([...baseResumes]);
+  const sortedTailoredResumes = sortResumes([...tailoredResumes]);
 
   // Check if user has any resumes
-  const hasResumes = allResumes.length > 0;
+  const hasResumes = baseResumes.length > 0 || tailoredResumes.length > 0;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
@@ -81,7 +72,7 @@ export default async function ResumesPage({
       </div>
 
       {/* Main content */}
-      <div className="container  mx-auto px-4  py-6 space-y-8 relative z-10">
+      <div className="container mx-auto px-4 py-6 space-y-8 relative z-10">
         {/* Header with controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -107,24 +98,6 @@ export default async function ResumesPage({
               <Suspense>
                 <ResumeSortControls />
               </Suspense>
-            )}
-            {profile && (
-              <CreateBaseResumeDialog profile={profile}>
-                <Button
-                  className={cn(
-                    "inline-flex items-center justify-center gap-2",
-                    "rounded-full text-sm font-medium",
-                    "transition-all duration-500",
-                    "bg-[#5b6949]",
-                    "text-white hover:shadow-lg hover:shadow-[#5b6949]/25",
-                    "hover:-translate-y-0.5",
-                    "h-10 px-6",
-                  )}
-                >
-                  <Plus className="w-4 h-4" />
-                  Create Resume
-                </Button>
-              </CreateBaseResumeDialog>
             )}
           </div>
         </div>
@@ -166,7 +139,7 @@ export default async function ResumesPage({
                     )}
                   >
                     <Plus className="w-5 h-5" />
-                    Create Resume
+                    Create Base Resume
                   </Button>
                 </CreateBaseResumeDialog>
               )}
@@ -174,58 +147,143 @@ export default async function ResumesPage({
           </div>
         ) : (
           <>
-            {/* Instruction message */}
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#5b6949]/10 to-gray-500/10 border border-[#5b6949]/20">
-                <Target className="w-4 h-4 text-[#5b6949]" />
-                <span className="text-sm font-medium text-gray-700">
-                  Select the resume you want to{" "}
-                  <span className="font-semibold">edit</span>
-                </span>
-              </div>
-            </div>
-
-            {/* Resumes Grid */}
-            <div className="relative rounded-2xl overflow-hidden backdrop-blur-xl bg-white/60 border border-gray-200/50 shadow-xl">
-              <Suspense fallback={<ResumesLoadingSkeleton />}>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
-                  {paginatedResumes.map((resume) => (
-                    <Link
-                      href={`/dashboard/resumes/${resume.id}`}
-                      key={resume.id}
-                    >
-                      <MiniResumePreview
-                        name={resume.name}
-                        type={resume.is_base_resume ? "base" : "tailored"}
-                        target_role={resume.target_role}
-                        updatedAt={resume.updated_at}
-                        className="hover:-translate-y-1 transition-transform duration-300 hover:shadow-lg"
-                      />
-                    </Link>
-                  ))}
+            {/* Base Resumes Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-zinc-100 border border-zinc-200">
+                    <FileText className="w-5 h-5 text-zinc-700" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-zinc-900">
+                      Base Resumes
+                    </h2>
+                    <p className="text-sm text-zinc-600">
+                      {sortedBaseResumes.length} resume
+                      {sortedBaseResumes.length !== 1 ? "s" : ""}
+                    </p>
+                  </div>
                 </div>
-              </Suspense>
+                {profile && (
+                  <CreateBaseResumeDialog profile={profile}>
+                    <Button
+                      className={cn(
+                        "inline-flex items-center justify-center gap-2",
+                        "rounded-full text-sm font-medium",
+                        "transition-all duration-300",
+                        "bg-zinc-900 hover:bg-zinc-800",
+                        "text-white hover:shadow-lg",
+                        "h-10 px-6",
+                      )}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Create Base Resume
+                    </Button>
+                  </CreateBaseResumeDialog>
+                )}
+              </div>
+
+              {sortedBaseResumes.length > 0 ? (
+                <div className="relative rounded-2xl overflow-hidden backdrop-blur-xl bg-white/60 border border-gray-200/50 shadow-xl">
+                  <Suspense fallback={<ResumesLoadingSkeleton />}>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+                      {sortedBaseResumes.map((resume) => (
+                        <Link
+                          href={`/dashboard/resumes/${resume.id}`}
+                          key={resume.id}
+                        >
+                          <MiniResumePreview
+                            name={resume.name}
+                            type="base"
+                            target_role={resume.target_role}
+                            updatedAt={resume.updated_at}
+                            className="hover:-translate-y-1 transition-transform duration-300 hover:shadow-lg"
+                          />
+                        </Link>
+                      ))}
+                    </div>
+                  </Suspense>
+                </div>
+              ) : (
+                <div className="text-center py-12 px-6 rounded-2xl bg-white/60 border border-gray-200/50">
+                  <p className="text-zinc-500">
+                    No base resumes yet. Create one to get started!
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center gap-2">
-                {[...Array(totalPages)].map((_, i) => (
-                  <Link
-                    key={i}
-                    href={`?page=${i + 1}&sort=${sort}&direction=${direction}`}
-                    className={cn(
-                      "px-4 py-2 rounded-lg transition-all duration-300",
-                      currentPage === i + 1
-                        ? "bg-gradient-to-r from-[#5b6949] to-gray-600 text-white shadow-lg"
-                        : "bg-white/60 hover:bg-white/80 border border-gray-200/50",
-                    )}
+            {/* Application Kits Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-[#5b6949]/10 border border-[#5b6949]/20">
+                    <Sparkles className="w-5 h-5 text-[#5b6949]" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-zinc-900">
+                      Application Kits
+                    </h2>
+                    <p className="text-sm text-zinc-600">
+                      {sortedTailoredResumes.length} application kit
+                      {sortedTailoredResumes.length !== 1 ? "s" : ""}
+                    </p>
+                  </div>
+                </div>
+                {profile && sortedBaseResumes.length > 0 && (
+                  <CreateTailoredResumeDialog
+                    profile={profile}
+                    baseResumes={sortedBaseResumes}
                   >
-                    {i + 1}
-                  </Link>
-                ))}
+                    <Button
+                      className={cn(
+                        "inline-flex items-center justify-center gap-2",
+                        "rounded-full text-sm font-medium",
+                        "transition-all duration-300",
+                        "bg-[#5b6949] hover:bg-[#5b6949]",
+                        "text-white hover:shadow-lg hover:shadow-emerald-500/20",
+                        "h-10 px-6",
+                      )}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Create Application Kit
+                    </Button>
+                  </CreateTailoredResumeDialog>
+                )}
               </div>
-            )}
+
+              {sortedTailoredResumes.length > 0 ? (
+                <div className="relative rounded-2xl overflow-hidden backdrop-blur-xl bg-gradient-to-br from-zinc-50/80 to-zinc-100 border border-[#5b6949]/50 shadow-xl">
+                  <Suspense fallback={<ResumesLoadingSkeleton />}>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-6">
+                      {sortedTailoredResumes.map((resume) => (
+                        <Link
+                          href={`/dashboard/resumes/${resume.id}`}
+                          key={resume.id}
+                        >
+                          <MiniResumePreview
+                            name={resume.name}
+                            type="tailored"
+                            target_role={resume.target_role}
+                            updatedAt={resume.updated_at}
+                            className="hover:-translate-y-1 transition-transform duration-300 hover:shadow-lg border-emerald-200"
+                          />
+                        </Link>
+                      ))}
+                    </div>
+                  </Suspense>
+                </div>
+              ) : (
+                <div className="text-center py-12 px-6 rounded-2xl bg-gradient-to-br from-emerald-50/80 to-green-50/60 border border-emerald-200/50">
+                  <p className="text-[#5b6949]">
+                    No application kits yet.{" "}
+                    {sortedBaseResumes.length === 0
+                      ? "Create a base resume first!"
+                      : "Create one from your base resumes!"}
+                  </p>
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>

@@ -57,21 +57,19 @@ const BasicInfoField = memo(function BasicInfoField({
   return (
     <div className="relative group">
       <div className="absolute right-2.5 top-1/2 -translate-y-1/2">
-        <div className="p-1 rounded-full bg-[#5b6949]/10 transition-transform duration-300 group-focus-within:scale-110">
-          <Icon className="h-4 w-4 text-[#5b6949]" />
-        </div>
+        <Icon className="h-4 w-4 text-[#5b6949]" />
       </div>
       <Input
         type={type}
         value={value || ""}
         onChange={handleChange}
-        className="pr-10 text-sm bg-white border-zinc-200 rounded-lg h-9
-          focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20
-          hover:border-[#5b6949]/60 hover:bg-zinc-50/80 transition-colors
+        className="pr-10 text-sm bg-white border border-zinc-200 h-10
+          focus:border-[#5b6949] focus:ring-1 focus:ring-[#5b6949]
+          hover:border-[#5b6949] transition-colors
           placeholder:text-zinc-400"
         placeholder={placeholder}
       />
-      <div className="absolute -top-2 left-2 px-1 text-[9px] font-medium text-[#5b6949]">
+      <div className="absolute -top-2 left-2 px-1 bg-white text-[9px] font-semibold text-[#5b6949] uppercase">
         {label}
       </div>
     </div>
@@ -114,13 +112,13 @@ export const BasicInfoForm = memo(function BasicInfoFormComponent({
 
   return (
     <div className="space-y-6">
-      <Card className="relative group bg-gradient-to-r from-[#5b6949]/5 via-[#5b6949]/10 to-zinc-100/5 backdrop-blur-md border border-[#5b6949]/20 hover:border-[#5b6949]/40 hover:shadow-lg transition-all duration-300 shadow-sm">
+      <Card className="relative bg-white border border-zinc-200 hover:border-[#5b6949] transition-colors">
         <CardContent className="p-3 sm:p-4">
           {profile && (
             <div className="mb-3 sm:mb-4">
               <Button
                 onClick={handleFillFromProfile}
-                className="w-full bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80 text-white text-sm hover:from-[#5b6949]/90 hover:to-[#5b6949]/70 transition-all duration-500 shadow-md hover:shadow-lg hover:shadow-[#5b6949]/20 hover:-translate-y-0.5"
+                className="w-full bg-[#5b6949] text-white text-sm hover:bg-[#5b6949]/90 transition-colors h-10"
               >
                 <UserCircle2 className="mr-2 h-4 w-4" />
                 Fill from Profile

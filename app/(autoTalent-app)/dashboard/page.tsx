@@ -15,7 +15,6 @@ import type { Resume } from "@/lib/types";
 import { ResumesSection } from "@/components/dashboard/resumes-section";
 import { createClient } from "@/utils/supabase/server";
 import { getDashboardData } from "@/utils/actions";
-import { checkSubscriptionPlan } from "@/utils/actions/stripe/actions";
 
 import IsLoadingFalseforDashboard from "@/components/dashboard/isLoadingFalseforDashboard";
 import { JobHubSection } from "@/components/dashboard/jobhub-section";
@@ -99,10 +98,7 @@ export default async function Home({
   );
 
   // Check if user is on Pro plan
-  const subscription = await checkSubscriptionPlan();
-  const isProPlan = subscription.plan === "pro";
-
-  // console.log(subscription);
+  const isProPlan = true;
 
   // Count resumes for base and tailored sections
   const baseResumesCount = await countResumes("base");

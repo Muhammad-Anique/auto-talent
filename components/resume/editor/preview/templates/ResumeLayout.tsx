@@ -497,7 +497,10 @@ export const ExperienceSection = memo(function ExperienceSection({
             </View>
             <Text style={styles.dateRange}>{experience.date}</Text>
           </View>
-          {experience.description.map((bullet, bulletIndex) => (
+          {(Array.isArray(experience.description)
+            ? experience.description
+            : experience.description ? [experience.description] : []
+          ).map((bullet, bulletIndex) => (
             <View key={bulletIndex} style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>•</Text>
               <View style={styles.bulletText}>
@@ -573,7 +576,10 @@ export const ProjectsSection = memo(function ProjectsSection({
               </Text>
             )}
           </View>
-          {project.description.map((bullet, bulletIndex) => (
+          {(Array.isArray(project.description)
+            ? project.description
+            : project.description ? [project.description] : []
+          ).map((bullet, bulletIndex) => (
             <View key={bulletIndex} style={styles.bulletPoint}>
               <Text style={styles.bulletDot}>•</Text>
               <View style={styles.bulletText}>

@@ -3,7 +3,6 @@
 import { createClient, createServiceClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { deleteCustomerAndData } from "@/utils/actions/stripe/actions";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import type { User } from "@supabase/supabase-js";
 
@@ -48,14 +47,6 @@ export async function deleteUserAccount(formData: FormData): Promise<void> {
   try {
     const serviceClient = await createServiceClient();
     const userId = user.id;
-
-    // Delete Stripe customer data if exists
-    try {
-      await deleteCustomerAndData(userId);
-    } catch (error) {
-      console.error("Error deleting Stripe customer:", error);
-      // Continue with account deletion even if Stripe deletion fails
-    }
 
     // Delete user data from all tables
     // Delete auto-apply configurations
