@@ -77,8 +77,9 @@ function FollowUpEmailEditor({
   }, [editor])
 
   return (
-    <div className="relative w-full shadow-lg overflow-hidden mb-12 bg-white">
-      {editor && (
+    <div className="bg-zinc-400 p-2">
+      <div className="relative w-full shadow-lg overflow-hidden bg-white">
+        {editor && (
         <BubbleMenu 
           editor={editor} 
           tippyOptions={{ duration: 100 }}
@@ -234,6 +235,7 @@ function FollowUpEmailEditor({
             />
           </div>
         </div>
+      </div>
       </div>
     </div>
   )

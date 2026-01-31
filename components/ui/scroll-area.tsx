@@ -40,14 +40,14 @@ const ScrollBar = React.forwardRef<
     )}
     {...props}
   >
-    <ScrollAreaPrimitive.ScrollAreaThumb 
+    <ScrollAreaPrimitive.ScrollAreaThumb
       className={cn(
         "relative rounded-full transition-colors duration-150",
-        "bg-gradient-to-b from-teal-500/30 to-cyan-500/30",
-        "hover:from-teal-500/40 hover:to-cyan-500/40",
-        "group-hover:from-teal-500/50 group-hover:to-cyan-500/50",
-        "shadow-[0_0_4px_rgba(45,212,191,0.1)]",
-        "border border-white/10",
+        "bg-gradient-to-b from-gray-300/40 to-gray-400/40",
+        "hover:from-[#5b6949]/40 hover:to-[#5b6949]/50",
+        "group-hover:from-[#5b6949]/50 group-hover:to-[#5b6949]/60",
+        "shadow-[0_0_4px_rgba(91,105,73,0.1)]",
+        "border border-gray-200/20",
         "flex-1"
       )}
     />

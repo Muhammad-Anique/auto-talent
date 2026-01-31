@@ -33,17 +33,16 @@ export function LanguageSelector({
   const currentLang = TRANSLATION_LANGUAGES[currentLanguage as TranslationLanguage] || TRANSLATION_LANGUAGES.en;
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative w-full" ref={dropdownRef}>
       <button
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={cn(
-          "flex items-center gap-1.5 px-3 py-2 h-10",
-          "bg-white border border-zinc-200",
+          "w-full flex items-center gap-2 px-4 py-2 h-10",
+          "bg-white border-2 border-zinc-200 rounded-md",
           "text-xs font-medium text-zinc-700",
-          "hover:bg-zinc-50 hover:border-[#5b6949] transition-colors",
-          "disabled:opacity-50 disabled:cursor-not-allowed",
-          "min-w-[100px]"
+          "hover:border-[#5b6949] hover:bg-[#5b6949]/5 transition-all",
+          "disabled:opacity-50 disabled:cursor-not-allowed"
         )}
       >
         <Globe className="w-4 h-4" />
@@ -55,7 +54,7 @@ export function LanguageSelector({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full mt-1 right-0 bg-white border border-zinc-200 py-1 min-w-[180px] z-50">
+        <div className="absolute top-full mt-1 left-0 right-0 bg-white border-2 border-zinc-200 rounded-md shadow-lg py-1 z-50">
           {Object.entries(TRANSLATION_LANGUAGES).map(([code, lang]) => (
             <button
               key={code}
@@ -64,9 +63,9 @@ export function LanguageSelector({
                 setIsOpen(false);
               }}
               className={cn(
-                "w-full px-3 py-2 text-left text-xs hover:bg-zinc-50 transition-colors",
+                "w-full px-3 py-2 text-left text-xs hover:bg-[#5b6949]/5 transition-colors",
                 "flex items-center gap-2 text-zinc-800",
-                currentLanguage === code && "bg-zinc-50 text-[#5b6949] font-medium"
+                currentLanguage === code && "bg-[#5b6949]/10 text-[#5b6949] font-medium"
               )}
             >
               <span className="text-base">{lang.flag}</span>

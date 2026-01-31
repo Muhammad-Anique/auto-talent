@@ -57,6 +57,8 @@ export interface SectionConfig {
   style?: 'grouped' | 'list' | 'grid';
 }
 
+export type TemplateLayout = 'classic' | 'left-aligned' | 'compact' | 'modern' | 'professional' | 'minimal' | 'sidebar' | 'executive' | 'corporate';
+
 export interface Resume {
   id: string;
   user_id: string;
@@ -65,6 +67,8 @@ export interface Resume {
   target_role: string;
   is_base_resume: boolean;
   current_language?: string;
+  template_layout?: TemplateLayout;
+  designed_template_id?: string;
   first_name: string;
   last_name: string;
   email: string;

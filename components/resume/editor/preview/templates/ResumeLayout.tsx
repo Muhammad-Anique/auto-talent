@@ -6,6 +6,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import { Image } from "@react-pdf/renderer";
 import { useMemo } from "react";
+import { ColoredSidebarTemplate, ClassicTemplate } from './ColoredTemplates';
 
 const baseStyles = {
   link: {
@@ -68,6 +69,19 @@ function useTextProcessor() {
   return processText;
 }
 
+// Template color configurations
+const TEMPLATE_COLORS: Record<string, { primary: string; secondary: string; text: string; accent: string }> = {
+  classic: { primary: '#ffffff', secondary: '#f8f9fa', text: '#111827', accent: '#111827' },
+  modern: { primary: '#FF6B35', secondary: '#fff', text: '#ffffff', accent: '#FF6B35' },
+  professional: { primary: '#2C3E50', secondary: '#fff', text: '#ffffff', accent: '#2C3E50' },
+  minimal: { primary: '#8B2635', secondary: '#fff', text: '#ffffff', accent: '#8B2635' },
+  'left-aligned': { primary: '#27AE60', secondary: '#fff', text: '#ffffff', accent: '#27AE60' },
+  sidebar: { primary: '#9B59B6', secondary: '#fff', text: '#ffffff', accent: '#9B59B6' },
+  compact: { primary: '#16A085', secondary: '#fff', text: '#ffffff', accent: '#16A085' },
+  executive: { primary: '#D4AF37', secondary: '#fff', text: '#ffffff', accent: '#D4AF37' },
+  corporate: { primary: '#34495E', secondary: '#fff', text: '#ffffff', accent: '#34495E' },
+};
+
 export function createResumeStyles(
   settings: Resume["document_settings"] = {
     document_font_size: 10,
@@ -97,6 +111,8 @@ export function createResumeStyles(
   theme: Theme = {},
   layout: string = "classic"
 ) {
+  const colors = TEMPLATE_COLORS[layout] || TEMPLATE_COLORS.classic;
+  const hasSidebar = !['classic', 'left-aligned'].includes(layout);
   const {
     document_font_size,
     document_line_height,
@@ -646,46 +662,31 @@ interface ResumePDFDocumentProps {
 }
 
 export function ResumeLayout({ resume, theme = { color: "#111827" }, layout = "classic" }: ResumePDFDocumentProps) {
-  const styles = useMemo(
-    () => createResumeStyles(resume.document_settings, theme, layout),
-    [resume.document_settings, theme, layout]
-  );
+  // Use colored sidebar templates for all layouts except classic
+  if (layout !== 'classic') {
+    // Template color mapping for colored templates
+    const colorMap: Record<string, string> = {
+      classic: '#ffffff',
+      modern: '#FF6B35',
+      professional: '#2C3E50',
+      minimal: '#8B2635',
+      'left-aligned': '#27AE60',
+      sidebar: '#9B59B6',
+      compact: '#16A085',
+      executive: '#D4AF37',
+      corporate: '#34495E',
+    };
 
-  // Render different layouts
-  if (layout === "sidebar") {
     return (
-      <View style={styles.page}>
-        <View style={styles.sidebar}>
-          <HeaderSection resume={resume} styles={styles} />
-          <SkillsSection skills={resume.skills} styles={styles} />
-        </View>
-        <View style={styles.mainContent}>
-          <ExperienceSection experiences={resume.work_experience} styles={styles} />
-          <ProjectsSection projects={resume.projects} styles={styles} />
-          <EducationSection education={resume.education} styles={styles} />
-        </View>
-      </View>
+      <ColoredSidebarTemplate
+        resume={resume}
+        primaryColor={colorMap[layout] || colorMap.modern}
+        layout={layout as any}
+      />
     );
   }
 
-  // Default layout
-  return (
-    <View style={styles.page}>
-      <HeaderSection resume={resume} styles={styles} />
-      <SkillsSection skills={resume.skills} styles={styles} />
-      <ExperienceSection experiences={resume.work_experience} styles={styles} />
-      <ProjectsSection projects={resume.projects} styles={styles} />
-      <EducationSection education={resume.education} styles={styles} />
-
-      {resume.document_settings?.show_ubc_footer && (
-        <View style={styles.footer}>
-          <Image
-            src="/images/ubc-science-footer.png"
-            style={styles.footerImage}
-          />
-        </View>
-      )}
-    </View>
-  );
+  // Classic white template
+  return <ClassicTemplate resume={resume} />;
 }
 

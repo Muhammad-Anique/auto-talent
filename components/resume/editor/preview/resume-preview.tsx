@@ -40,7 +40,7 @@ const CACHE_EXPIRATION_TIME = 30 * 60 * 1000;
  * Generate a simple hash from the resume content
  * This is used as a cache key for PDF generation
  */
-function generateResumeHash(resume: Resume, template?: string, design?: string): string {
+function generateResumeHash(resume: Resume, template?: string, design?: TemplateLayout): string {
   const content = JSON.stringify({
     basic: {
       name: `${resume.first_name} ${resume.last_name}`,
@@ -55,6 +55,7 @@ function generateResumeHash(resume: Resume, template?: string, design?: string):
     settings: resume.document_settings,
     template: template,
     design: design,
+    template_layout: resume.template_layout,
   });
   
   // Simple hash function
@@ -100,12 +101,14 @@ const customStyles = `
   }
 `;
 
+import type { TemplateLayout } from '@/lib/types';
+
 interface ResumePreviewProps {
   resume: Resume;
   variant?: 'base' | 'tailored';
   containerWidth: number;  // This is now expected to be a percentage (0-100)
   template?: 'basic' | 'modern' | 'professional' | 'default';
-  design?: 'classic' | 'left-aligned' | 'compact' | 'sidebar' | 'minimal' | 'executive' | 'corporate';
+  design?: TemplateLayout;
 }
 
 /**
@@ -278,11 +281,11 @@ export const ResumePreview = memo(function ResumePreview({ resume, variant = 'ba
 
   // Display the generated PDF using react-pdf
   return (
-    <div className=" h-full relative bg-black/15">
+    <div className="h-full relative bg-zinc-400 p-2 flex flex-col items-center">
         <Document
           file={url}
           onLoadSuccess={onDocumentLoadSuccess}
-          className="relative h-full   "
+          className="relative h-full flex flex-col items-center"
           externalLinkTarget="_blank"
           loading={
             <div className="w-full aspect-[8.5/11] bg-white  p-8">
