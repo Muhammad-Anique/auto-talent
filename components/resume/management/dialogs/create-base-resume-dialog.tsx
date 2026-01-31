@@ -499,11 +499,7 @@ export function CreateBaseResumeDialog({
 
       const resume = await createBaseResume(
         targetRole,
-        importOption === "scratch"
-          ? "fresh"
-          : importOption === "import-linkedin"
-            ? "import-resume"
-            : importOption,
+        importOption === "scratch" ? "fresh" : importOption,
         selectedContent,
       );
 

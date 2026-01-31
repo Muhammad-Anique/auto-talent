@@ -2,7 +2,7 @@
 
 import { Resume } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Download, Save, ZoomIn, ZoomOut, FileText, Palette, Upload } from "lucide-react";
+import { Download, Save, ZoomIn, ZoomOut, FileText, Palette } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { pdf } from '@react-pdf/renderer';
 import { ResumePDFDocument } from "./resume-pdf-document";
@@ -290,10 +290,7 @@ export function PreviewNavbar({
             resume={resume}
             onResumeChange={onResumeChange}
             className={cn(buttonStyle, "flex items-center gap-2")}
-          >
-            <Upload className="w-4 h-4" />
-            Import
-          </TextImport>
+          />
 
           {/* Download Dropdown */}
           <DropdownMenu>
