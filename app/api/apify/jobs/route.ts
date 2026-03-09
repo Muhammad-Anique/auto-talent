@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const APIFY_API_TOKEN = process.env.APIFY_API_TOKEN || "apify_api_TlHxsCGXP3Ja1FKPKf8jqp6AzpPZdx1Yt8oN";
+const APIFY_API_TOKEN = process.env.APIFY_API_TOKEN;
 const APIFY_ACTOR_ID = "curious_coder~linkedin-jobs-scraper";
 
 export async function POST(req: NextRequest) {

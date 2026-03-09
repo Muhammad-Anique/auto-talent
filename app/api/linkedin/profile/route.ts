@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const APIFY_API_TOKEN = process.env.APIFY_API_TOKEN || "apify_api_TlHxsCGXP3Ja1FKPKf8jqp6AzpPZdx1Yt8oN";
+    const APIFY_API_TOKEN = process.env.APIFY_API_TOKEN;
     const ACTOR_ID = "dev_fusion~linkedin-profile-scraper";
 
     // Start the Actor run
