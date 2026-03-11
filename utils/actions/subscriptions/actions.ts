@@ -261,8 +261,8 @@ export async function getInvoices(): Promise<InvoiceItem[]> {
     amount_paid: inv.amount_paid,
     currency: inv.currency,
     created: inv.created,
-    hosted_invoice_url: inv.hosted_invoice_url,
-    invoice_pdf: inv.invoice_pdf,
+    hosted_invoice_url: inv.hosted_invoice_url ?? null,
+    invoice_pdf: inv.invoice_pdf ?? null,
     period_start: inv.period_start,
     period_end: inv.period_end,
   }));
