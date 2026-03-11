@@ -160,9 +160,12 @@ export interface Subscription {
   user_id: string;
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
-  subscription_plan: 'free' | 'pro';
-  subscription_status: 'active' | 'canceled';
+  subscription_plan: 'free' | 'pro' | 'lifetime';
+  plan_type: 'free' | 'pro' | 'lifetime';
+  subscription_status: 'active' | 'canceled' | 'past_due';
+  stripe_price_id: string | null;
   current_period_end: string | null;
+  cancel_at_period_end: boolean;
   trial_end: string | null;
   created_at: string;
   updated_at: string;

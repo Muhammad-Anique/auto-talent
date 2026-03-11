@@ -1,50 +1,24 @@
 "use client";
 
 import {
-  Trash2,
-  Copy,
-  FileText,
   Sparkles,
+  FileText,
   ChevronLeft,
   ChevronRight,
+  Layers,
+  Plus,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
-import { MiniResumePreview } from "@/components/resume/shared/mini-resume-preview";
 import { CreateResumeDialog } from "@/components/resume/management/dialogs/create-resume-dialog";
 import { ApplicationKitCard } from "@/components/resume/management/cards/application-kit-card";
 import {
-  ResumeSortControls,
   type SortOption,
   type SortDirection,
 } from "@/components/resume/management/resume-sort-controls";
 import type { Profile, Resume } from "@/lib/types";
-import { deleteResume, copyResume } from "@/utils/actions/resumes/actions";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-} from "@/components/ui/pagination";
 import { useState } from "react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
 interface JobHubSectionProps {
   type: "base" | "tailored";
@@ -54,7 +28,7 @@ interface JobHubSectionProps {
   directionParam: string;
   currentSort: SortOption;
   currentDirection: SortDirection;
-  baseResumes?: Resume[]; // Only needed for tailored type
+  baseResumes?: Resume[];
   canCreateMore?: boolean;
 }
 
@@ -74,39 +48,15 @@ export function JobHubSection({
   baseResumes = [],
   canCreateMore,
 }: JobHubSectionProps) {
-  const config = {
-    base: {
-      gradient: "from-[#5b6949] to-[#5b6949]/90",
-      border: "border-[#5b6949]",
-      bg: "bg-[#5b6949]",
-      text: "text-[#5b6949]",
-      icon: FileText,
-      accent: {
-        bg: "zinc-100",
-        hover: "zinc-100/50",
-      },
-    },
-    tailored: {
-      gradient: "from-[#5b6949] to-[#5b6949]/90",
-      border: "border-[#5b6949]",
-      bg: "bg-[#5b6949]",
-      text: "text-[#5b6949]",
-      icon: Sparkles,
-      accent: {
-        bg: "zinc-100",
-        hover: "zinc-100/50",
-      },
-    },
-  }[type];
-
   const [pagination, setPagination] = useState<PaginationState>({
     currentPage: 1,
-    itemsPerPage: 7,
+    itemsPerPage: 9,
   });
 
   const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
   const endIndex = startIndex + pagination.itemsPerPage;
   const paginatedResumes = resumes.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(resumes.length / pagination.itemsPerPage);
 
   function handlePageChange(page: number) {
     setPagination((prev) => ({
@@ -115,7 +65,7 @@ export function JobHubSection({
     }));
   }
 
-  // Create Resume Card Component
+  // Create Resume Card
   const CreateResumeCard = () => (
     <CreateResumeDialog
       type={type}
@@ -124,136 +74,82 @@ export function JobHubSection({
     >
       <button
         className={cn(
-          "w-full rounded-lg p-8",
+          "w-full h-full rounded-2xl",
           "relative overflow-hidden",
-          "border-2 border-dashed transition-all duration-300",
-          "group/new-resume flex flex-col items-center justify-center gap-4",
-          "border-zinc-300 hover:border-zinc-400",
-          "bg-zinc-50",
-          "hover:shadow-md hover:-translate-y-1",
+          "border-2 border-dashed border-zinc-200 hover:border-[#5b6949]/40",
+          "group/create flex flex-col items-center justify-center",
+          "bg-white hover:bg-[#5b6949]/[0.03]",
+          "transition-all duration-300 ease-out",
+          "hover:shadow-lg hover:shadow-zinc-200/60",
+          "hover:-translate-y-0.5",
+          "py-12",
         )}
       >
-        <div
-          className={cn(
-            "relative z-10 flex flex-col items-center",
-            "transform transition-all duration-500",
-            "group-hover/new-resume:scale-105",
-          )}
-        >
+        <div className="relative z-10 flex flex-col items-center transition-transform duration-300 group-hover/create:scale-105">
           <div
             className={cn(
-              "h-12 w-12 rounded-xl",
+              "h-14 w-14 rounded-2xl",
               "flex items-center justify-center",
-              "transform transition-all duration-300",
-              "shadow-sm group-hover/new-resume:shadow-md",
-              "bg-white",
-              "group-hover/new-resume:scale-110",
+              "bg-zinc-50 border border-zinc-200",
+              "group-hover/create:bg-[#5b6949]/10 group-hover/create:border-[#5b6949]/20",
+              "transition-all duration-300",
             )}
           >
-            <config.icon
+            <Plus
               className={cn(
-                "h-5 w-5 transition-all duration-300",
-                "text-zinc-700",
-                "group-hover/new-resume:scale-110",
+                "h-6 w-6 text-zinc-300",
+                "group-hover/create:text-[#5b6949]",
+                "transition-colors duration-300",
               )}
             />
           </div>
 
           <span
             className={cn(
-              "mt-4 text-sm font-medium",
-              "transition-all duration-300",
-              "text-zinc-700",
-              "group-hover/new-resume:font-semibold",
+              "mt-4 text-sm font-semibold",
+              "text-zinc-400 group-hover/create:text-[#5b6949]",
+              "transition-colors duration-300",
             )}
           >
-            Create {type === "base" ? "Base Resume" : "Application Kit"}
+            New Application Kit
           </span>
-
           <span
             className={cn(
-              "mt-2 text-xs",
-              "transition-all duration-300 opacity-0",
-              "text-zinc-600",
-              "group-hover/new-resume:opacity-70",
+              "mt-1 text-xs text-zinc-300",
+              "group-hover/create:text-zinc-400",
+              "transition-colors duration-300",
             )}
           >
-            Click to start
+            Resume + Cover Letter + Follow-up
           </span>
         </div>
       </button>
     </CreateResumeDialog>
   );
 
-  // Limit Reached Card Component
+  // Limit Reached Card
   const LimitReachedCard = () => (
-    <Link
-      href="/dashboard/subscription"
-      className={cn(
-        "group/limit block w-full",
-        "cursor-pointer",
-        "transition-all duration-300",
-      )}
-    >
+    <Link href="/dashboard/subscription" className="block h-full">
       <div
         className={cn(
-          "w-full rounded-lg p-8",
-          "relative overflow-hidden",
-          "border-2 border-dashed",
-          "flex flex-col items-center justify-center gap-4",
-          "border-zinc-300",
-          "bg-zinc-50",
-          "transition-all duration-300",
-          "hover:shadow-md",
-          "hover:border-zinc-400",
+          "w-full h-full rounded-2xl py-12",
+          "border-2 border-dashed border-zinc-200 hover:border-zinc-300",
+          "flex flex-col items-center justify-center",
+          "bg-white hover:bg-zinc-50",
+          "transition-all duration-300 ease-out",
+          "hover:shadow-lg hover:shadow-zinc-200/60",
+          "hover:-translate-y-0.5",
+          "group/limit",
         )}
       >
-        <div
-          className={cn(
-            "relative z-10 flex flex-col items-center",
-            "transform transition-all duration-500",
-            "group-hover/limit:scale-105",
-          )}
-        >
-          <div
-            className={cn(
-              "h-12 w-12 rounded-xl",
-              "flex items-center justify-center",
-              "bg-white",
-              "text-zinc-700",
-              "shadow-md",
-              "transition-all duration-300",
-              "group-hover/limit:shadow-lg",
-              "group-hover/limit:-translate-y-1",
-            )}
-          >
-            <config.icon
-              className={cn(
-                "h-5 w-5",
-                "transition-all duration-300",
-                "group-hover/limit:scale-110",
-              )}
-            />
+        <div className="flex flex-col items-center transition-transform duration-300 group-hover/limit:scale-105">
+          <div className="h-14 w-14 rounded-2xl flex items-center justify-center bg-zinc-50 border border-zinc-200">
+            <Layers className="h-6 w-6 text-zinc-300" />
           </div>
-          <span
-            className={cn(
-              "mt-4 text-sm font-medium",
-              "text-zinc-700",
-              "transition-all duration-300",
-              "group-hover/limit:text-zinc-900",
-            )}
-          >
-            {type === "base" ? "Base" : "Application Kit"} Limit Reached
+          <span className="mt-4 text-sm font-semibold text-zinc-400">
+            Limit Reached
           </span>
-          <span
-            className={cn(
-              "mt-2 text-xs",
-              "text-zinc-600",
-              "underline underline-offset-4",
-              "transition-all duration-300",
-              "group-hover/limit:text-zinc-700",
-            )}
-          >
+          <span className="mt-1 text-xs text-zinc-300 underline underline-offset-4 group-hover/limit:text-[#5b6949] transition-colors">
             Upgrade to create more
           </span>
         </div>
@@ -262,150 +158,70 @@ export function JobHubSection({
   );
 
   return (
-    <div className="relative bg-zinc-50 p-6  !w-full border border-zinc-200 rounded-xl">
-      <div className="flex flex-col gap-4 w-full">
-        <div className="relative mb-4 flex  flex-col sm:flex-row sm:items-center justify-between gap-2">
-          <h2
-            className={`text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-700`}
-          >
+    <div className="relative">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        <div className="flex items-center gap-3">
+          <div className="h-7 w-1 rounded-full bg-[#5b6949]" />
+          <h2 className="text-xl font-bold tracking-tight text-zinc-900">
             Application Kits
           </h2>
-          <div className="flex items-center gap-2 mb-4 translate-x-4">
-            {/* <ResumeSortControls 
-              sortParam={sortParam}
-              directionParam={directionParam}
-              currentSort={currentSort}
-              currentDirection={currentDirection}
-            /> */}
-          </div>
+          {resumes.length > 0 && (
+            <span className="flex items-center justify-center px-2 py-0.5 text-[11px] font-bold bg-[#5b6949]/10 text-[#5b6949] rounded-full">
+              {resumes.length}
+            </span>
+          )}
         </div>
 
-        {/* Desktop Pagination (hidden on mobile) */}
+        {/* Pagination controls */}
         {resumes.length > pagination.itemsPerPage && (
-          <div className="hidden md:flex w-full items-start justify-start -mt-4">
-            <Pagination className="flex justify-end">
-              <PaginationContent className="gap-1">
-                <PaginationItem>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handlePageChange(pagination.currentPage - 1)}
-                    disabled={pagination.currentPage === 1}
-                    className="h-8 w-8 p-0 text-gray-700 hover:text-foreground"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                </PaginationItem>
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handlePageChange(pagination.currentPage - 1)}
+              disabled={pagination.currentPage === 1}
+              className="h-8 w-8 p-0 text-zinc-400 hover:text-zinc-700 rounded-lg"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
 
-                {Array.from({
-                  length: Math.ceil(resumes.length / pagination.itemsPerPage),
-                }).map((_, index) => {
-                  const pageNumber = index + 1;
-                  const totalPages = Math.ceil(
-                    resumes.length / pagination.itemsPerPage,
-                  );
+            <span className="text-xs font-medium text-zinc-400 px-2">
+              {pagination.currentPage} / {totalPages}
+            </span>
 
-                  if (
-                    pageNumber === 1 ||
-                    pageNumber === totalPages ||
-                    (pageNumber >= pagination.currentPage - 1 &&
-                      pageNumber <= pagination.currentPage + 1)
-                  ) {
-                    return (
-                      <PaginationItem key={index}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handlePageChange(pageNumber)}
-                          className={cn(
-                            "h-8 w-8 p-0",
-                            "text-gray-700 hover:text-foreground",
-                            pagination.currentPage === pageNumber &&
-                              "font-medium text-foreground",
-                          )}
-                        >
-                          {pageNumber}
-                        </Button>
-                      </PaginationItem>
-                    );
-                  }
-
-                  if (
-                    (pageNumber === 2 && pagination.currentPage > 3) ||
-                    (pageNumber === totalPages - 1 &&
-                      pagination.currentPage < totalPages - 2)
-                  ) {
-                    return (
-                      <PaginationItem key={index}>
-                        <span className="text-gray-700 px-2">...</span>
-                      </PaginationItem>
-                    );
-                  }
-
-                  return null;
-                })}
-
-                <PaginationItem>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handlePageChange(pagination.currentPage + 1)}
-                    disabled={
-                      pagination.currentPage ===
-                      Math.ceil(resumes.length / pagination.itemsPerPage)
-                    }
-                    className="h-8 w-8 p-0 text-gray-700 hover:text-foreground"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handlePageChange(pagination.currentPage + 1)}
+              disabled={pagination.currentPage === totalPages}
+              className="h-8 w-8 p-0 text-zinc-400 hover:text-zinc-700 rounded-lg"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
           </div>
         )}
       </div>
 
-      <div className="relative pb-6">
-        {/* Mobile View - Full Width Cards */}
-        <div className="md:hidden w-full space-y-6">
-          {/* Mobile Create Button Row */}
-          {canCreateMore ? (
-            <div className="w-full">
-              <CreateResumeCard />
-            </div>
-          ) : (
-            <div className="w-full">
-              <LimitReachedCard />
-            </div>
-          )}
+      {/* Grid of cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Create / Limit card */}
+        {canCreateMore ? <CreateResumeCard /> : <LimitReachedCard />}
 
-          {/* Mobile Application Kit Cards */}
-          {paginatedResumes.map((resume) => (
-            <ApplicationKitCard key={resume.id} resume={resume} />
-          ))}
-        </div>
-
-        {/* Desktop View - Full Width Cards */}
-        <div className="hidden md:flex md:flex-col gap-6">
-          {/* Create Button Row */}
-          <div className="w-full">
-            {canCreateMore ? (
-              <div className="w-full">
-                <CreateResumeCard />
-              </div>
-            ) : (
-              <div className="w-full">
-                <LimitReachedCard />
-              </div>
-            )}
-          </div>
-
-          {/* Application Kit Cards */}
-          {paginatedResumes.map((resume) => (
-            <ApplicationKitCard key={resume.id} resume={resume} />
-          ))}
-        </div>
+        {/* Application Kit Cards */}
+        {paginatedResumes.map((resume) => (
+          <ApplicationKitCard key={resume.id} resume={resume} />
+        ))}
       </div>
+
+      {/* Empty state */}
+      {resumes.length === 0 && (
+        <div className="text-center py-10 col-span-full">
+          <p className="text-sm text-zinc-400">
+            No application kits yet. Create one to get started.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

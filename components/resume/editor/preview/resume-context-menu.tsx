@@ -11,6 +11,8 @@ import { toast } from "@/hooks/use-toast";
 import { Resume, WorkExperience, Education, Project } from "@/lib/types";
 import { pdf } from '@react-pdf/renderer';
 import { ResumePDFDocument } from "../preview/resume-pdf-document";
+import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
+import { useRouter } from "next/navigation";
 
 interface ResumeContextMenuProps {
   children: React.ReactNode;
@@ -18,8 +20,22 @@ interface ResumeContextMenuProps {
 }
 
 export function ResumeContextMenu({ children, resume }: ResumeContextMenuProps) {
+  const router = useRouter();
+
   const handleDownloadPDF = async () => {
     try {
+      // Paywall check
+      const check = await checkCanPerformAction('cv_download');
+      if (!check.allowed) {
+        toast({
+          title: "Download limit reached",
+          description: "You've used your free CV download. Upgrade to Pro for unlimited downloads.",
+          variant: "destructive",
+        });
+        router.push("/dashboard/subscription");
+        return;
+      }
+
       const blob = await pdf(<ResumePDFDocument resume={resume} />).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -29,6 +45,7 @@ export function ResumeContextMenu({ children, resume }: ResumeContextMenuProps) 
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      await recordUsage('cv_download');
       toast({
         title: "Download started",
         description: "Your resume PDF is being downloaded.",

@@ -1,90 +1,146 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import { Sparkles, Star, Trophy } from "lucide-react";
-import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Sparkles, Crown, Zap, ExternalLink, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import {
+  getSubscriptionStatus,
+  createBillingPortalSession,
+} from "@/utils/actions/subscriptions/actions";
+import type { PlanType } from "@/lib/stripe";
 
 export function SubscriptionSection() {
+  const [plan, setPlan] = useState<PlanType>("free");
+  const [status, setStatus] = useState<string | null>(null);
+  const [periodEnd, setPeriodEnd] = useState<string | null>(null);
+  const [cancelAtPeriodEnd, setCancelAtPeriodEnd] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const sub = await getSubscriptionStatus();
+        setPlan(sub.plan);
+        setStatus(sub.status);
+        setPeriodEnd(sub.currentPeriodEnd);
+        setCancelAtPeriodEnd(sub.cancelAtPeriodEnd);
+      } catch (error) {
+        console.error("Error loading subscription:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const handleManageBilling = async () => {
+    setPortalLoading(true);
+    try {
+      await createBillingPortalSession();
+    } catch (error) {
+      console.error("Portal error:", error);
+    } finally {
+      setPortalLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center gap-3 py-8 justify-center">
+        <div className="w-4 h-4 border-2 border-zinc-200 border-t-[#5b6949] rounded-full animate-spin" />
+        <span className="text-sm text-zinc-400">Loading subscription...</span>
+      </div>
+    );
+  }
+
+  const planConfig = {
+    free: {
+      icon: Zap,
+      label: "Free Plan",
+      color: "text-zinc-500",
+      bg: "bg-zinc-100",
+    },
+    pro: {
+      icon: Sparkles,
+      label: "Pro Plan",
+      color: "text-[#5b6949]",
+      bg: "bg-[#5b6949]/10",
+    },
+    lifetime: {
+      icon: Crown,
+      label: "Lifetime Plan",
+      color: "text-zinc-900",
+      bg: "bg-zinc-900/10",
+    },
+  }[plan];
+
   return (
-    <div className="space-y-16 relative">
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-[40%] -right-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-zinc-500/10 to-zinc-500/10 blur-3xl" />
-        <div className="absolute -bottom-[40%] -left-[25%] w-[800px] h-[800px] rounded-full bg-gradient-to-br from-zinc-500/10 to-zinc-500/10 blur-3xl" />
+    <div className="space-y-6">
+      {/* Current Plan */}
+      <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 border border-zinc-200">
+        <div className="flex items-center gap-3">
+          <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", planConfig.bg)}>
+            <planConfig.icon className={cn("w-5 h-5", planConfig.color)} />
+          </div>
+          <div>
+            <h4 className="font-semibold text-zinc-900">{planConfig.label}</h4>
+            <p className="text-xs text-zinc-400">
+              {plan === "free" && "Limited access"}
+              {plan === "pro" && status === "active" && !cancelAtPeriodEnd && "Active subscription"}
+              {plan === "pro" && cancelAtPeriodEnd && "Cancels at period end"}
+              {plan === "lifetime" && "Lifetime access - never expires"}
+            </p>
+          </div>
+        </div>
+
+        {plan === "pro" && periodEnd && (
+          <div className="text-right">
+            <p className="text-xs text-zinc-400">
+              {cancelAtPeriodEnd ? "Access until" : "Renews"}
+            </p>
+            <p className="text-sm font-medium text-zinc-700">
+              {new Date(periodEnd).toLocaleDateString()}
+            </p>
+          </div>
+        )}
       </div>
 
-      {/* Status Card */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <Card
-          className={cn(
-            "p-8 text-center rounded-3xl border backdrop-blur-xl relative overflow-hidden shadow-2xl",
-            "border-zinc-200/50 bg-gradient-to-br from-zinc-50/80 to-white/80",
-          )}
-        >
-          <div className="relative space-y-6">
-            {/* Icon */}
-            <div className="flex items-center justify-center">
-              <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 260,
-                  damping: 20,
-                }}
-                className={cn(
-                  "h-16 w-16 rounded-2xl flex items-center justify-center transform transition-transform duration-300",
-                  "bg-gradient-to-br from-zinc-700 to-zinc-900 hover:rotate-12",
-                )}
-              >
-                <Trophy className="h-8 w-8 text-white" />
-              </motion.div>
-            </div>
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3">
+        {plan === "free" && (
+          <Link href="/dashboard/subscription">
+            <Button className="bg-[#5b6949] text-white hover:bg-[#4a573a] rounded-xl font-semibold shadow-sm shadow-[#5b6949]/20">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Upgrade Plan
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </Link>
+        )}
 
-            {/* Title and Description */}
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-zinc-700 via-zinc-800 to-zinc-900">
-                  Pro Plan Active
-                </span>
-              </h2>
-              <p className="text-lg text-zinc-600">
-                Enjoying unlimited access to all features
-              </p>
-            </div>
+        {plan === "pro" && (
+          <Button
+            onClick={handleManageBilling}
+            disabled={portalLoading}
+            variant="outline"
+            className="rounded-xl font-medium"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            {portalLoading ? "Opening..." : "Manage Billing"}
+          </Button>
+        )}
 
-            {/* Features Grid */}
-            <div className="grid grid-cols-3 gap-4">
-              {[
-                { icon: Trophy, text: "Premium Features" },
-                { icon: Sparkles, text: "Priority Support" },
-                { icon: Star, text: "Exclusive Templates" },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 + 0.3 }}
-                  className={cn(
-                    "p-4 rounded-xl backdrop-blur-sm border transition-all duration-300",
-                    "bg-white/40 border-zinc-200 hover:border-zinc-300",
-                  )}
-                >
-                  <item.icon className="h-6 w-6 mx-auto mb-2 text-zinc-700" />
-                  <p className="text-sm font-medium text-zinc-900">
-                    {item.text}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
+        {plan === "lifetime" && (
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-900/5 border border-zinc-200">
+            <Crown className="w-4 h-4 text-zinc-700" />
+            <span className="text-sm font-medium text-zinc-700">
+              You have lifetime access. No billing needed.
+            </span>
           </div>
-        </Card>
-      </motion.div>
+        )}
+      </div>
     </div>
   );
 }

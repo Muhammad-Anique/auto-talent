@@ -15,6 +15,8 @@ import type { Resume } from "@/lib/types";
 import { ResumesSection } from "@/components/dashboard/resumes-section";
 import { createClient } from "@/utils/supabase/server";
 import { getDashboardData } from "@/utils/actions";
+import { getSubscriptionStatus } from "@/utils/actions/subscriptions/actions";
+import { PLANS } from "@/lib/stripe";
 
 import IsLoadingFalseforDashboard from "@/components/dashboard/isLoadingFalseforDashboard";
 import { JobHubSection } from "@/components/dashboard/jobhub-section";
@@ -97,34 +99,35 @@ export default async function Home({
     tailoredDirection,
   );
 
-  // Check if user is on Pro plan
-  const isProPlan = true;
+  // Get real subscription status
+  const subscription = await getSubscriptionStatus();
+  const isProPlan = subscription.plan === "pro" || subscription.plan === "lifetime";
 
   // Count resumes for base and tailored sections
   const baseResumesCount = await countResumes("base");
   const tailoredResumesCount = await countResumes("tailored");
-  // console.log(baseResumesCount, tailoredResumesCount);
-  // console.log(isProPlan);
 
-  // Free plan limits
+  // Free plan limits: 1 CV download, 1 cover letter, 10 job applications
   const canCreateBase = isProPlan || baseResumesCount < 2;
   const canCreateTailored = isProPlan || tailoredResumesCount < 4;
 
   // Display a friendly message if no profile exists
   if (!profile) {
     return (
-      <main className="min-h-screen p-6 md:p-8 lg:p-10 relative flex items-center justify-center">
-        <Card className="max-w-md w-full p-8 bg-white/80 backdrop-blur-xl border-white/40 shadow-2xl">
+      <main className="min-h-screen p-6 md:p-8 lg:p-10 relative flex items-center justify-center bg-[#fafaf9]">
+        <Card className="max-w-md w-full p-8 bg-white border-zinc-200 shadow-sm rounded-2xl">
           <div className="text-center space-y-4">
-            <User className="w-12 h-12 text-gray-700 mx-auto" />
-            <h2 className="text-2xl font-semibold text-gray-800">
+            <div className="w-16 h-16 rounded-2xl bg-zinc-100 flex items-center justify-center mx-auto">
+              <User className="w-7 h-7 text-zinc-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-zinc-900">
               Profile Not Found
             </h2>
-            <p className="text-gray-700">
+            <p className="text-zinc-500 text-sm leading-relaxed">
               We couldn&apos;t find your profile information. Please contact
               support for assistance.
             </p>
-            <Button className="w-full bg-gradient-to-r from-teal-600 to-cyan-600 text-white">
+            <Button className="w-full bg-[#5b6949] text-white hover:bg-[#4a573a] rounded-xl h-11 font-semibold shadow-sm shadow-[#5b6949]/20">
               Contact Support
             </Button>
           </div>
@@ -134,76 +137,43 @@ export default async function Home({
   }
 
   return (
-    <main className="min-h-screen relative sm:pb-12 pb-40">
+    <main className="min-h-screen bg-[#fafaf9] relative sm:pb-12 pb-40">
       <IsLoadingFalseforDashboard />
-      {/* Welcome Dialog for New Signups */}
       <WelcomeDialog isOpen={!!isNewSignup} />
 
-      {/* Gradient Background */}
-      {/* <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 via-sky-50/50 to-violet-50/50" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:14px_24px]" /> */}
-      {/* Animated Gradient Orbs */}
-      {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-teal-200/20 to-cyan-200/20 rounded-full blur-3xl animate-float-slow" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-purple-200/20 to-indigo-200/20 rounded-full blur-3xl animate-float-slower" />
-      </div> */}
+      {/* Subtle background pattern */}
+      <div className="fixed inset-0 bg-[radial-gradient(#e5e7db_0.5px,transparent_0.5px)] [background-size:24px_24px] opacity-30 pointer-events-none" />
 
       {/* Content */}
-      <div className="relative  z-10">
-        {/* Profile Row Component */}
+      <div className="relative z-10">
         <ProfileRow profile={profile} />
 
-        <div className="sm:pl-0 sm:container sm:max-none  px-4  lg:px-8 md:px-8 sm:px-6 pt-4 ">
-          {/* Profile Overview */}
-          <div className="mb-6 space-y-4">
-            {/* API Key Alert */}
-            {!isProPlan && <ApiKeyAlert />}
+        <div className="sm:pl-0 sm:container sm:max-none px-4 lg:px-8 md:px-8 sm:px-6 pt-6">
+          {/* API Key Alert */}
+          {!isProPlan && <ApiKeyAlert />}
 
-            {/* Greeting & Edit Button */}
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h1 className="text-2xl font-semibold text-zinc-800">
-                  {getGreeting()}, {profile.first_name}
-                </h1>
-                <p className="text-sm text-gray-900 mt-0.5">
-                  Welcome to your job hub dashboard
-                </p>
-              </div>
-            </div>
-
-            {/* Resume Bookshelf */}
-            <div className="">
-              {/* Base Resumes Section
-              <ResumesSection
-                type="base"
-                resumes={baseResumes}
-                profile={profile}
-                sortParam="baseSort"
-                directionParam="baseDirection"
-                currentSort={baseSort}
-                currentDirection={baseDirection}
-                canCreateMore={canCreateBase}
-              />
-
-             
-              <div className="relative py-2">
-                <div className="h-px bg-gradient-to-r from-transparent via-purple-300/30 to-transparent" />
-              </div> */}
-
-              {/* Tailored Resumes Section */}
-              <JobHubSection
-                type="tailored"
-                resumes={tailoredResumes}
-                profile={profile}
-                sortParam="tailoredSort"
-                directionParam="tailoredDirection"
-                currentSort={tailoredSort}
-                currentDirection={tailoredDirection}
-                baseResumes={baseResumes}
-                canCreateMore={canCreateTailored}
-              />
-            </div>
+          {/* Greeting */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-zinc-900 tracking-tight">
+              {getGreeting()}, {profile.first_name}
+            </h1>
+            <p className="text-sm text-zinc-500 mt-1">
+              Welcome to your job hub dashboard
+            </p>
           </div>
+
+          {/* Application Kits Section */}
+          <JobHubSection
+            type="tailored"
+            resumes={tailoredResumes}
+            profile={profile}
+            sortParam="tailoredSort"
+            directionParam="tailoredDirection"
+            currentSort={tailoredSort}
+            currentDirection={tailoredDirection}
+            baseResumes={baseResumes}
+            canCreateMore={canCreateTailored}
+          />
         </div>
       </div>
     </main>

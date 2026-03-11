@@ -2,6 +2,10 @@ import { Resume } from '@/lib/types';
 import { generateCV11eu4003Template } from './html-templates/CV-11eu400-3';
 import { generateCV21eu4002Template } from './html-templates/CV-21eu400-2';
 import { generateCV31eu5003Template } from './html-templates/CV-31eu500-3';
+import { generateCV41eu4001Template } from './html-templates/CV-41eu400-1';
+import { generateCV51eu4002Template } from './html-templates/CV-51eu400-2';
+import { generateCV61eu5001Template } from './html-templates/CV-61eu500-1';
+import { generateCV71eu4003Template } from './html-templates/CV-71eu400-3';
 
 export interface CVTemplate {
   id: string;
@@ -47,6 +51,42 @@ export const CV_TEMPLATES: CVTemplate[] = [
     generateHTML: generateCV31eu5003Template,
     category: 'modern',
     color: '#E67E22',
+  },
+  {
+    id: 'CV-41eu400-1',
+    name: 'Blue Leadership',
+    description: 'Blue sidebar with profile photo, profile summary, and skills on the left',
+    thumbnail: '/cv-templates/thumbnails/CV-41eu400-1.png',
+    generateHTML: generateCV41eu4001Template,
+    category: 'professional',
+    color: '#1a5276',
+  },
+  {
+    id: 'CV-51eu400-2',
+    name: 'Teal Executive',
+    description: 'Dark navy sidebar with landscape banner, circular photo, and teal accents',
+    thumbnail: '/cv-templates/thumbnails/CV-51eu400-2.png',
+    generateHTML: generateCV51eu4002Template,
+    category: 'modern',
+    color: '#1b2a3d',
+  },
+  {
+    id: 'CV-61eu500-1',
+    name: 'Olive Classic',
+    description: 'White background with olive green accents and two-column body layout',
+    thumbnail: '/cv-templates/thumbnails/CV-61eu500-1.png',
+    generateHTML: generateCV61eu5001Template,
+    category: 'minimal',
+    color: '#3d5c2e',
+  },
+  {
+    id: 'CV-71eu400-3',
+    name: 'Navy Portrait',
+    description: 'Dark sidebar with circular portrait, green banner, and clean right column',
+    thumbnail: '/cv-templates/thumbnails/CV-71eu400-3.png',
+    generateHTML: generateCV71eu4003Template,
+    category: 'creative',
+    color: '#1c2b3a',
   },
 ];
 

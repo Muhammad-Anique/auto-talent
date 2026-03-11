@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
 
 const EditCoverLetterPage: FC = () => {
   const { id } = useParams(); // Get the dynamic 'id' from params
@@ -92,7 +93,19 @@ const EditCoverLetterPage: FC = () => {
     setSaving(false);
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
+    // Paywall check
+    const check = await checkCanPerformAction('cover_letter_download');
+    if (!check.allowed) {
+      toast({
+        title: "Download limit reached",
+        description: "You've used your free cover letter download. Upgrade to Pro for unlimited downloads.",
+        variant: "destructive",
+      });
+      router.push("/dashboard/subscription");
+      return;
+    }
+
     const doc = new jsPDF();
   
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -130,7 +143,8 @@ const EditCoverLetterPage: FC = () => {
   
     // Save the PDF
     doc.save(`${coverLetter.title}.pdf`);
-    
+
+    await recordUsage('cover_letter_download');
     toast({
       title: "Downloaded",
       description: "Cover letter downloaded as PDF successfully!",

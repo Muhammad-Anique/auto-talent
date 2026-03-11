@@ -24,6 +24,10 @@ import {
   ChevronUp,
   ExternalLink,
   Globe,
+  ArrowRight,
+  Sparkles,
+  SlidersHorizontal,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -346,296 +350,263 @@ export default function JobsPage() {
     });
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#5b6949]/10 to-gray-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-gray-500/10 to-[#5b6949]/10 rounded-full blur-3xl"></div>
-      </div>
+  // Reusable dropdown button component
+  const DropdownSelector = ({
+    label,
+    value,
+    isOpen,
+    onToggle,
+    options,
+    onSelect,
+    selectedValue,
+    dropdownRef,
+  }: {
+    label: string;
+    value: string;
+    isOpen: boolean;
+    onToggle: () => void;
+    options: { name: string; value: string }[];
+    onSelect: (value: string) => void;
+    selectedValue: string;
+    dropdownRef: React.RefObject<HTMLDivElement | null>;
+  }) => (
+    <div className="relative" ref={dropdownRef}>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={cn(
+          "w-full flex items-center justify-between px-4 py-3 h-11 rounded-xl border text-sm transition-all duration-200",
+          "bg-white hover:bg-zinc-50",
+          isOpen
+            ? "border-[#5b6949] ring-2 ring-[#5b6949]/10 shadow-sm"
+            : "border-zinc-200 hover:border-zinc-300"
+        )}
+      >
+        <div className="flex flex-col items-start">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 leading-none mb-0.5">
+            {label}
+          </span>
+          <span className="text-zinc-800 font-medium truncate">{value}</span>
+        </div>
+        <ChevronDown
+          className={cn(
+            "w-4 h-4 text-zinc-400 transition-transform duration-200 flex-shrink-0",
+            isOpen && "rotate-180"
+          )}
+        />
+      </button>
+      {isOpen && (
+        <div className="absolute z-[200] top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-xl shadow-black/5 max-h-60 overflow-y-auto">
+          {options.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onSelect(opt.value)}
+              className={cn(
+                "w-full text-left px-4 py-2.5 text-sm transition-colors first:rounded-t-xl last:rounded-b-xl",
+                selectedValue === opt.value
+                  ? "bg-[#5b6949]/10 text-[#5b6949] font-semibold"
+                  : "text-zinc-700 hover:bg-zinc-50"
+              )}
+            >
+              {opt.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
-      <div className="container max-w-6xl mx-auto p-6 space-y-8 relative z-10">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <div className="flex justify-center">
-            <div className="p-4 rounded-full bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60">
-              <Briefcase className="w-12 h-12 text-[#5b6949]" />
+  return (
+    <div className="min-h-screen bg-[#fafaf9] relative">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7db_0.5px,transparent_0.5px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+
+      <div className="relative container max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-[#3d4832] p-8 sm:p-10">
+          {/* Grid overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(91,105,73,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(91,105,73,0.07)_1px,transparent_1px)] bg-[size:32px_32px]" />
+          {/* Glow orb */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#5b6949]/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#5b6949]/10 rounded-full blur-3xl" />
+
+          <div className="relative flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#5b6949]/20 border border-[#5b6949]/30 backdrop-blur-sm">
+                <Sparkles className="w-3.5 h-3.5 text-[#8fa676]" />
+                <span className="text-xs font-semibold text-[#8fa676] tracking-wide uppercase">
+                  LinkedIn Search
+                </span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                Job Hub
+              </h1>
+              <p className="text-zinc-400 text-sm sm:text-base max-w-md leading-relaxed">
+                Discover opportunities with advanced LinkedIn filters. Search, save, and apply smarter.
+              </p>
             </div>
-          </div>
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight text-[#5b6949]">
-              Advanced LinkedIn Job Search
-            </h1>
-            <p className="text-gray-600 mt-2">
-              Search with powerful filters powered by Apify
-            </p>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <TrendingUp className="w-4 h-4 text-[#8fa676]" />
+                <span className="text-sm text-zinc-300 font-medium">
+                  {jobs.length > 0 ? `${jobs.length} results` : "Ready to search"}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Search Form */}
-        <div className="relative rounded-2xl backdrop-blur-xl bg-white/60 border border-gray-200/50 shadow-xl">
-          <form onSubmit={handleSearch} className="p-6 space-y-6">
-            {/* Main Search Inputs */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Keywords Input */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        {/* Search Form Card */}
+        <div className="relative rounded-2xl bg-white border border-zinc-200/80 shadow-sm shadow-black/[0.03]">
+          <form onSubmit={handleSearch} className="p-6 sm:p-8 space-y-6">
+            {/* Main Search Row */}
+            <div className="flex flex-col md:flex-row gap-3">
+              {/* Keywords */}
+              <div className="relative flex-1 group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors">
+                  <Search className="w-3.5 h-3.5 text-[#5b6949]" />
+                </div>
                 <Input
                   type="text"
-                  placeholder="Job title, keywords (e.g., React Developer)"
-                  className="pl-10 h-12 text-gray-800 bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                  placeholder="Job title, keywords, company..."
+                  className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
                   value={keywords}
                   onChange={(e) => setKeywords(e.target.value)}
                   required
                 />
               </div>
 
-              {/* Location Input */}
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              {/* Location */}
+              <div className="relative flex-1 group">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors">
+                  <MapPin className="w-3.5 h-3.5 text-[#5b6949]" />
+                </div>
                 <Input
                   type="text"
-                  placeholder="City, state, or country (optional)"
-                  className="pl-10 h-12 text-gray-800 bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                  placeholder="City, state, or country"
+                  className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                 />
               </div>
+
+              {/* Search Button - visible on md+ */}
+              <Button
+                type="submit"
+                disabled={loading}
+                className={cn(
+                  "h-12 px-8 font-semibold rounded-xl whitespace-nowrap hidden md:flex",
+                  "bg-[#5b6949] text-white shadow-md shadow-[#5b6949]/20",
+                  "hover:bg-[#4a573a] hover:shadow-lg hover:shadow-[#5b6949]/25",
+                  "active:scale-[0.98] transition-all duration-200",
+                  "disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+                )}
+              >
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Searching...
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Search className="w-4 h-4" />
+                    Search
+                  </div>
+                )}
+              </Button>
             </div>
 
-            {/* Quick Filters Row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {/* GeoID Dropdown */}
-              <div className="relative" ref={geoRef}>
-                <button
-                  type="button"
-                  onClick={() => setShowGeoDropdown(!showGeoDropdown)}
-                  className={cn(
-                    "w-full flex items-center justify-between p-3 h-12 rounded-lg border transition-all",
-                    "bg-white/80 border-gray-200 hover:border-[#5b6949]/50",
-                    showGeoDropdown && "border-[#5b6949] ring-2 ring-[#5b6949]/20"
-                  )}
-                >
-                  <span className="text-sm text-gray-700 truncate">
-                    {getSelectedGeoName()}
-                  </span>
-                  <svg
-                    className="w-4 h-4 text-gray-400 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {showGeoDropdown && (
-                  <div className="absolute z-[200] top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                    {LOCATIONS.map((loc) => (
-                      <button
-                        key={loc.value}
-                        type="button"
-                        onClick={() => {
-                          setGeoId(loc.value);
-                          setShowGeoDropdown(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm",
-                          geoId === loc.value &&
-                            "bg-[#5b6949]/10 text-[#5b6949] font-medium"
-                        )}
-                      >
-                        {loc.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Distance Dropdown */}
-              <div className="relative" ref={distanceRef}>
-                <button
-                  type="button"
-                  onClick={() => setShowDistanceDropdown(!showDistanceDropdown)}
-                  className={cn(
-                    "w-full flex items-center justify-between p-3 h-12 rounded-lg border transition-all",
-                    "bg-white/80 border-gray-200 hover:border-[#5b6949]/50",
-                    showDistanceDropdown &&
-                      "border-[#5b6949] ring-2 ring-[#5b6949]/20"
-                  )}
-                >
-                  <span className="text-sm text-gray-700 truncate">
-                    {getSelectedDistanceName()}
-                  </span>
-                  <svg
-                    className="w-4 h-4 text-gray-400 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {showDistanceDropdown && (
-                  <div className="absolute z-[200] top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
-                    {DISTANCE_OPTIONS.map((dist) => (
-                      <button
-                        key={dist.value}
-                        type="button"
-                        onClick={() => {
-                          setDistance(dist.value);
-                          setShowDistanceDropdown(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm",
-                          distance === dist.value &&
-                            "bg-[#5b6949]/10 text-[#5b6949] font-medium"
-                        )}
-                      >
-                        {dist.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Recency Dropdown */}
-              <div className="relative" ref={recencyRef}>
-                <button
-                  type="button"
-                  onClick={() => setShowRecencyDropdown(!showRecencyDropdown)}
-                  className={cn(
-                    "w-full flex items-center justify-between p-3 h-12 rounded-lg border transition-all",
-                    "bg-white/80 border-gray-200 hover:border-[#5b6949]/50",
-                    showRecencyDropdown &&
-                      "border-[#5b6949] ring-2 ring-[#5b6949]/20"
-                  )}
-                >
-                  <span className="text-sm text-gray-700 truncate">
-                    {getSelectedRecencyName()}
-                  </span>
-                  <svg
-                    className="w-4 h-4 text-gray-400 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {showRecencyDropdown && (
-                  <div className="absolute z-[200] top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
-                    {RECENCY_OPTIONS.map((rec) => (
-                      <button
-                        key={rec.value}
-                        type="button"
-                        onClick={() => {
-                          setRecency(rec.value);
-                          setShowRecencyDropdown(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm",
-                          recency === rec.value &&
-                            "bg-[#5b6949]/10 text-[#5b6949] font-medium"
-                        )}
-                      >
-                        {rec.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Sort Dropdown */}
-              <div className="relative" ref={sortRef}>
-                <button
-                  type="button"
-                  onClick={() => setShowSortDropdown(!showSortDropdown)}
-                  className={cn(
-                    "w-full flex items-center justify-between p-3 h-12 rounded-lg border transition-all",
-                    "bg-white/80 border-gray-200 hover:border-[#5b6949]/50",
-                    showSortDropdown &&
-                      "border-[#5b6949] ring-2 ring-[#5b6949]/20"
-                  )}
-                >
-                  <span className="text-sm text-gray-700 truncate">
-                    {getSelectedSortName()}
-                  </span>
-                  <svg
-                    className="w-4 h-4 text-gray-400 flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {showSortDropdown && (
-                  <div className="absolute z-[200] top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg">
-                    {SORT_OPTIONS.map((sort) => (
-                      <button
-                        key={sort.value}
-                        type="button"
-                        onClick={() => {
-                          setSortBy(sort.value);
-                          setShowSortDropdown(false);
-                        }}
-                        className={cn(
-                          "w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors text-sm",
-                          sortBy === sort.value &&
-                            "bg-[#5b6949]/10 text-[#5b6949] font-medium"
-                        )}
-                      >
-                        {sort.name}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
+            {/* Quick Filter Dropdowns */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <DropdownSelector
+                label="Region"
+                value={getSelectedGeoName()}
+                isOpen={showGeoDropdown}
+                onToggle={() => setShowGeoDropdown(!showGeoDropdown)}
+                options={LOCATIONS}
+                onSelect={(val) => {
+                  setGeoId(val);
+                  setShowGeoDropdown(false);
+                }}
+                selectedValue={geoId}
+                dropdownRef={geoRef}
+              />
+              <DropdownSelector
+                label="Distance"
+                value={getSelectedDistanceName()}
+                isOpen={showDistanceDropdown}
+                onToggle={() =>
+                  setShowDistanceDropdown(!showDistanceDropdown)
+                }
+                options={DISTANCE_OPTIONS}
+                onSelect={(val) => {
+                  setDistance(val);
+                  setShowDistanceDropdown(false);
+                }}
+                selectedValue={distance}
+                dropdownRef={distanceRef}
+              />
+              <DropdownSelector
+                label="Posted"
+                value={getSelectedRecencyName()}
+                isOpen={showRecencyDropdown}
+                onToggle={() =>
+                  setShowRecencyDropdown(!showRecencyDropdown)
+                }
+                options={RECENCY_OPTIONS}
+                onSelect={(val) => {
+                  setRecency(val);
+                  setShowRecencyDropdown(false);
+                }}
+                selectedValue={recency}
+                dropdownRef={recencyRef}
+              />
+              <DropdownSelector
+                label="Sort By"
+                value={getSelectedSortName()}
+                isOpen={showSortDropdown}
+                onToggle={() => setShowSortDropdown(!showSortDropdown)}
+                options={SORT_OPTIONS}
+                onSelect={(val) => {
+                  setSortBy(val);
+                  setShowSortDropdown(false);
+                }}
+                selectedValue={sortBy}
+                dropdownRef={sortRef}
+              />
             </div>
 
             {/* Advanced Filters Toggle */}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+            <div className="flex items-center justify-between pt-1 border-t border-zinc-100">
               <button
                 type="button"
                 onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2 text-[#5b6949] hover:text-[#4a573a] font-medium transition-colors"
+                className="flex items-center gap-2 py-2 text-sm font-semibold text-zinc-500 hover:text-[#5b6949] transition-colors group"
               >
-                <Filter className="w-4 h-4" />
+                <SlidersHorizontal className="w-4 h-4 group-hover:text-[#5b6949] transition-colors" />
                 <span>Advanced Filters</span>
                 {getActiveFiltersCount() > 0 && (
-                  <span className="px-2 py-0.5 text-xs bg-[#5b6949] text-white rounded-full">
+                  <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold bg-[#5b6949] text-white rounded-full">
                     {getActiveFiltersCount()}
                   </span>
                 )}
+                <ChevronDown
+                  className={cn(
+                    "w-3.5 h-3.5 transition-transform duration-200",
+                    showFilters && "rotate-180"
+                  )}
+                />
               </button>
             </div>
 
             {/* Advanced Filters Panel */}
             {showFilters && (
-              <div className="space-y-6 pt-4 border-t border-gray-200">
+              <div className="space-y-6 pt-2 animate-in slide-in-from-top-2 duration-200">
                 {/* Workplace Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
                     Workplace Type
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -651,10 +622,10 @@ export default function JobsPage() {
                           )
                         }
                         className={cn(
-                          "px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                          "px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200",
                           workplaceType.includes(type.value)
-                            ? "bg-[#5b6949] text-white border-[#5b6949]"
-                            : "bg-white text-gray-700 border-gray-200 hover:border-[#5b6949]/50"
+                            ? "bg-[#5b6949] text-white border-[#5b6949] shadow-sm shadow-[#5b6949]/20"
+                            : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                         )}
                       >
                         {type.name}
@@ -665,7 +636,7 @@ export default function JobsPage() {
 
                 {/* Job Type */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
                     Job Type
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -677,10 +648,10 @@ export default function JobsPage() {
                           toggleArrayValue(jobType, setJobType, type.value)
                         }
                         className={cn(
-                          "px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                          "px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200",
                           jobType.includes(type.value)
-                            ? "bg-[#5b6949] text-white border-[#5b6949]"
-                            : "bg-white text-gray-700 border-gray-200 hover:border-[#5b6949]/50"
+                            ? "bg-[#5b6949] text-white border-[#5b6949] shadow-sm shadow-[#5b6949]/20"
+                            : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                         )}
                       >
                         {type.name}
@@ -691,7 +662,7 @@ export default function JobsPage() {
 
                 {/* Experience Level */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
                     Experience Level
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -707,10 +678,10 @@ export default function JobsPage() {
                           )
                         }
                         className={cn(
-                          "px-4 py-2 rounded-lg border text-sm font-medium transition-all",
+                          "px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200",
                           experienceLevel.includes(level.value)
-                            ? "bg-[#5b6949] text-white border-[#5b6949]"
-                            : "bg-white text-gray-700 border-gray-200 hover:border-[#5b6949]/50"
+                            ? "bg-[#5b6949] text-white border-[#5b6949] shadow-sm shadow-[#5b6949]/20"
+                            : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                         )}
                       >
                         {level.name}
@@ -721,7 +692,7 @@ export default function JobsPage() {
 
                 {/* Special Filters */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
                     Special Filters
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -729,26 +700,26 @@ export default function JobsPage() {
                       type="button"
                       onClick={() => setEasyApply(!easyApply)}
                       className={cn(
-                        "px-4 py-2 rounded-lg border text-sm font-medium transition-all flex items-center gap-2",
+                        "px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200 flex items-center gap-2",
                         easyApply
-                          ? "bg-[#5b6949] text-white border-[#5b6949]"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-[#5b6949]/50"
+                          ? "bg-[#5b6949] text-white border-[#5b6949] shadow-sm shadow-[#5b6949]/20"
+                          : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                       )}
                     >
-                      <Zap className="w-4 h-4" />
+                      <Zap className="w-3.5 h-3.5" />
                       Easy Apply
                     </button>
                     <button
                       type="button"
                       onClick={() => setUnder10Applicants(!under10Applicants)}
                       className={cn(
-                        "px-4 py-2 rounded-lg border text-sm font-medium transition-all flex items-center gap-2",
+                        "px-4 py-2 rounded-lg border text-sm font-medium transition-all duration-200 flex items-center gap-2",
                         under10Applicants
-                          ? "bg-[#5b6949] text-white border-[#5b6949]"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-[#5b6949]/50"
+                          ? "bg-[#5b6949] text-white border-[#5b6949] shadow-sm shadow-[#5b6949]/20"
+                          : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                       )}
                     >
-                      <Users className="w-4 h-4" />
+                      <Users className="w-3.5 h-3.5" />
                       Under 10 Applicants
                     </button>
                   </div>
@@ -767,30 +738,30 @@ export default function JobsPage() {
                       setUnder10Applicants(false);
                       setDistance("");
                     }}
-                    className="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium text-sm"
+                    className="flex items-center gap-2 text-red-500 hover:text-red-600 font-semibold text-sm transition-colors"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-3.5 h-3.5" />
                     Clear All Filters
                   </button>
                 )}
               </div>
             )}
 
-            {/* Search Button */}
+            {/* Mobile Search Button */}
             <Button
               type="submit"
               disabled={loading}
               className={cn(
-                "w-full h-12 text-gray-800 font-medium",
-                "bg-[#5b6949]",
-                "text-white hover:shadow-lg hover:shadow-[#5b6949]/25",
-                "transition-all duration-500 hover:-translate-y-0.5",
-                "disabled:opacity-50 disabled:cursor-not-allowed"
+                "w-full h-12 font-semibold rounded-xl md:hidden",
+                "bg-[#5b6949] text-white shadow-md shadow-[#5b6949]/20",
+                "hover:bg-[#4a573a] hover:shadow-lg hover:shadow-[#5b6949]/25",
+                "active:scale-[0.98] transition-all duration-200",
+                "disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
               )}
             >
               {loading ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   Searching...
                 </div>
               ) : (
@@ -803,304 +774,343 @@ export default function JobsPage() {
           </form>
         </div>
 
-        {/* Results Section */}
+        {/* Loading State */}
         {loading && pageNum === 0 && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#5b6949]/10 to-gray-500/10 border border-[#5b6949]/20">
-              <div className="w-4 h-4 border-2 border-[#5b6949]/30 border-t-[#5b6949] rounded-full animate-spin"></div>
-              <span className="text-gray-700 font-medium">
-                Searching for jobs...
-              </span>
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="relative">
+              <div className="w-12 h-12 rounded-full border-[3px] border-zinc-200 border-t-[#5b6949] animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Search className="w-4 h-4 text-[#5b6949]" />
+              </div>
             </div>
+            <p className="text-zinc-500 text-sm font-medium">Searching for opportunities...</p>
           </div>
         )}
 
+        {/* Empty State */}
         {!loading && searched && jobs.length === 0 && (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200">
-              <span className="text-red-600 font-medium">
-                No jobs found. Try adjusting your search criteria.
-              </span>
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-zinc-100 flex items-center justify-center">
+              <Briefcase className="w-7 h-7 text-zinc-300" />
+            </div>
+            <div className="text-center space-y-1">
+              <p className="text-zinc-700 font-semibold">No jobs found</p>
+              <p className="text-zinc-400 text-sm">
+                Try adjusting your search criteria or filters
+              </p>
             </div>
           </div>
         )}
 
+        {/* Results */}
         {jobs.length > 0 && (
-          <div className="space-y-4">
+          <div className="space-y-5">
+            {/* Results Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-gray-900">
-                Found {jobs.length} job{jobs.length !== 1 ? "s" : ""}
-              </h2>
+              <div className="flex items-center gap-3">
+                <div className="h-6 w-1 rounded-full bg-[#5b6949]" />
+                <h2 className="text-lg font-bold text-zinc-900">
+                  {jobs.length} result{jobs.length !== 1 ? "s" : ""}
+                </h2>
+              </div>
             </div>
 
-            <div className="grid gap-4">
-              {jobs.map((job) => {
+            {/* Job Cards */}
+            <div className="grid gap-3">
+              {jobs.map((job, idx) => {
                 const isExpanded = expandedJobs.has(job.id);
+                const isSaved = savedJobs.includes(job.id);
                 return (
                   <div
                     key={job.id}
-                    className="relative block bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 group"
+                    className="group relative bg-white border border-zinc-200/80 rounded-xl hover:border-[#5b6949]/30 hover:shadow-lg hover:shadow-[#5b6949]/[0.04] transition-all duration-300"
+                    style={{ animationDelay: `${idx * 30}ms` }}
                   >
-                    {/* Save Button */}
-                    <button
-                      onClick={() => saveJob(job)}
-                      className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100/80 hover:bg-[#5b6949]/10 transition-colors z-10"
-                      title={
-                        savedJobs.includes(job.id) ? "Job saved" : "Save job"
-                      }
-                    >
-                      {savedJobs.includes(job.id) ? (
-                        <Heart className="w-5 h-5 text-red-500 fill-current" />
-                      ) : (
-                        <Bookmark className="w-5 h-5 text-gray-500" />
-                      )}
-                    </button>
+                    {/* Left accent bar */}
+                    <div className="absolute left-0 top-3 bottom-3 w-[3px] rounded-full bg-transparent group-hover:bg-[#5b6949] transition-all duration-300" />
 
-                    <div className="flex items-start gap-4 mb-4">
-                      {job.companyLogo && (
-                        <div className="flex-shrink-0">
-                          <img
-                            src={job.companyLogo}
-                            alt={job.companyName}
-                            className="w-12 h-12 object-contain rounded-lg border border-gray-200"
-                          />
-                        </div>
-                      )}
+                    <div className="p-5 sm:p-6">
+                      {/* Save Button */}
+                      <button
+                        onClick={() => saveJob(job)}
+                        className={cn(
+                          "absolute top-4 right-4 sm:top-5 sm:right-5 p-2.5 rounded-xl transition-all duration-200 z-10",
+                          isSaved
+                            ? "bg-red-50 text-red-500 shadow-sm"
+                            : "bg-zinc-50 text-zinc-300 hover:bg-[#5b6949]/10 hover:text-[#5b6949] hover:shadow-sm"
+                        )}
+                        title={isSaved ? "Job saved" : "Save job"}
+                      >
+                        {isSaved ? (
+                          <Heart className="w-4 h-4 fill-current" />
+                        ) : (
+                          <Bookmark className="w-4 h-4" />
+                        )}
+                      </button>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Briefcase className="w-4 h-4 text-[#5b6949]" />
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {job.title}
-                          </h3>
-                        </div>
-
-                        <div className="flex items-center gap-4 text-sm text-gray-600 mb-2 flex-wrap">
-                          <div className="flex items-center gap-1">
-                            <Building2 className="w-4 h-4" />
-                            <span>{job.companyName}</span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <MapPin className="w-4 h-4" />
-                            <span>{job.location}</span>
-                          </div>
-                          {job.salary && (
-                            <div className="flex items-center gap-1">
-                              <DollarSign className="w-4 h-4" />
-                              <span>{job.salary}</span>
-                            </div>
-                          )}
-                          {job.applicantsCount && (
-                            <div className="flex items-center gap-1">
-                              <Users className="w-4 h-4" />
-                              <span className="font-medium text-[#5b6949]">
-                                {job.applicantsCount} applicants
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            <span>Posted: {formatDate(job.postedAt)}</span>
-                          </div>
-                          {job.employmentType && (
-                            <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                              {job.employmentType}
-                            </span>
-                          )}
-                          {job.seniorityLevel && (
-                            <span className="px-2 py-1 bg-gray-100 rounded text-xs">
-                              {job.seniorityLevel}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Expandable Details Section */}
-                    {isExpanded && (
-                      <div className="mt-4 pt-4 border-t border-gray-200 space-y-4">
-                        {/* Job Description */}
-                        {job.descriptionHtml && (
-                          <div>
-                            <h4 className="text-sm font-semibold text-gray-900 mb-2">
-                              Job Description
-                            </h4>
-                            <div
-                              className="text-sm text-gray-700 prose prose-sm max-w-none"
-                              dangerouslySetInnerHTML={{
-                                __html: job.descriptionHtml,
-                              }}
+                      {/* Job Header */}
+                      <div className="flex items-start gap-4 mb-4">
+                        {job.companyLogo ? (
+                          <div className="flex-shrink-0 w-12 h-12 rounded-xl border border-zinc-100 bg-white overflow-hidden flex items-center justify-center shadow-sm">
+                            <img
+                              src={job.companyLogo}
+                              alt={job.companyName}
+                              className="w-10 h-10 object-contain"
                             />
+                          </div>
+                        ) : (
+                          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-[#5b6949]/10 to-[#5b6949]/5 border border-[#5b6949]/10 flex items-center justify-center">
+                            <Building2 className="w-5 h-5 text-[#5b6949]/60" />
                           </div>
                         )}
 
-                        {/* Additional Details Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {/* Company Info */}
-                          {(job.companyDescription ||
-                            job.companySlogan ||
-                            job.companyWebsite) && (
-                            <div className="space-y-2">
-                              <h4 className="text-sm font-semibold text-gray-900">
-                                About {job.companyName}
-                              </h4>
-                              {job.companySlogan && (
-                                <p className="text-sm text-gray-600 italic">
-                                  {job.companySlogan}
-                                </p>
-                              )}
-                              {job.companyDescription && (
-                                <p className="text-sm text-gray-700">
-                                  {job.companyDescription}
-                                </p>
-                              )}
-                              {job.companyWebsite && (
-                                <a
-                                  href={job.companyWebsite}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-1 text-sm text-[#5b6949] hover:underline"
-                                >
-                                  <Globe className="w-4 h-4" />
-                                  Visit Company Website
-                                </a>
-                              )}
-                            </div>
-                          )}
+                        <div className="flex-1 min-w-0 pr-12">
+                          <h3 className="text-[15px] font-bold text-zinc-900 group-hover:text-[#5b6949] transition-colors duration-200 mb-1 leading-snug">
+                            {job.title}
+                          </h3>
+                          <div className="flex items-center gap-2 text-sm text-zinc-500 mb-2 flex-wrap">
+                            <span className="font-semibold text-zinc-700">
+                              {job.companyName}
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-zinc-300" />
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {job.location}
+                            </span>
+                            {job.salary && (
+                              <>
+                                <span className="w-1 h-1 rounded-full bg-zinc-300" />
+                                <span className="flex items-center gap-1 text-[#5b6949] font-semibold">
+                                  <DollarSign className="w-3 h-3" />
+                                  {job.salary}
+                                </span>
+                              </>
+                            )}
+                          </div>
 
-                          {/* Job Details */}
-                          <div className="space-y-2">
-                            <h4 className="text-sm font-semibold text-gray-900">
-                              Job Details
-                            </h4>
-                            {job.jobFunction && (
-                              <div className="text-sm">
-                                <span className="text-gray-600">
-                                  Function:{" "}
-                                </span>
-                                <span className="text-gray-900">
-                                  {job.jobFunction}
-                                </span>
-                              </div>
+                          {/* Tags Row */}
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-md bg-zinc-100 text-zinc-500">
+                              <Calendar className="w-3 h-3" />
+                              {formatDate(job.postedAt)}
+                            </span>
+                            {job.applicantsCount && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold rounded-md bg-[#5b6949]/10 text-[#5b6949]">
+                                <Users className="w-3 h-3" />
+                                {job.applicantsCount}
+                              </span>
                             )}
-                            {job.industries && (
-                              <div className="text-sm">
-                                <span className="text-gray-600">
-                                  Industries:{" "}
-                                </span>
-                                <span className="text-gray-900">
-                                  {job.industries}
-                                </span>
-                              </div>
+                            {job.employmentType && (
+                              <span className="px-2 py-0.5 text-[11px] font-semibold rounded-md bg-zinc-100 text-zinc-500">
+                                {job.employmentType}
+                              </span>
                             )}
-                            {job.benefits && job.benefits.length > 0 && (
-                              <div>
-                                <span className="text-sm text-gray-600">
-                                  Benefits:{" "}
-                                </span>
-                                <div className="flex flex-wrap gap-1 mt-1">
-                                  {job.benefits.map((benefit, idx) => (
-                                    <span
-                                      key={idx}
-                                      className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded"
-                                    >
-                                      {benefit}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
+                            {job.seniorityLevel && (
+                              <span className="px-2 py-0.5 text-[11px] font-semibold rounded-md bg-zinc-100 text-zinc-500">
+                                {job.seniorityLevel}
+                              </span>
                             )}
                           </div>
                         </div>
-
-                        {/* Action Links */}
-                        <div className="flex flex-wrap gap-2 pt-2">
-                          <Link
-                            href={job.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 px-4 py-2 bg-[#5b6949] text-white rounded-lg hover:bg-[#4a573a] transition-colors text-sm font-medium"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                            View on LinkedIn
-                          </Link>
-                          {job.applyUrl && (
-                            <a
-                              href={job.applyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 px-4 py-2 bg-white border-2 border-[#5b6949] text-[#5b6949] rounded-lg hover:bg-[#5b6949] hover:text-white transition-colors text-sm font-medium"
-                            >
-                              <Zap className="w-4 h-4" />
-                              Apply Now
-                            </a>
-                          )}
-                          {job.companyLinkedinUrl && (
-                            <a
-                              href={job.companyLinkedinUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
-                            >
-                              <Building2 className="w-4 h-4" />
-                              Company Page
-                            </a>
-                          )}
-                        </div>
                       </div>
-                    )}
 
-                    {/* Toggle Button */}
-                    <button
-                      onClick={() => toggleJobExpanded(job.id)}
-                      className="mt-4 w-full flex items-center justify-center gap-2 py-2 text-sm font-medium text-[#5b6949] hover:text-[#4a573a] transition-colors"
-                    >
-                      {isExpanded ? (
-                        <>
-                          <ChevronUp className="w-4 h-4" />
-                          Show Less
-                        </>
-                      ) : (
-                        <>
-                          <ChevronDown className="w-4 h-4" />
-                          Show More Details
-                        </>
+                      {/* Expanded Details */}
+                      {isExpanded && (
+                        <div className="mt-5 pt-5 border-t border-zinc-100 space-y-5 animate-in slide-in-from-top-2 duration-200">
+                          {/* Description */}
+                          {job.descriptionHtml && (
+                            <div>
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
+                                Description
+                              </h4>
+                              <div
+                                className="text-sm text-zinc-600 prose prose-sm prose-zinc max-w-none prose-headings:text-zinc-800 prose-a:text-[#5b6949]"
+                                dangerouslySetInnerHTML={{
+                                  __html: job.descriptionHtml,
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* Details Grid */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {(job.companyDescription ||
+                              job.companySlogan ||
+                              job.companyWebsite) && (
+                              <div className="space-y-3 p-5 bg-zinc-50/80 rounded-xl border border-zinc-100">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                                  About {job.companyName}
+                                </h4>
+                                {job.companySlogan && (
+                                  <p className="text-sm text-zinc-500 italic leading-relaxed">
+                                    &ldquo;{job.companySlogan}&rdquo;
+                                  </p>
+                                )}
+                                {job.companyDescription && (
+                                  <p className="text-sm text-zinc-600 leading-relaxed">
+                                    {job.companyDescription}
+                                  </p>
+                                )}
+                                {job.companyWebsite && (
+                                  <a
+                                    href={job.companyWebsite}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 text-sm text-[#5b6949] font-semibold hover:underline"
+                                  >
+                                    <Globe className="w-3.5 h-3.5" />
+                                    Visit Website
+                                    <ArrowRight className="w-3 h-3" />
+                                  </a>
+                                )}
+                              </div>
+                            )}
+
+                            <div className="space-y-3 p-5 bg-zinc-50/80 rounded-xl border border-zinc-100">
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
+                                Details
+                              </h4>
+                              {job.jobFunction && (
+                                <div className="text-sm">
+                                  <span className="text-zinc-400 font-medium">Function </span>
+                                  <span className="text-zinc-700 font-semibold">{job.jobFunction}</span>
+                                </div>
+                              )}
+                              {job.industries && (
+                                <div className="text-sm">
+                                  <span className="text-zinc-400 font-medium">Industries </span>
+                                  <span className="text-zinc-700 font-semibold">{job.industries}</span>
+                                </div>
+                              )}
+                              {job.benefits && job.benefits.length > 0 && (
+                                <div>
+                                  <span className="text-sm text-zinc-400 font-medium">Benefits</span>
+                                  <div className="flex flex-wrap gap-1.5 mt-2">
+                                    {job.benefits.map((benefit, idx) => (
+                                      <span
+                                        key={idx}
+                                        className="text-[11px] px-2.5 py-1 bg-[#5b6949]/10 text-[#5b6949] rounded-lg font-semibold"
+                                      >
+                                        {benefit}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            <Link
+                              href={job.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#5b6949] text-white rounded-xl hover:bg-[#4a573a] shadow-sm shadow-[#5b6949]/20 hover:shadow-md transition-all text-sm font-semibold"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                              View on LinkedIn
+                            </Link>
+                            {job.applyUrl && (
+                              <a
+                                href={job.applyUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#5b6949] text-[#5b6949] rounded-xl hover:bg-[#5b6949] hover:text-white transition-all text-sm font-semibold"
+                              >
+                                <Zap className="w-3.5 h-3.5" />
+                                Apply Now
+                              </a>
+                            )}
+                            {job.companyLinkedinUrl && (
+                              <a
+                                href={job.companyLinkedinUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-100 text-zinc-600 rounded-xl hover:bg-zinc-200 transition-all text-sm font-medium"
+                              >
+                                <Building2 className="w-3.5 h-3.5" />
+                                Company
+                              </a>
+                            )}
+                          </div>
+                        </div>
                       )}
-                    </button>
+
+                      {/* Toggle Button */}
+                      <button
+                        onClick={() => toggleJobExpanded(job.id)}
+                        className="mt-4 w-full flex items-center justify-center gap-1.5 py-2 text-sm font-semibold text-zinc-400 hover:text-[#5b6949] transition-colors rounded-lg hover:bg-[#5b6949]/5"
+                      >
+                        {isExpanded ? (
+                          <>
+                            <ChevronUp className="w-4 h-4" />
+                            Less
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="w-4 h-4" />
+                            Details
+                          </>
+                        )}
+                      </button>
+                    </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Load More Button */}
+            {/* Load More */}
             {hasMore && !loading && (
               <div className="flex justify-center pt-4">
                 <Button
                   onClick={handleLoadMore}
                   disabled={loading}
                   className={cn(
-                    "px-8 h-12 font-medium",
-                    "bg-white text-[#5b6949] border-2 border-[#5b6949]",
-                    "hover:bg-[#5b6949] hover:text-white",
-                    "transition-all duration-300"
+                    "px-8 h-11 font-semibold rounded-xl",
+                    "bg-white text-[#5b6949] border-2 border-[#5b6949]/20",
+                    "hover:border-[#5b6949] hover:bg-[#5b6949] hover:text-white",
+                    "shadow-sm hover:shadow-md transition-all duration-200"
                   )}
                 >
-                  Load More Jobs
+                  <span className="flex items-center gap-2">
+                    Load More
+                    <ArrowRight className="w-4 h-4" />
+                  </span>
                 </Button>
               </div>
             )}
 
             {loading && pageNum > 0 && (
-              <div className="text-center py-4">
-                <div className="inline-flex items-center gap-2 text-gray-600">
-                  <div className="w-4 h-4 border-2 border-gray-300 border-t-[#5b6949] rounded-full animate-spin"></div>
-                  <span>Loading more jobs...</span>
+              <div className="flex justify-center py-6">
+                <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white border border-zinc-200 shadow-sm">
+                  <div className="w-4 h-4 border-2 border-zinc-200 border-t-[#5b6949] rounded-full animate-spin" />
+                  <span className="text-zinc-500 text-sm font-medium">Loading more...</span>
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Initial empty state before search */}
+        {!searched && !loading && jobs.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 gap-6">
+            <div className="relative">
+              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#5b6949]/15 to-[#5b6949]/5 flex items-center justify-center border border-[#5b6949]/10">
+                <Search className="w-8 h-8 text-[#5b6949]/40" />
+              </div>
+              <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-[#5b6949]/10 flex items-center justify-center">
+                <Sparkles className="w-3 h-3 text-[#5b6949]" />
+              </div>
+            </div>
+            <div className="text-center space-y-2 max-w-sm">
+              <p className="text-zinc-700 font-semibold text-lg">
+                Start your search
+              </p>
+              <p className="text-zinc-400 text-sm leading-relaxed">
+                Enter keywords and location to discover thousands of opportunities from LinkedIn
+              </p>
+            </div>
           </div>
         )}
       </div>

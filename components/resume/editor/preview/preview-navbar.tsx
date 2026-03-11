@@ -2,7 +2,7 @@
 
 import { Resume } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Download, Save, ZoomIn, ZoomOut, FileText, Palette } from "lucide-react";
+import { Download, Save, ZoomIn, ZoomOut, FileText, Palette, Lock } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { pdf } from '@react-pdf/renderer';
 import { ResumePDFDocument } from "./resume-pdf-document";
@@ -17,6 +17,8 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { TextImport } from "../../text-import";
+import { recordUsage, checkCanPerformAction } from "@/utils/actions/subscriptions/usage";
+import { useRouter } from "next/navigation";
 
 interface PreviewNavbarProps {
   resume: Resume;
@@ -46,6 +48,8 @@ export function PreviewNavbar({
     followUpEmail: false
   });
 
+  const router = useRouter();
+
   const handleTabChange = (tab: 'designed' | 'simple') => {
     onTabChange(tab);
     onZoomChange(1); // Reset zoom when switching tabs
@@ -53,6 +57,36 @@ export function PreviewNavbar({
 
   const handleDownload = async () => {
     try {
+      // Check paywall for CV downloads
+      const needsCvCheck = downloadOptions.designedResume || downloadOptions.simpleResume;
+      const needsCoverLetterCheck = downloadOptions.coverLetter;
+
+      if (needsCvCheck) {
+        const cvCheck = await checkCanPerformAction('cv_download');
+        if (!cvCheck.allowed) {
+          toast({
+            title: "Download limit reached",
+            description: "You've used your free CV download. Upgrade to Pro for unlimited downloads.",
+            variant: "destructive",
+          });
+          router.push("/dashboard/subscription");
+          return;
+        }
+      }
+
+      if (needsCoverLetterCheck) {
+        const clCheck = await checkCanPerformAction('cover_letter_download');
+        if (!clCheck.allowed) {
+          toast({
+            title: "Download limit reached",
+            description: "You've used your free cover letter download. Upgrade to Pro for unlimited downloads.",
+            variant: "destructive",
+          });
+          router.push("/dashboard/subscription");
+          return;
+        }
+      }
+
       // Download Designed Resume
       if (downloadOptions.designedResume) {
         const html2pdf = (await import('html2pdf.js')).default;
@@ -201,6 +235,14 @@ export function PreviewNavbar({
         } finally {
           document.body.removeChild(tempContainer);
         }
+      }
+
+      // Record usage after successful download
+      if (needsCvCheck) {
+        await recordUsage('cv_download');
+      }
+      if (needsCoverLetterCheck) {
+        await recordUsage('cover_letter_download');
       }
 
       toast({
