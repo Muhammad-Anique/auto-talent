@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
           getAll() {
             return request.cookies.getAll();
           },
-          setAll(cookiesToSetFromSupabase) {
+          setAll(cookiesToSetFromSupabase: Array<{ name: string; value: string; options?: Record<string, unknown> }>) {
             // Store cookies with options
             cookiesToSet.length = 0;
             cookiesToSetFromSupabase.forEach(({ name, value, options }) => {
