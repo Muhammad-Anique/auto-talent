@@ -236,36 +236,41 @@ export interface InvoiceItem {
 }
 
 export async function getInvoices(): Promise<InvoiceItem[]> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return [];
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
 
-  const { data: subscription } = await supabase
-    .from("subscriptions")
-    .select("stripe_customer_id")
-    .eq("user_id", user.id)
-    .single();
+    const { data: subscription } = await supabase
+      .from("subscriptions")
+      .select("stripe_customer_id")
+      .eq("user_id", user.id)
+      .single();
 
-  if (!subscription?.stripe_customer_id) return [];
+    if (!subscription?.stripe_customer_id) return [];
 
-  const invoices = await stripe.invoices.list({
-    customer: subscription.stripe_customer_id,
-    limit: 24,
-  });
+    const invoices = await stripe.invoices.list({
+      customer: subscription.stripe_customer_id,
+      limit: 24,
+    });
 
-  return invoices.data.map((inv) => ({
-    id: inv.id,
-    number: inv.number,
-    status: inv.status,
-    amount_due: inv.amount_due,
-    amount_paid: inv.amount_paid,
-    currency: inv.currency,
-    created: inv.created,
-    hosted_invoice_url: inv.hosted_invoice_url ?? null,
-    invoice_pdf: inv.invoice_pdf ?? null,
-    period_start: inv.period_start,
-    period_end: inv.period_end,
-  }));
+    return invoices.data.map((inv) => ({
+      id: inv.id,
+      number: inv.number,
+      status: inv.status as string | null,
+      amount_due: inv.amount_due,
+      amount_paid: inv.amount_paid,
+      currency: inv.currency,
+      created: inv.created,
+      hosted_invoice_url: inv.hosted_invoice_url ?? null,
+      invoice_pdf: inv.invoice_pdf ?? null,
+      period_start: inv.period_start,
+      period_end: inv.period_end,
+    }));
+  } catch (e) {
+    console.error("Failed to fetch invoices:", e);
+    return [];
+  }
 }
 
 export async function reactivateSubscription(): Promise<{ success?: boolean; error?: string }> {

@@ -45,17 +45,20 @@ export default function BillingPage() {
 
   async function loadData() {
     try {
-      const [sub, inv] = await Promise.all([
-        getSubscriptionStatus(),
-        getInvoices(),
-      ]);
+      const sub = await getSubscriptionStatus();
       setPlan(sub.plan);
       setStatus(sub.status);
       setPeriodEnd(sub.currentPeriodEnd);
       setCancelAtPeriodEnd(sub.cancelAtPeriodEnd);
-      setInvoices(inv);
+
+      try {
+        const inv = await getInvoices();
+        setInvoices(inv);
+      } catch {
+        console.error("Failed to load invoices");
+      }
     } catch (e) {
-      console.error(e);
+      console.error("Failed to load subscription:", e);
     } finally {
       setLoading(false);
     }
