@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useLoading } from "../../../../context/LoadingContext";
@@ -28,8 +28,76 @@ import {
   Sparkles,
   SlidersHorizontal,
   TrendingUp,
+  Wifi,
+  Radar,
+  Database,
+  CheckCircle2,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// --- Cache utilities ---
+const CACHE_KEY = "job_search_cache";
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+interface CachedSearch {
+  params: string; // JSON stringified search params
+  jobs: Job[];
+  timestamp: number;
+  hasMore: boolean;
+  pageNum: number;
+}
+
+function getCacheKey(params: Record<string, unknown>): string {
+  const sorted = Object.keys(params).sort().reduce((acc, key) => {
+    if (params[key] !== undefined && params[key] !== "" && params[key] !== false) {
+      acc[key] = params[key];
+    }
+    return acc;
+  }, {} as Record<string, unknown>);
+  return JSON.stringify(sorted);
+}
+
+function saveToCache(paramsKey: string, jobs: Job[], hasMore: boolean, pageNum: number) {
+  try {
+    const cache: CachedSearch = {
+      params: paramsKey,
+      jobs,
+      timestamp: Date.now(),
+      hasMore,
+      pageNum,
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // localStorage full or unavailable — silently fail
+  }
+}
+
+function loadFromCache(paramsKey?: string): CachedSearch | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const cache: CachedSearch = JSON.parse(raw);
+    if (Date.now() - cache.timestamp > CACHE_TTL) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+    if (paramsKey && cache.params !== paramsKey) return null;
+    return cache;
+  } catch {
+    return null;
+  }
+}
+
+// --- Search stages ---
+const SEARCH_STAGES = [
+  { id: "connecting", label: "Connecting to LinkedIn", icon: Wifi, duration: 2000 },
+  { id: "scanning", label: "Scanning job listings", icon: Radar, duration: 8000 },
+  { id: "retrieving", label: "Retrieving job details", icon: Database, duration: 15000 },
+  { id: "processing", label: "Processing results", icon: Loader2, duration: 5000 },
+] as const;
+
+type SearchStage = typeof SEARCH_STAGES[number]["id"] | "done";
 
 type Job = {
   id: string;
@@ -139,6 +207,13 @@ export default function JobsPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set());
 
+  // Search progress tracking
+  const [searchStage, setSearchStage] = useState<SearchStage>("connecting");
+  const [searchElapsed, setSearchElapsed] = useState(0);
+  const stageTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const elapsedTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [cachedResultsShown, setCachedResultsShown] = useState(false);
+
   // Dropdown states
   const [showGeoDropdown, setShowGeoDropdown] = useState(false);
   const [showDistanceDropdown, setShowDistanceDropdown] = useState(false);
@@ -152,13 +227,25 @@ export default function JobsPage() {
 
   const supabase = createClient();
 
+  // Restore cached results on mount
+  useEffect(() => {
+    const cached = loadFromCache();
+    if (cached && cached.jobs.length > 0) {
+      setJobs(cached.jobs);
+      setHasMore(cached.hasMore);
+      setPageNum(cached.pageNum);
+      setSearched(true);
+      setCachedResultsShown(true);
+    }
+  }, []);
+
   useEffect(() => {
     const fetchSavedJobs = async () => {
       const { data: userData } = await supabase.auth.getUser();
       const userId = userData?.user?.id;
       if (!userId) return;
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("saved_jobs")
         .select("job")
         .eq("user_id", userId);
@@ -199,34 +286,91 @@ export default function JobsPage() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Progress stage simulation
+  const startProgressStages = useCallback(() => {
+    setSearchStage("connecting");
+    setSearchElapsed(0);
+
+    // Elapsed timer (ticks every second)
+    elapsedTimerRef.current = setInterval(() => {
+      setSearchElapsed((prev) => prev + 1);
+    }, 1000);
+
+    // Stage progression
+    let cumulativeDelay = 0;
+    const timers: NodeJS.Timeout[] = [];
+
+    SEARCH_STAGES.forEach((stage, idx) => {
+      if (idx === 0) return; // already set to "connecting"
+      cumulativeDelay += SEARCH_STAGES[idx - 1].duration;
+      const timer = setTimeout(() => {
+        setSearchStage(stage.id);
+      }, cumulativeDelay);
+      timers.push(timer);
+    });
+
+    stageTimerRef.current = timers[0]; // store for cleanup
+    return timers;
+  }, []);
+
+  const stopProgressStages = useCallback((timers?: NodeJS.Timeout[]) => {
+    setSearchStage("done");
+    if (elapsedTimerRef.current) clearInterval(elapsedTimerRef.current);
+    if (timers) timers.forEach((t) => clearTimeout(t));
+  }, []);
+
+  const getSearchParams = useCallback(() => ({
+    keywords,
+    location,
+    geoId,
+    distance: distance ? parseInt(distance) : undefined,
+    workplaceType: workplaceType.length > 0 ? workplaceType : undefined,
+    jobType: jobType.length > 0 ? jobType : undefined,
+    experienceLevel: experienceLevel.length > 0 ? experienceLevel : undefined,
+    recency: recency || undefined,
+    easyApply,
+    under10Applicants,
+    sortBy,
+  }), [keywords, location, geoId, distance, workplaceType, jobType, experienceLevel, recency, easyApply, under10Applicants, sortBy]);
+
   const handleSearch = async (e?: React.FormEvent, loadMore = false) => {
     if (e) e.preventDefault();
-    setLoading(true);
     setSearched(true);
 
     const currentPage = loadMore ? pageNum + 1 : 0;
+    const isNewSearch = !loadMore;
+    const params = getSearchParams();
+    const paramsKey = getCacheKey({ ...params, pageNum: 0 });
+
+    // For new searches, check cache first
+    if (isNewSearch) {
+      const cached = loadFromCache(paramsKey);
+      if (cached && cached.jobs.length > 0) {
+        setJobs(cached.jobs);
+        setHasMore(cached.hasMore);
+        setPageNum(cached.pageNum);
+        setCachedResultsShown(true);
+        return; // Use cache, skip API call
+      }
+    }
+
+    setLoading(true);
+    setCachedResultsShown(false);
+
+    // Start progress stages for new searches (not load more)
+    let progressTimers: NodeJS.Timeout[] | undefined;
+    if (isNewSearch) {
+      progressTimers = startProgressStages();
+    }
 
     try {
       const res = await fetch("/api/apify/jobs", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          keywords,
-          location,
-          geoId,
-          distance: distance ? parseInt(distance) : undefined,
-          workplaceType: workplaceType.length > 0 ? workplaceType : undefined,
-          jobType: jobType.length > 0 ? jobType : undefined,
-          experienceLevel:
-            experienceLevel.length > 0 ? experienceLevel : undefined,
-          recency: recency || undefined,
-          easyApply,
-          under10Applicants,
-          sortBy,
+          ...params,
           pageNum: currentPage,
-          count: 100, // Apify minimum
+          count: 100,
         }),
       });
 
@@ -234,16 +378,21 @@ export default function JobsPage() {
 
       if (data.success) {
         const jobList = data.data ?? [];
-        console.log("Fetched jobs:", jobList);
 
         if (loadMore) {
-          setJobs((prev) => [...prev, ...jobList]);
+          const merged = [...jobs, ...jobList];
+          setJobs(merged);
+          setPageNum(currentPage);
+          setHasMore(data.pagination?.hasMore ?? false);
+          // Update cache with merged results
+          saveToCache(paramsKey, merged, data.pagination?.hasMore ?? false, currentPage);
         } else {
           setJobs(jobList);
+          setPageNum(currentPage);
+          setHasMore(data.pagination?.hasMore ?? false);
+          // Cache new results
+          saveToCache(paramsKey, jobList, data.pagination?.hasMore ?? false, currentPage);
         }
-
-        setPageNum(currentPage);
-        setHasMore(data.pagination?.hasMore ?? false);
       } else {
         console.error("Error:", data.error);
         if (!loadMore) setJobs([]);
@@ -252,6 +401,7 @@ export default function JobsPage() {
       console.error("Error fetching jobs:", error);
       if (!loadMore) setJobs([]);
     } finally {
+      if (isNewSearch) stopProgressStages(progressTimers);
       setLoading(false);
     }
   };
@@ -451,7 +601,7 @@ export default function JobsPage() {
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
                 <TrendingUp className="w-4 h-4 text-[#8fa676]" />
                 <span className="text-sm text-zinc-300 font-medium">
-                  {jobs.length > 0 ? `${jobs.length} results` : "Ready to search"}
+                  {loading ? "Searching..." : jobs.length > 0 ? `${jobs.length} results` : "Ready to search"}
                 </span>
               </div>
             </div>
@@ -774,16 +924,101 @@ export default function JobsPage() {
           </form>
         </div>
 
-        {/* Loading State */}
+        {/* Loading State — Multi-Stage Progress */}
         {loading && pageNum === 0 && (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="relative">
-              <div className="w-12 h-12 rounded-full border-[3px] border-zinc-200 border-t-[#5b6949] animate-spin" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Search className="w-4 h-4 text-[#5b6949]" />
+          <div className="relative rounded-2xl bg-white border border-zinc-200/80 shadow-sm overflow-hidden">
+            {/* Top progress bar */}
+            <div className="h-1 bg-zinc-100">
+              <div
+                className="h-full bg-gradient-to-r from-[#5b6949] to-[#8fa676] transition-all duration-1000 ease-out"
+                style={{
+                  width: searchStage === "connecting" ? "10%" :
+                         searchStage === "scanning" ? "35%" :
+                         searchStage === "retrieving" ? "65%" :
+                         searchStage === "processing" ? "85%" : "100%"
+                }}
+              />
+            </div>
+
+            <div className="px-8 py-10">
+              {/* Elapsed time */}
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#5b6949] animate-pulse" />
+                  <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Searching LinkedIn</span>
+                </div>
+                <span className="text-xs font-mono text-zinc-400">
+                  {Math.floor(searchElapsed / 60)}:{(searchElapsed % 60).toString().padStart(2, "0")}
+                </span>
+              </div>
+
+              {/* Stage indicators */}
+              <div className="space-y-4">
+                {SEARCH_STAGES.map((stage, idx) => {
+                  const stageIdx = SEARCH_STAGES.findIndex((s) => s.id === searchStage);
+                  const isActive = stage.id === searchStage;
+                  const isComplete = idx < stageIdx || searchStage === "done";
+                  const isPending = idx > stageIdx && searchStage !== "done";
+                  const StageIcon = stage.icon;
+
+                  return (
+                    <div
+                      key={stage.id}
+                      className={cn(
+                        "flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-500",
+                        isActive && "bg-[#5b6949]/5 border border-[#5b6949]/15",
+                        isComplete && "opacity-60",
+                        isPending && "opacity-30"
+                      )}
+                    >
+                      <div className={cn(
+                        "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500",
+                        isActive && "bg-[#5b6949] shadow-md shadow-[#5b6949]/20",
+                        isComplete && "bg-[#5b6949]/20",
+                        isPending && "bg-zinc-100"
+                      )}>
+                        {isComplete ? (
+                          <CheckCircle2 className="w-4 h-4 text-[#5b6949]" />
+                        ) : isActive ? (
+                          <StageIcon className="w-4 h-4 text-white animate-pulse" />
+                        ) : (
+                          <StageIcon className="w-4 h-4 text-zinc-300" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className={cn(
+                          "text-sm font-semibold transition-colors duration-300",
+                          isActive ? "text-zinc-800" : isComplete ? "text-zinc-500" : "text-zinc-300"
+                        )}>
+                          {stage.label}
+                        </p>
+                        {isActive && (
+                          <div className="mt-1.5 flex gap-1">
+                            <div className="w-1 h-1 rounded-full bg-[#5b6949] animate-bounce" style={{ animationDelay: "0ms" }} />
+                            <div className="w-1 h-1 rounded-full bg-[#5b6949] animate-bounce" style={{ animationDelay: "150ms" }} />
+                            <div className="w-1 h-1 rounded-full bg-[#5b6949] animate-bounce" style={{ animationDelay: "300ms" }} />
+                          </div>
+                        )}
+                      </div>
+                      {isComplete && (
+                        <span className="text-[10px] font-bold text-[#5b6949] uppercase tracking-wider">Done</span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Tip message */}
+              <div className="mt-8 flex items-center gap-2 px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-100">
+                <Sparkles className="w-3.5 h-3.5 text-[#5b6949] flex-shrink-0" />
+                <p className="text-xs text-zinc-400">
+                  {searchElapsed < 15 ? "Connecting to LinkedIn's job database..." :
+                   searchElapsed < 45 ? "Scanning thousands of listings — hang tight..." :
+                   searchElapsed < 90 ? "Almost there! Retrieving detailed job information..." :
+                   "Taking a bit longer than usual. Still working on it..."}
+                </p>
               </div>
             </div>
-            <p className="text-zinc-500 text-sm font-medium">Searching for opportunities...</p>
           </div>
         )}
 
@@ -812,7 +1047,49 @@ export default function JobsPage() {
                 <h2 className="text-lg font-bold text-zinc-900">
                   {jobs.length} result{jobs.length !== 1 ? "s" : ""}
                 </h2>
+                {cachedResultsShown && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#5b6949] bg-[#5b6949]/10 rounded-full">
+                    <Clock className="w-3 h-3" />
+                    Cached
+                  </span>
+                )}
               </div>
+              {cachedResultsShown && (
+                <button
+                  onClick={() => {
+                    setCachedResultsShown(false);
+                    localStorage.removeItem(CACHE_KEY);
+                    setLoading(true);
+                    setSearched(true);
+                    const params = getSearchParams();
+                    const paramsKey = getCacheKey({ ...params, pageNum: 0 });
+                    const progressTimers = startProgressStages();
+                    fetch("/api/apify/jobs", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ ...params, pageNum: 0, count: 100 }),
+                    })
+                      .then((res) => res.json())
+                      .then((data) => {
+                        if (data.success) {
+                          const jobList = data.data ?? [];
+                          setJobs(jobList);
+                          setPageNum(0);
+                          setHasMore(data.pagination?.hasMore ?? false);
+                          saveToCache(paramsKey, jobList, data.pagination?.hasMore ?? false, 0);
+                        }
+                      })
+                      .finally(() => {
+                        stopProgressStages(progressTimers);
+                        setLoading(false);
+                      });
+                  }}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-[#5b6949] transition-colors"
+                >
+                  <Search className="w-3.5 h-3.5" />
+                  Refresh
+                </button>
+              )}
             </div>
 
             {/* Job Cards */}
