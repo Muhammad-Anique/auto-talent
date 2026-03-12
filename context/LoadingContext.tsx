@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 type LoadingContextType = {
   isLoading: boolean;
@@ -11,6 +12,12 @@ const LoadingContext = createContext<LoadingContextType | undefined>(undefined);
 
 export function LoadingProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
+  const pathname = usePathname();
+
+  // Automatically clear loading when route changes
+  useEffect(() => {
+    setIsLoading(false);
+  }, [pathname]);
 
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
