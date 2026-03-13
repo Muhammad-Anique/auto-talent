@@ -415,7 +415,7 @@ export function generateCV3Template(resume: Resume): string {
       <div class="additional-text">
         ${resume.skills && resume.skills.length > 0 ? `
           ${resume.skills.map(skill =>
-            `<strong>${skill.title || 'Skills'}:</strong> ${skill.items.join(', ')}`
+            `<strong>${skill.category || 'Skills'}:</strong> ${skill.items.join(', ')}`
           ).join('<br/>')}
         ` : ''}
       </div>
