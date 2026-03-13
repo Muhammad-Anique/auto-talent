@@ -392,16 +392,6 @@ export function generateCV3Template(resume: Resume): string {
     </div>
     ` : ''}
 
-    <!-- Certifications -->
-    ${resume.certifications && resume.certifications.length > 0 ? `
-    <div class="section">
-      <h2>Certifications</h2>
-      <ul class="cert-list">
-        ${resume.certifications.map(cert => `<li>${cert}</li>`).join('')}
-      </ul>
-    </div>
-    ` : ''}
-
     <!-- Projects -->
     ${resume.projects && resume.projects.length > 0 ? `
     <div class="section">
