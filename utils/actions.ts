@@ -18,15 +18,28 @@ export async function getDashboardData(): Promise<DashboardData> {
   }
 
   try {
-    // Fetch profile data
+    // Fetch profile data and user's profile_pic
     let profile;
-    const { data, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('user_id', user.id)
-      .single();
-    
+    const [profileResult, userResult] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user.id)
+        .single(),
+      supabase
+        .from('users')
+        .select('profile_pic')
+        .eq('id', user.id)
+        .single()
+    ]);
+
+    const { data, error: profileError } = profileResult;
     profile = data;
+
+    // Merge user's profile_pic into profile if profile doesn't have one
+    if (profile && !profile.profile_pic && userResult.data?.profile_pic) {
+      profile.profile_pic = userResult.data.profile_pic;
+    }
 
     // If profile doesn't exist, create one
     if (profileError?.code === 'PGRST116') {

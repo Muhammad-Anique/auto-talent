@@ -125,7 +125,7 @@ export default async function ResumesPage({
               </div>
 
               {/* Button */}
-              {profile && (
+              {profile ? (
                 <CreateBaseResumeDialog profile={profile}>
                   <Button
                     size="lg"
@@ -142,6 +142,23 @@ export default async function ResumesPage({
                     Create Base Resume
                   </Button>
                 </CreateBaseResumeDialog>
+              ) : (
+                <Link href="/dashboard/resume-builder">
+                  <Button
+                    size="lg"
+                    className={cn(
+                      "inline-flex items-center gap-2",
+                      "rounded-full text-gray-800 font-medium px-8 py-3",
+                      "transition-all duration-500",
+                      "bg-[#5b6949]",
+                      "text-white hover:shadow-xl hover:shadow-[#5b6949]/25",
+                      "hover:-translate-y-1 hover:scale-105",
+                    )}
+                  >
+                    <Plus className="w-5 h-5" />
+                    Create Base Resume
+                  </Button>
+                </Link>
               )}
             </div>
           </div>
@@ -164,7 +181,7 @@ export default async function ResumesPage({
                     </p>
                   </div>
                 </div>
-                {profile && (
+                {profile ? (
                   <CreateBaseResumeDialog profile={profile}>
                     <Button
                       className={cn(
@@ -180,6 +197,22 @@ export default async function ResumesPage({
                       Create Base Resume
                     </Button>
                   </CreateBaseResumeDialog>
+                ) : (
+                  <Link href="/dashboard/resume-builder">
+                    <Button
+                      className={cn(
+                        "inline-flex items-center justify-center gap-2",
+                        "rounded-full text-sm font-medium",
+                        "transition-all duration-300",
+                        "bg-zinc-900 hover:bg-zinc-800",
+                        "text-white hover:shadow-lg",
+                        "h-10 px-6",
+                      )}
+                    >
+                      <Plus className="w-4 h-4" />
+                      Create Base Resume
+                    </Button>
+                  </Link>
                 )}
               </div>
 

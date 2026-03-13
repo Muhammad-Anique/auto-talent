@@ -37,9 +37,13 @@ const CoverLettersPage = () => {
   const { setIsLoading } = useLoading();
 
   const fetchCoverLetters = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     const { data, error } = await supabase
       .from("cover_letters")
       .select("*")
+      .eq("user_id", user.id)
       .order("created_at", { ascending: false });
 
     if (data) {

@@ -25,23 +25,23 @@ const CoverLettersPage = () => {
   const { setIsLoading } = useLoading();
 
   const fetchEmails = async () => {
-    const { data, error } = await supabase.from("email_hr").select("*");
-    console.log("Fetched Emails:", data, error);
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from("email_hr")
+      .select("*")
+      .eq("user_id", user.id);
 
     if (error) {
       setError("Failed to fetch emails");
     } else {
-      const parsedData = data.map((email: any) => {
-        // The content is already a string, no need for complex parsing
-        return {
-          id: email.id,
-          title: email.title,
-          subject: email.subject,
-          content: email.content || "",
-        };
-      });
-
-      console.log("Parsed Emails:", parsedData);
+      const parsedData = data.map((email: any) => ({
+        id: email.id,
+        title: email.title,
+        subject: email.subject,
+        content: email.content || "",
+      }));
       setEmails(parsedData as Email[]);
     }
   };

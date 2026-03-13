@@ -41,6 +41,17 @@ export function ResumeEditorClient({
   const hasAttemptedCoverLetter = useRef(false);
   const hasAttemptedFollowUp = useRef(false);
 
+  // Auto-apply profile pic to resume if resume doesn't have one
+  useEffect(() => {
+    const DEFAULT_PIC = 'https://gxvrkmueqemyudmnonji.supabase.co/storage/v1/object/public/autotalent_images/profile_pic.png';
+    const resumePic = state.resume.profile_pic;
+    const profilePic = profile?.profile_pic;
+
+    if ((!resumePic || resumePic === DEFAULT_PIC) && profilePic && profilePic !== DEFAULT_PIC) {
+      dispatch({ type: 'UPDATE_FIELD', field: 'profile_pic', value: profilePic });
+    }
+  }, [profile?.profile_pic]);
+
   // Single job fetching effect
   useEffect(() => {
     async function fetchJob() {

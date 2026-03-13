@@ -21,7 +21,7 @@ export async function getResumeById(resumeId: string): Promise<{ resume: Resume;
   }
 
   try {
-    const [resumeResult, profileResult] = await Promise.all([
+    const [resumeResult, profileResult, userResult] = await Promise.all([
       supabase
         .from('resumes')
         .select('*')
@@ -32,6 +32,11 @@ export async function getResumeById(resumeId: string): Promise<{ resume: Resume;
         .from('profiles')
         .select('*')
         .eq('user_id', user.id)
+        .single(),
+      supabase
+        .from('users')
+        .select('profile_pic')
+        .eq('id', user.id)
         .single()
     ]);
 
@@ -43,9 +48,16 @@ export async function getResumeById(resumeId: string): Promise<{ resume: Resume;
       throw new Error('Profile not found');
     }
 
-    return { 
-      resume: resumeResult.data, 
-      profile: profileResult.data 
+    const profile = profileResult.data;
+
+    // Merge user's profile_pic into profile if profile doesn't have one
+    if (!profile.profile_pic && userResult.data?.profile_pic) {
+      profile.profile_pic = userResult.data.profile_pic;
+    }
+
+    return {
+      resume: resumeResult.data,
+      profile
     };
   } catch (error) {
     throw error;
@@ -181,6 +193,7 @@ export async function createBaseResume(
     website: importOption === 'import-resume' ? selectedContent?.website || '' : importOption === 'fresh' ? '' : profile?.website || '',
     linkedin_url: importOption === 'import-resume' ? selectedContent?.linkedin_url || '' : importOption === 'fresh' ? '' : profile?.linkedin_url || '',
     github_url: importOption === 'import-resume' ? selectedContent?.github_url || '' : importOption === 'fresh' ? '' : profile?.github_url || '',
+    profile_pic: importOption === 'fresh' ? undefined : profile?.profile_pic || undefined,
     work_experience: (importOption === 'import-profile' || importOption === 'import-resume') && selectedContent 
       ? selectedContent.work_experience
       : [],
@@ -288,6 +301,7 @@ export async function createTailoredResume(
     website: baseResume.website,
     linkedin_url: baseResume.linkedin_url,
     github_url: baseResume.github_url,
+    profile_pic: baseResume.profile_pic,
     document_settings: baseResume.document_settings,
     section_configs: baseResume.section_configs,
     section_order: baseResume.section_order,
