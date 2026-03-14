@@ -155,6 +155,8 @@
     "mostPopular": "Mest populär",
     "perMonth": "/månad",
     "per3Months": "/3 månader",
+    "perForever": "för alltid",
+    "perOneTime": "engångsbetalning",
     "getStarted": "Kom igång",
     "tiers": {
       "small": {

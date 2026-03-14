@@ -155,6 +155,8 @@
     "mostPopular": "الأكثر شعبية",
     "perMonth": "/شهرياً",
     "per3Months": "/3 أشهر",
+    "perForever": "للأبد",
+    "perOneTime": "دفعة واحدة",
     "getStarted": "ابدأ الآن",
     "tiers": {
       "small": {
