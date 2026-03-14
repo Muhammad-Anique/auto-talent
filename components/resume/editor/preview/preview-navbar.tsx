@@ -2,7 +2,7 @@
 
 import { Resume } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { Download, Save, ZoomIn, ZoomOut, FileText, Palette, Lock } from "lucide-react";
+import { Download, Save, ZoomIn, ZoomOut, FileText, Palette, Lock, Layers } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { pdf } from '@react-pdf/renderer';
 import { ResumePDFDocument } from "./resume-pdf-document";
@@ -19,6 +19,7 @@ import {
 import { TextImport } from "../../text-import";
 import { recordUsage, checkCanPerformAction } from "@/utils/actions/subscriptions/usage";
 import { useRouter } from "next/navigation";
+import { CV_TEMPLATES } from "@/lib/cv-templates/template-registry";
 
 interface PreviewNavbarProps {
   resume: Resume;
@@ -327,6 +328,55 @@ export function PreviewNavbar({
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
+          {/* Template Switcher — only shown in Designed mode */}
+          {activeTab === 'designed' && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className={buttonStyle}>
+                  <Layers className="w-4 h-4 mr-2" />
+                  Template
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-60 bg-white border-2 border-zinc-200 shadow-lg p-2">
+                <DropdownMenuLabel className="text-xs font-semibold text-zinc-500 uppercase tracking-wide px-2 pb-2">
+                  Choose a template
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="grid grid-cols-1 gap-1 mt-1">
+                  {CV_TEMPLATES.map((template) => {
+                    const isActive = (resume.designed_template_id || 'CV1') === template.id;
+                    return (
+                      <button
+                        key={template.id}
+                        onClick={() => onResumeChange('designed_template_id', template.id)}
+                        className={cn(
+                          "flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-left transition-all duration-150",
+                          isActive
+                            ? "bg-[#5b6949]/10 border border-[#5b6949]/30"
+                            : "hover:bg-zinc-50 border border-transparent"
+                        )}
+                      >
+                        <div
+                          className="w-5 h-5 rounded-full shrink-0 border-2 border-white shadow-sm"
+                          style={{ backgroundColor: template.color }}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className={cn("text-xs font-semibold truncate", isActive ? "text-[#5b6949]" : "text-zinc-800")}>
+                            {template.name}
+                          </div>
+                          <div className="text-[10px] text-zinc-400 truncate">{template.description.split(',')[0]}</div>
+                        </div>
+                        {isActive && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#5b6949] shrink-0" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+
           {/* Import Button */}
           <TextImport
             resume={resume}

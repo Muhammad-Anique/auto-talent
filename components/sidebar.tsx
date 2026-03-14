@@ -51,6 +51,11 @@ export default function Sidebar() {
       icon: <Home className="w-6 h-6 mr-3" />,
     },
     {
+      name: "AI Agent",
+      href: "/dashboard/agent",
+      icon: <Brain className="w-6 h-6 mr-3" />,
+    },
+    {
       name: "Resume Builder",
       href: "/dashboard/resumes",
       icon: <FileText className="w-6 h-6 mr-3" />,

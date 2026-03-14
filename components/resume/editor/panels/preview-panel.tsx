@@ -24,7 +24,7 @@ export function PreviewPanel({
   resume,
   onResumeChange,
   width,
-  selectedTemplateId = 'CV-11eu400-3',
+  selectedTemplateId = 'CV1',
 }: PreviewPanelProps) {
   const [activeTab, setActiveTab] = useState<'designed' | 'simple'>('designed');
   const [zoom, setZoom] = useState(1);

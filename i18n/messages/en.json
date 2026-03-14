@@ -154,40 +154,41 @@
     "description": "Start free and scale as you grow. All plans include our core features with no hidden fees.",
     "mostPopular": "Most Popular",
     "perMonth": "/month",
-    "per3Months": "/3 months",
+    "perForever": "forever",
+    "perOneTime": "one-time",
     "getStarted": "Get Started",
     "tiers": {
       "small": {
-        "name": "Small",
-        "price": "$49",
-        "description": "Perfect for getting started",
+        "name": "Free",
+        "price": "$0",
+        "description": "Perfect for trying out the platform",
         "features": [
-          "Intelligent Resume & CV builder",
-          "Apply to 100 jobs/month",
-          "AI-Powered Job Matching",
-          "Interview Assistant"
+          "1 CV download",
+          "1 cover letter download",
+          "10 job applications",
+          "Full CV builder access"
         ]
       },
       "starter": {
-        "name": "Starter",
-        "price": "$99",
-        "description": "For serious job seekers",
+        "name": "Pro",
+        "price": "$19",
+        "description": "Everything unlimited for serious job seekers",
         "features": [
-          "Intelligent Resume & CV builder",
-          "Apply to 250 jobs/month",
-          "AI-Powered Job Matching",
-          "Interview Assistant"
+          "Unlimited CV downloads",
+          "Unlimited cover letters",
+          "Unlimited job applications",
+          "All platform features"
         ]
       },
       "pro": {
-        "name": "Pro",
-        "price": "$199",
-        "description": "Best value for 3 months",
+        "name": "Lifetime",
+        "price": "$149",
+        "description": "One payment, unlimited forever",
         "features": [
-          "Intelligent Resume & CV builder",
-          "Apply to 250 jobs/month",
-          "AI-Powered Job Matching",
-          "Interview Assistant"
+          "Everything in Pro, forever",
+          "Smart Apply (coming soon)",
+          "All future features included",
+          "Priority support"
         ]
       }
     }

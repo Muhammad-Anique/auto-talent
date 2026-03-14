@@ -9,6 +9,7 @@ export function TestimonialsSection() {
       name: "Alex R",
       role: "Recent Graduate",
       avatar: "AR",
+      avatarImg: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
       rating: 5,
       text: "AutoTalent was a lifesaver! I got hired within 3 weeks of using the auto-apply feature. Absolute game-changer for my job search.",
@@ -20,6 +21,7 @@ export function TestimonialsSection() {
       name: "Sarah M",
       role: "Marketing Professional",
       avatar: "SM",
+      avatarImg: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
       rating: 5,
       text: "Like magic! I applied to 200+ jobs in one click and landed 5 interviews. AutoTalent completely transformed my job hunt.",
@@ -31,6 +33,7 @@ export function TestimonialsSection() {
       name: "James L",
       role: "Software Engineer",
       avatar: "JL",
+      avatarImg: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
       rating: 5,
       text: "The AI interview assistant is incredible. I felt so prepared and confident. Got my dream job at a top tech company!",
@@ -42,6 +45,7 @@ export function TestimonialsSection() {
       name: "Emily K",
       role: "Career Changer",
       avatar: "EK",
+      avatarImg: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-pink-400 to-pink-500",
       rating: 5,
       text: "Switching careers felt impossible until I found AutoTalent. The resume builder created a perfect CV that got me hired fast!",
@@ -53,6 +57,7 @@ export function TestimonialsSection() {
       name: "Michael T",
       role: "Project Manager",
       avatar: "MT",
+      avatarImg: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-indigo-400 to-indigo-500",
       rating: 5,
       text: "Best investment for my career. AutoTalent's tools are a total game-changer. Highly recommend to anyone job hunting!",
@@ -65,6 +70,7 @@ export function TestimonialsSection() {
       name: "Erik S",
       role: "Nyexaminerad",
       avatar: "ES",
+      avatarImg: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
       rating: 5,
       text: "AutoTalent var en livräddare! Fick jobb inom två veckor. En total game-changer för mitt jobbsökande.",
@@ -76,6 +82,7 @@ export function TestimonialsSection() {
       name: "Anna L",
       role: "Marknadsförare",
       avatar: "AL",
+      avatarImg: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
       rating: 5,
       text: "Som magi! Sökte 150 jobb med ett klick och fick 4 intervjuer. Helt fantastiskt verktyg!",
@@ -87,6 +94,7 @@ export function TestimonialsSection() {
       name: "Johan K",
       role: "Systemutvecklare",
       avatar: "JK",
+      avatarImg: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
       rating: 5,
       text: "AI-intervjuassistenten är otrolig. Kände mig superförberedd. Fick mitt drömjobb tack vare AutoTalent!",
@@ -98,6 +106,7 @@ export function TestimonialsSection() {
       name: "Lisa M",
       role: "Projektledare",
       avatar: "LM",
+      avatarImg: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-pink-400 to-pink-500",
       rating: 5,
       text: "Bästa investeringen för min karriär. Blev anställd på drömföretaget efter bara en månad!",
@@ -109,6 +118,7 @@ export function TestimonialsSection() {
       name: "Oscar N",
       role: "Dataanalytiker",
       avatar: "ON",
+      avatarImg: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-teal-400 to-teal-500",
       rating: 5,
       text: "AutoTalent förändrade allt. CV-byggaren skapade ett perfekt CV som öppnade alla dörrar. Magiskt!",
@@ -121,6 +131,7 @@ export function TestimonialsSection() {
       name: "أحمد م",
       role: "خريج جديد",
       avatar: "أم",
+      avatarImg: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-[#5b6949] to-[#5b6949]/80",
       rating: 5,
       text: "AutoTalent كان منقذاً لحياتي المهنية! حصلت على وظيفة خلال أسبوعين. أداة رائعة غيرت قواعد اللعبة!",
@@ -132,6 +143,7 @@ export function TestimonialsSection() {
       name: "فاطمة ع",
       role: "مديرة تسويق",
       avatar: "فع",
+      avatarImg: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-yellow-400 to-yellow-500",
       rating: 5,
       text: "كالسحر! تقدمت لـ 200 وظيفة بنقرة واحدة وحصلت على 6 مقابلات. AutoTalent حول بحثي عن عمل تماماً!",
@@ -143,6 +155,7 @@ export function TestimonialsSection() {
       name: "محمد ك",
       role: "مهندس برمجيات",
       avatar: "مك",
+      avatarImg: "https://images.unsplash.com/photo-1488161628813-04466f872be2?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-emerald-400 to-emerald-500",
       rating: 5,
       text: "مساعد المقابلات الذكي مذهل! شعرت بثقة كبيرة وحصلت على وظيفة أحلامي في شركة تقنية كبرى!",
@@ -154,6 +167,7 @@ export function TestimonialsSection() {
       name: "نورة س",
       role: "محللة بيانات",
       avatar: "نس",
+      avatarImg: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-pink-400 to-pink-500",
       rating: 5,
       text: "أفضل استثمار لمسيرتي المهنية. تم توظيفي بسرعة بفضل أدوات AutoTalent الرائعة!",
@@ -165,6 +179,7 @@ export function TestimonialsSection() {
       name: "خالد ر",
       role: "مدير مشاريع",
       avatar: "خر",
+      avatarImg: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&h=100&fit=crop&crop=faces&auto=format",
       avatarColor: "bg-gradient-to-br from-indigo-400 to-indigo-500",
       rating: 5,
       text: "AutoTalent غير كل شيء! منشئ السيرة الذاتية أنشأ سيرة مثالية فتحت لي كل الأبواب. سحري!",
@@ -220,12 +235,12 @@ export function TestimonialsSection() {
 
               {/* Header */}
               <div className="flex items-start gap-4 mb-4 relative">
-                <div
-                  className={`w-12 h-12 ${testimonial.avatarColor} rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm`}
-                >
-                  <span className="font-bold text-white text-sm">
-                    {testimonial.avatar}
-                  </span>
+                <div className="w-12 h-12 rounded-xl shrink-0 shadow-sm overflow-hidden">
+                  <img
+                    src={testimonial.avatarImg}
+                    alt={testimonial.name}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-bold text-gray-900 mb-0.5">

@@ -44,6 +44,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { PaywallModal } from "@/components/ui/paywall-modal";
 
 interface ResumesSectionProps {
   type: "base" | "tailored";
@@ -102,6 +103,7 @@ export function ResumesSection({
     currentPage: 1,
     itemsPerPage: 7,
   });
+  const [paywallOpen, setPaywallOpen] = useState(false);
 
   const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
   const endIndex = startIndex + pagination.itemsPerPage;
@@ -114,177 +116,112 @@ export function ResumesSection({
     }));
   }
 
-  // Create Resume Card Component
-  const CreateResumeCard = () => (
-    <CreateResumeDialog
-      type={type}
-      profile={profile}
-      {...(type === "tailored" && { baseResumes })}
-    >
-      <button
-        className={cn(
-          "aspect-[8.5/11] rounded-lg",
-          "relative overflow-hidden",
-          "border-2 border-dashed transition-all duration-500",
-          "group/new-resume flex flex-col items-center justify-center gap-4",
-          type === "base"
-            ? "border-blue-300/70 hover:border-blue-400"
-            : "border-[#5b6949]/70 hover:border-[#5b6949]/40",
-          type === "base"
-            ? "bg-gradient-to-br from-blue-50/80 via-blue-50/40 to-blue-100/60"
-            : "bg-gradient-to-br from-[#5b6949]/20 via-[#5b6949]/0 to-[#5b6949]/20",
-          "hover:shadow-lg hover:shadow-purple-100/50 hover:-translate-y-1",
-          "after:absolute after:inset-0 after:bg-gradient-to-br",
-          type === "base"
-            ? "after:from-[#5b6949]/[0.03] after:to-blue-600/[0.03]"
-            : "after:from-[#5b6949]/[0.03] after:to-[#5b6949]/[0.03]",
-          "after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-500 w-full sm:w-auto mr-8 sm:mr-0",
-        )}
-      >
-        <div
-          className={cn(
-            "relative z-10 flex flex-col items-center",
-            "transform transition-all duration-500",
-            "group-hover/new-resume:scale-105",
-          )}
-        >
-          <div
-            className={cn(
-              "h-12 w-12 rounded-xl",
-              "flex items-center justify-center",
-              "transform transition-all duration-500",
-              "shadow-sm group-hover/new-resume:shadow-md",
-              type === "base"
-                ? "bg-gradient-to-br from-white to-white"
-                : "bg-gradient-to-br from-white to-white",
-              "group-hover/new-resume:scale-110",
-            )}
-          >
-            <config.icon
-              className={cn(
-                "h-5 w-5 transition-all duration-500",
-                type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
-                "group-hover/new-resume:scale-110",
-              )}
-            />
-          </div>
-
-          <span
-            className={cn(
-              "mt-4 text-sm font-medium",
-              "transition-all duration-500",
-              type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
-              "group-hover/new-resume:font-semibold",
-            )}
-          >
-            Create {type === "base" ? "Base" : "Tailored"} Resume
-          </span>
-
-          <span
-            className={cn(
-              "mt-2 text-xs",
-              "transition-all duration-500 opacity-0",
-              type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
-              "group-hover/new-resume:opacity-70",
-            )}
-          >
-            Click to start
-          </span>
-        </div>
-      </button>
-    </CreateResumeDialog>
-  );
-
-  // Limit Reached Card Component
-  const LimitReachedCard = () => (
-    <Link
-      href="/dashboard/subscription"
+  // Shared card button — always shown
+  const CreateCardButton = ({ onClick }: { onClick?: () => void }) => (
+    <button
+      onClick={onClick}
       className={cn(
-        "group/limit block",
-        "cursor-pointer",
-        "transition-all duration-500",
-        "hover:-translate-y-1",
+        "aspect-[8.5/11] rounded-lg",
+        "relative overflow-hidden",
+        "border-2 border-dashed transition-all duration-500",
+        "group/new-resume flex flex-col items-center justify-center gap-4",
+        type === "base"
+          ? "border-blue-300/70 hover:border-blue-400"
+          : "border-[#5b6949]/70 hover:border-[#5b6949]/40",
+        type === "base"
+          ? "bg-linear-to-br from-blue-50/80 via-blue-50/40 to-blue-100/60"
+          : "bg-linear-to-br from-[#5b6949]/20 via-[#5b6949]/0 to-[#5b6949]/20",
+        "hover:shadow-lg hover:shadow-purple-100/50 hover:-translate-y-1",
+        "after:absolute after:inset-0 after:bg-linear-to-br",
+        type === "base"
+          ? "after:from-[#5b6949]/3 after:to-blue-600/3"
+          : "after:from-[#5b6949]/3 after:to-[#5b6949]/3",
+        "after:opacity-0 hover:after:opacity-100 after:transition-opacity after:duration-500 w-full sm:w-auto mr-8 sm:mr-0",
       )}
     >
       <div
         className={cn(
-          "aspect-[8.5/11] rounded-lg",
-          "relative overflow-hidden",
-          "border-2 border-dashed",
-          "flex flex-col items-center justify-center gap-4",
-          "border-amber-600/80",
-          "bg-gradient-to-br from-amber-50/80 via-amber-50/40 to-amber-100/60",
-          "transition-all duration-500",
-          "hover:shadow-xl hover:shadow-amber-200/20",
-          "hover:border-amber-600/90",
-          "after:absolute after:inset-0 after:bg-gradient-to-br",
-          "after:from-amber-600/[0.03] after:to-orange-600/[0.03]",
-          "after:opacity-40 after:transition-opacity after:duration-500",
-          "hover:after:opacity-60",
+          "relative z-10 flex flex-col items-center",
+          "transform transition-all duration-500",
+          "group-hover/new-resume:scale-105",
         )}
       >
         <div
           className={cn(
-            "relative z-10 flex flex-col items-center",
+            "h-12 w-12 rounded-xl",
+            "flex items-center justify-center",
             "transform transition-all duration-500",
-            "group-hover/limit:scale-105",
+            "shadow-sm group-hover/new-resume:shadow-md",
+            "bg-linear-to-br from-white to-white",
+            "group-hover/new-resume:scale-110",
           )}
         >
-          <div
+          <config.icon
             className={cn(
-              "h-12 w-12 rounded-xl",
-              "flex items-center justify-center",
-              "bg-gradient-to-br from-amber-100 to-amber-50",
-              "text-amber-600",
-              "shadow-md",
-              "transition-all duration-500",
-              "group-hover/limit:shadow-lg",
-              "group-hover/limit:bg-gradient-to-br",
-              "group-hover/limit:from-amber-200",
-              "group-hover/limit:to-amber-100",
-              "group-hover/limit:-translate-y-1",
+              "h-5 w-5 transition-all duration-500",
+              type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
+              "group-hover/new-resume:scale-110",
             )}
-          >
-            <config.icon
-              className={cn(
-                "h-5 w-5",
-                "transition-all duration-500",
-                "group-hover/limit:scale-110",
-              )}
-            />
-          </div>
-          <span
-            className={cn(
-              "mt-4 text-sm font-medium",
-              "text-amber-600",
-              "transition-all duration-500",
-              "group-hover/limit:text-amber-700",
-            )}
-          >
-            {type === "base" ? "Base" : "Tailored"} Limit Reached
-          </span>
-          <span
-            className={cn(
-              "mt-2 text-xs",
-              "text-amber-600/70",
-              "underline underline-offset-4",
-              "transition-all duration-300",
-              "group-hover/limit:text-amber-700/90",
-            )}
-          >
-            Upgrade to create more
-          </span>
+          />
         </div>
+
+        <span
+          className={cn(
+            "mt-4 text-sm font-medium",
+            "transition-all duration-500",
+            type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
+            "group-hover/new-resume:font-semibold",
+          )}
+        >
+          Create {type === "base" ? "Base" : "Tailored"} Resume
+        </span>
+
+        <span
+          className={cn(
+            "mt-2 text-xs",
+            "transition-all duration-500 opacity-0",
+            type === "base" ? "text-[#5b6949]/90" : "text-[#5b6949]",
+            "group-hover/new-resume:opacity-70",
+          )}
+        >
+          Click to start
+        </span>
       </div>
-    </Link>
+    </button>
   );
+
+  // Create card — always visible, paywall shown if limit reached
+  const CreateResumeCard = () =>
+    canCreateMore ? (
+      <CreateResumeDialog
+        type={type}
+        profile={profile}
+        {...(type === "tailored" && { baseResumes })}
+      >
+        <CreateCardButton />
+      </CreateResumeDialog>
+    ) : (
+      <>
+        <CreateCardButton onClick={() => setPaywallOpen(true)} />
+        <PaywallModal
+          open={paywallOpen}
+          onClose={() => setPaywallOpen(false)}
+          feature={type === "base" ? "Base Resumes" : "Tailored Resumes"}
+          limitMessage={
+            type === "base"
+              ? "You've reached your free plan limit for Base Resumes. Upgrade to Pro for unlimited resumes and all platform features."
+              : "You've reached your free plan limit for Tailored Resumes. Upgrade to Pro for unlimited tailored resumes, cover letters, and more."
+          }
+        />
+      </>
+    );
 
   return (
     <div className="relative ">
       <div className="flex flex-col gap-4 w-full">
         <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <h2
-            className={`text-2xl sm:text-3xl font-semibold tracking-tight bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent`}
+            className={`text-2xl sm:text-3xl font-semibold tracking-tight bg-linear-to-r ${config.gradient} bg-clip-text text-transparent`}
           >
             {type === "base" ? "Base" : "Tailored"} Resumes
           </h2>
@@ -387,15 +324,9 @@ export function ResumesSection({
         {/* Mobile View */}
         <div className="md:hidden w-full space-y-6">
           {/* Mobile Create Resume Button Row */}
-          {canCreateMore ? (
-            <div className="px-2 w-full  flex">
-              <CreateResumeCard />
-            </div>
-          ) : (
-            <div className="px-4 w-full">
-              <LimitReachedCard />
-            </div>
-          )}
+          <div className="px-2 w-full flex">
+            <CreateResumeCard />
+          </div>
 
           {/* Mobile Resumes Carousel */}
           {paginatedResumes.length > 0 && (
@@ -501,7 +432,7 @@ export function ResumesSection({
 
         {/* Desktop Grid View */}
         <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-          {canCreateMore ? <CreateResumeCard /> : <LimitReachedCard />}
+          <CreateResumeCard />
 
           {paginatedResumes.map((resume) => (
             <div key={resume.id} className="group relative">

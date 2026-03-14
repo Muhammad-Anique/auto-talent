@@ -106,7 +106,7 @@ export function ResumeEditorActions({
 
           {/* Template Selector */}
           <DesignedTemplateSelector
-            currentTemplateId={resume.designed_template_id || 'CV-11eu400-3'}
+            currentTemplateId={resume.designed_template_id || 'CV1'}
             onTemplateSelect={(templateId) => {
               onResumeChange('designed_template_id', templateId);
               toast({
