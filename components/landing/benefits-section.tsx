@@ -9,6 +9,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useLocale } from "@/components/providers/locale-provider";
+import Link from "next/link";
 
 const benefitsData = [
   {
@@ -163,10 +164,12 @@ export function BenefitsSection() {
             <p className="text-white/90 text-lg mb-8 max-w-2xl mx-auto">
               {t("benefits.cta.description")}
             </p>
-            <button className="bg-white text-[#5b6949] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 mx-auto shadow-xl hover:shadow-2xl hover:scale-105">
-              {t("benefits.cta.button")}
-              <ArrowRight className="w-5 h-5" />
-            </button>
+            <Link href="/signin">
+              <button className="bg-white text-[#5b6949] px-8 py-4 rounded-xl font-bold hover:bg-gray-100 transition-all duration-300 flex items-center gap-2 mx-auto shadow-xl hover:shadow-2xl hover:scale-105">
+                {t("benefits.cta.button")}
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -19,7 +19,6 @@ import {
   PinOff,
   BrainCircuitIcon,
   CreditCard,
-  Settings,
 } from "lucide-react";
 import { useState } from "react";
 import React from "react";
@@ -89,11 +88,6 @@ export default function Sidebar() {
       name: "Billing",
       href: "/dashboard/billing",
       icon: <CreditCard className="w-6 h-6 mr-3" />,
-    },
-    {
-      name: "Settings",
-      href: "/dashboard/settings",
-      icon: <Settings className="w-6 h-6 mr-3" />,
     },
   ];
 

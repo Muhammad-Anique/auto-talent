@@ -3,6 +3,7 @@
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/providers/locale-provider";
+import Link from "next/link";
 
 interface PricingFeature {
   text: string;
@@ -175,16 +176,18 @@ export function PricingSection() {
                 </ul>
 
                 {/* CTA Button */}
-                <button
-                  className={cn(
-                    "w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300",
-                    tier.popular
-                      ? "bg-gradient-to-r from-[#5b6949] to-[#5b6949] text-white hover:from-[#5b6949]/90 hover:to-[#5b6949]/90 shadow-lg hover:shadow-xl"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200",
-                  )}
-                >
-                  {tier.buttonText}
-                </button>
+                <Link href="/signin" className="block w-full">
+                  <button
+                    className={cn(
+                      "w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300",
+                      tier.popular
+                        ? "bg-gradient-to-r from-[#5b6949] to-[#5b6949] text-white hover:from-[#5b6949]/90 hover:to-[#5b6949]/90 shadow-lg hover:shadow-xl"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200",
+                    )}
+                  >
+                    {tier.buttonText}
+                  </button>
+                </Link>
               </div>
             </div>
           ))}
