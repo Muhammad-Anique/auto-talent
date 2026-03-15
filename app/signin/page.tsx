@@ -15,16 +15,19 @@ function SignInForm() {
   const [success, setSuccess] = useState(false);
   const [signInMode, setSignInMode] = useState<"password" | "magic">("password");
 
+  const plan = searchParams.get("plan");
+  const postAuthPath = plan ? "/dashboard/subscription" : "/dashboard";
+
   // Redirect to dashboard if already signed in
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
       if (data.session?.user) {
-        router.push("/dashboard");
+        router.push(postAuthPath);
       }
     };
     checkSession();
-  }, [router]);
+  }, [router, postAuthPath]);
 
   // Check for error from callback
   useEffect(() => {
@@ -49,8 +52,7 @@ function SignInForm() {
       setError(signInError.message);
       setLoading(false);
     } else {
-      // Redirect to dashboard
-      router.push("/dashboard");
+      router.push(postAuthPath);
     }
   };
 
@@ -62,7 +64,7 @@ function SignInForm() {
     // Magic link sign in
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
     // Ensure we have a full URL with protocol and correct callback path
-    const redirectTo = `${baseUrl}/auth/callback?next=/dashboard`;
+    const redirectTo = `${baseUrl}/auth/callback?next=${encodeURIComponent(postAuthPath)}`;
 
     const { error: signInError, data } = await supabase.auth.signInWithOtp({
       email,
@@ -84,7 +86,7 @@ function SignInForm() {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    const redirectTo = `${baseUrl}/auth/callback?next=/dashboard`;
+    const redirectTo = `${baseUrl}/auth/callback?next=${encodeURIComponent(postAuthPath)}`;
     const { error: signInError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo },

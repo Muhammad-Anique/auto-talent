@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { countResumes } from "@/utils/actions/resumes/actions";
+import { getSubscriptionStatus } from "@/utils/actions/subscriptions/actions";
 import { User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -96,18 +97,17 @@ export default async function Home({
     tailoredDirection,
   );
 
-  // Check if user is on Pro plan
-  const isProPlan = true;
+  // Check if user is on Pro/Lifetime plan
+  const subscription = await getSubscriptionStatus();
+  const isProPlan = subscription.plan !== "free";
 
   // Count resumes for base and tailored sections
   const baseResumesCount = await countResumes("base");
   const tailoredResumesCount = await countResumes("tailored");
-  // console.log(baseResumesCount, tailoredResumesCount);
-  // console.log(isProPlan);
 
-  // Free plan limits
-  const canCreateBase = isProPlan || baseResumesCount < 2;
-  const canCreateTailored = isProPlan || tailoredResumesCount < 4;
+  // Free plan limits: 1 base resume, 1 tailored resume
+  const canCreateBase = isProPlan || baseResumesCount < 1;
+  const canCreateTailored = isProPlan || tailoredResumesCount < 1;
 
   // Display a friendly message if no profile exists
   if (!profile) {

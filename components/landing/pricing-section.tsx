@@ -18,6 +18,7 @@ interface PricingTier {
   buttonText: string;
   gradient: string;
   popular?: boolean;
+  href: string;
 }
 
 const tierStyles = [
@@ -49,6 +50,7 @@ export function PricingSection() {
         { text: t("pricing.tiers.small.features.3"), included: true },
       ],
       buttonText: t("pricing.getStarted"),
+      href: "/signin",
     },
     {
       name: t("pricing.tiers.starter.name"),
@@ -63,6 +65,7 @@ export function PricingSection() {
         { text: t("pricing.tiers.starter.features.3"), included: true },
       ],
       buttonText: t("pricing.getStarted"),
+      href: "/signin?plan=pro",
     },
     {
       name: t("pricing.tiers.pro.name"),
@@ -76,6 +79,7 @@ export function PricingSection() {
         { text: t("pricing.tiers.pro.features.3"), included: true },
       ],
       buttonText: t("pricing.getStarted"),
+      href: "/signin?plan=lifetime",
     },
   ];
   return (
@@ -176,7 +180,7 @@ export function PricingSection() {
                 </ul>
 
                 {/* CTA Button */}
-                <Link href="/signin" className="block w-full">
+                <Link href={tier.href} className="block w-full">
                   <button
                     className={cn(
                       "w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300",
