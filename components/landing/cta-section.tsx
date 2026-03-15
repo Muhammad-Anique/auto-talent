@@ -6,7 +6,7 @@ import { useLocale } from "@/components/providers/locale-provider";
 
 const staticData = {
   button: {
-    href: "/signup",
+    href: "/signin",
   },
   trustpilot: {
     stars: 5,

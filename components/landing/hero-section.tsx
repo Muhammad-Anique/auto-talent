@@ -15,7 +15,7 @@ const staticData = {
     stars: 5,
   },
   cta: {
-    href: "/signup",
+    href: "/signin",
   },
   socialProof: {
     stars: 5,
