@@ -21,6 +21,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
+import { PaywallModal } from "@/components/ui/paywall-modal";
 
 type InterviewItem = {
   id: string;
@@ -40,6 +42,7 @@ export default function InterviewPage() {
   const [jobDescription, setJobDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
   const { setIsLoading: setGlobalLoading } = useLoading();
 
   useEffect(() => {
@@ -107,6 +110,14 @@ export default function InterviewPage() {
     setError(null);
 
     try {
+      // Check credit limit
+      const creditCheck = await checkCanPerformAction('questionnaire');
+      if (!creditCheck.allowed) {
+        setShowPaywall(true);
+        setIsLoading(false);
+        return;
+      }
+
       const res = await fetch("/api/generate-test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -143,6 +154,7 @@ export default function InterviewPage() {
         }
 
         if (insertedData) {
+          await recordUsage('questionnaire');
           setInterviewList((prev) => [insertedData, ...prev]);
           setFilteredInterviewList((prev) => [insertedData, ...prev]);
           toast({
@@ -332,6 +344,13 @@ export default function InterviewPage() {
             </div>
           )}
       </div>
+
+      <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Interview Questions"
+        limitMessage="You've used all your free interview question credits. Upgrade to continue."
+      />
 
       {/* Modal */}
       {showModal && (

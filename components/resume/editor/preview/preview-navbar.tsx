@@ -76,7 +76,7 @@ export function PreviewNavbar({
       }
 
       if (needsCoverLetterCheck) {
-        const clCheck = await checkCanPerformAction('cover_letter_download');
+        const clCheck = await checkCanPerformAction('cover_letter_create');
         if (!clCheck.allowed) {
           toast({
             title: "Download limit reached",
@@ -243,7 +243,7 @@ export function PreviewNavbar({
         await recordUsage('cv_download');
       }
       if (needsCoverLetterCheck) {
-        await recordUsage('cover_letter_download');
+        await recordUsage('cover_letter_create');
       }
 
       toast({

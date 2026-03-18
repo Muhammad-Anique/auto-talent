@@ -119,10 +119,11 @@ export default function BillingPage() {
     }
   };
 
-  const isPaid = plan === "pro" || plan === "lifetime";
+  const isPaid = plan === "pro" || plan === "lifetime" || plan === "starter";
 
   const planConfig = {
     free: { icon: Zap, label: "Free Plan", color: "text-zinc-500", bg: "bg-zinc-100", border: "border-zinc-200" },
+    starter: { icon: Zap, label: "Starter Plan", color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200" },
     pro: { icon: Sparkles, label: "Pro Plan", color: "text-[#5b6949]", bg: "bg-[#5b6949]/10", border: "border-[#5b6949]/20" },
     lifetime: { icon: Crown, label: "Lifetime Plan", color: "text-zinc-900", bg: "bg-zinc-900/10", border: "border-zinc-300" },
   }[plan];

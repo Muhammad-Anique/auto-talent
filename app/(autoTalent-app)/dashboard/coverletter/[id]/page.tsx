@@ -95,7 +95,7 @@ const EditCoverLetterPage: FC = () => {
 
   const handleDownloadPDF = async () => {
     // Paywall check
-    const check = await checkCanPerformAction('cover_letter_download');
+    const check = await checkCanPerformAction('cover_letter_create');
     if (!check.allowed) {
       toast({
         title: "Download limit reached",
@@ -144,7 +144,7 @@ const EditCoverLetterPage: FC = () => {
     // Save the PDF
     doc.save(`${coverLetter.title}.pdf`);
 
-    await recordUsage('cover_letter_download');
+    await recordUsage('cover_letter_create');
     toast({
       title: "Downloaded",
       description: "Cover letter downloaded as PDF successfully!",

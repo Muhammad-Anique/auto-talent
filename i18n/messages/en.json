@@ -159,14 +159,14 @@
     "getStarted": "Get Started",
     "tiers": {
       "small": {
-        "name": "Free",
-        "price": "$0",
-        "description": "Perfect for trying out the platform",
+        "name": "Starter",
+        "price": "$9",
+        "description": "Great for getting started with your job search",
         "features": [
-          "1 CV download",
-          "1 cover letter download",
-          "10 job applications",
-          "Full CV builder access"
+          "5 CV downloads/month",
+          "5 cover letters/month",
+          "50 job applications/month",
+          "50 agent messages/month"
         ]
       },
       "starter": {
@@ -177,7 +177,7 @@
           "Unlimited CV downloads",
           "Unlimited cover letters",
           "Unlimited job applications",
-          "All platform features"
+          "Unlimited agent messages"
         ]
       },
       "pro": {

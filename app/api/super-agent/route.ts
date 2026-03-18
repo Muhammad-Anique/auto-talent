@@ -9,6 +9,7 @@ import { RESUME_FORMATTER_SYSTEM_MESSAGE } from '@/lib/prompts';
 import { sanitizeUnknownStrings } from '@/lib/utils';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { ApifyClient } from 'apify-client';
+import { checkCanPerformAction, recordUsage } from '@/utils/actions/subscriptions/usage';
 
 function buildTools(supabase: SupabaseClient, userId: string) {
   return {
@@ -379,6 +380,13 @@ ${resume_text}`,
       }),
       execute: async ({ keywords, location, job_type, experience_level, remote_only, source = 'linkedin', max_results = 15 }) => {
         try {
+          // Check job search credit
+          const jsCheck = await checkCanPerformAction('job_search');
+          if (!jsCheck.allowed) {
+            return { error: 'Job search credit limit reached. Upgrade your plan to continue searching.' };
+          }
+          await recordUsage('job_search');
+
           const apifyToken = process.env.APIFY_API_TOKEN;
           if (!apifyToken) return { error: 'Apify API token not configured' };
 
@@ -611,6 +619,16 @@ export async function POST(req: Request) {
     if (!user) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
+
+    // Check agent message credit
+    const creditCheck = await checkCanPerformAction('agent_message');
+    if (!creditCheck.allowed) {
+      return new Response(
+        JSON.stringify({ error: 'You\'ve used all your agent message credits. Upgrade your plan to continue.' }),
+        { status: 403, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    await recordUsage('agent_message');
 
     // Load user context
     const userContext = await loadUserContext();
