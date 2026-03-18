@@ -19,6 +19,8 @@ import {
   PinOff,
   BrainCircuitIcon,
   CreditCard,
+  Rocket,
+  BarChart3,
 } from "lucide-react";
 import { useState } from "react";
 import React from "react";
@@ -43,7 +45,7 @@ export default function Sidebar() {
     router.push("/signin");
   };
 
-  const links = [
+  const links: { name: string; href: string; icon: React.ReactElement; badge?: string }[] = [
     {
       name: "Job Hub",
       href: "/dashboard",
@@ -85,6 +87,17 @@ export default function Sidebar() {
       icon: <Bookmark className="w-6 h-6 mr-3" />,
     },
     {
+      name: "Smart Apply",
+      href: "/dashboard/smart-apply",
+      icon: <Rocket className="w-6 h-6 mr-3" />,
+      badge: "Soon",
+    },
+    {
+      name: "Usage",
+      href: "/dashboard/usage",
+      icon: <BarChart3 className="w-6 h-6 mr-3" />,
+    },
+    {
       name: "Billing",
       href: "/dashboard/billing",
       icon: <CreditCard className="w-6 h-6 mr-3" />,
@@ -118,12 +131,12 @@ export default function Sidebar() {
                 }`}
               >
                 <span className="flex items-center justify-center w-10 pl-4">
-                  {React.cloneElement(link.icon, {
+                  {React.cloneElement(link.icon as React.ReactElement<{ className?: string }>, {
                     className: "w-6 h-6 flex-shrink-0",
                   })}
                 </span>
                 <span
-                  className={`ml-2 font-semibold transition-all duration-200 ease-in-out whitespace-nowrap ${
+                  className={`ml-2 font-semibold transition-all duration-200 ease-in-out whitespace-nowrap flex items-center gap-2 ${
                     expanded
                       ? "max-w-xs opacity-100"
                       : "max-w-0 opacity-0 overflow-hidden"
@@ -134,6 +147,11 @@ export default function Sidebar() {
                   }}
                 >
                   {link.name}
+                  {link.badge && expanded && (
+                    <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20">
+                      {link.badge}
+                    </span>
+                  )}
                 </span>
               </a>
             </li>

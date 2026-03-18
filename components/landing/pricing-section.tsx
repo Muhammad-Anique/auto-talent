@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocale } from "@/components/providers/locale-provider";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface PricingFeature {
   text: string;
@@ -36,11 +37,24 @@ const tierStyles = [
 
 export function PricingSection() {
   const { t } = useLocale();
+  const [geo, setGeo] = useState<{ symbol: string; starter: number; pro: number; lifetime: number } | null>(null);
+
+  useEffect(() => {
+    fetch("/api/geo-pricing")
+      .then((r) => r.json())
+      .then((data) => setGeo(data))
+      .catch(() => setGeo({ symbol: "$", starter: 9, pro: 19, lifetime: 149 }));
+  }, []);
+
+  const sym = geo?.symbol ?? "$";
+  const starterPrice = geo ? `${sym}${geo.starter}` : t("pricing.tiers.small.price");
+  const proPrice = geo ? `${sym}${geo.pro}` : t("pricing.tiers.starter.price");
+  const lifetimePrice = geo ? `${sym}${geo.lifetime}` : t("pricing.tiers.pro.price");
 
   const tiers: PricingTier[] = [
     {
       name: t("pricing.tiers.small.name"),
-      price: t("pricing.tiers.small.price"),
+      price: starterPrice,
       description: t("pricing.tiers.small.description"),
       gradient: tierStyles[0].gradient,
       features: [
@@ -50,11 +64,11 @@ export function PricingSection() {
         { text: t("pricing.tiers.small.features.3"), included: true },
       ],
       buttonText: t("pricing.getStarted"),
-      href: "/signin",
+      href: "/signin?plan=starter",
     },
     {
       name: t("pricing.tiers.starter.name"),
-      price: t("pricing.tiers.starter.price"),
+      price: proPrice,
       description: t("pricing.tiers.starter.description"),
       gradient: tierStyles[1].gradient,
       popular: tierStyles[1].popular,
@@ -69,7 +83,7 @@ export function PricingSection() {
     },
     {
       name: t("pricing.tiers.pro.name"),
-      price: t("pricing.tiers.pro.price"),
+      price: lifetimePrice,
       description: t("pricing.tiers.pro.description"),
       gradient: tierStyles[2].gradient,
       features: [

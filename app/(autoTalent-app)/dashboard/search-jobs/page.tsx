@@ -35,6 +35,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
+import { PaywallModal } from "@/components/ui/paywall-modal";
 
 // --- Cache utilities ---
 const CACHE_KEY = "job_search_cache";
@@ -213,6 +215,7 @@ export default function JobsPage() {
   const stageTimerRef = useRef<NodeJS.Timeout | null>(null);
   const elapsedTimerRef = useRef<NodeJS.Timeout | null>(null);
   const [cachedResultsShown, setCachedResultsShown] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
 
   // Dropdown states
   const [showGeoDropdown, setShowGeoDropdown] = useState(false);
@@ -352,6 +355,16 @@ export default function JobsPage() {
         setCachedResultsShown(true);
         return; // Use cache, skip API call
       }
+    }
+
+    // Check job search credit (skip for cache hits and load-more)
+    if (isNewSearch) {
+      const creditCheck = await checkCanPerformAction('job_search');
+      if (!creditCheck.allowed) {
+        setShowPaywall(true);
+        return;
+      }
+      await recordUsage('job_search');
     }
 
     setLoading(true);
@@ -1391,6 +1404,13 @@ export default function JobsPage() {
           </div>
         )}
       </div>
+
+      <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Job Search"
+        limitMessage="You've used all your free job search credits. Upgrade to continue searching."
+      />
     </div>
   );
 }

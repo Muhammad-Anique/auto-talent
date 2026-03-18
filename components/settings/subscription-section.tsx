@@ -63,6 +63,12 @@ export function SubscriptionSection() {
       color: "text-zinc-500",
       bg: "bg-zinc-100",
     },
+    starter: {
+      icon: Zap,
+      label: "Starter Plan",
+      color: "text-blue-600",
+      bg: "bg-blue-50",
+    },
     pro: {
       icon: Sparkles,
       label: "Pro Plan",

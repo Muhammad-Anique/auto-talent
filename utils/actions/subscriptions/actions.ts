@@ -52,13 +52,13 @@ export async function getSubscriptionStatus(): Promise<{
     };
   }
 
-  // Check if pro subscription is still active
+  // Check if pro or starter subscription is still active
   if (
-    subscription.plan_type === "pro" &&
+    (subscription.plan_type === "pro" || subscription.plan_type === "starter") &&
     subscription.subscription_status === "active"
   ) {
     return {
-      plan: "pro",
+      plan: subscription.plan_type as PlanType,
       status: subscription.subscription_status,
       currentPeriodEnd: subscription.current_period_end,
       cancelAtPeriodEnd: subscription.cancel_at_period_end ?? false,

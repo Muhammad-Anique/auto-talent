@@ -17,6 +17,8 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
+import { PaywallModal } from "@/components/ui/paywall-modal";
 
 interface CoverLetter {
   id: string;
@@ -34,6 +36,7 @@ const CoverLettersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
   const { setIsLoading } = useLoading();
 
   const fetchCoverLetters = async () => {
@@ -87,6 +90,14 @@ const CoverLettersPage = () => {
       setLoading(true);
       setError(null);
 
+      // Check credit limit
+      const creditCheck = await checkCanPerformAction('cover_letter_create');
+      if (!creditCheck.allowed) {
+        setShowPaywall(true);
+        setLoading(false);
+        return;
+      }
+
       // Get current user
       const {
         data: { user },
@@ -126,6 +137,7 @@ const CoverLettersPage = () => {
         throw new Error("Failed to save cover letter to Supabase");
       }
 
+      await recordUsage('cover_letter_create');
       await fetchCoverLetters();
       setIsModalOpen(false);
     } catch (err) {
@@ -306,6 +318,13 @@ const CoverLettersPage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateCoverLetter}
+      />
+
+      <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Cover Letters"
+        limitMessage="You've used all your free cover letter credits. Upgrade to continue creating cover letters."
       />
     </div>
   );

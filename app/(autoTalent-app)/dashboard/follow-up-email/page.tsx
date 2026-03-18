@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Mail, Plus, Sparkles, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
+import { PaywallModal } from "@/components/ui/paywall-modal";
 
 interface Email {
   id: string;
@@ -22,6 +24,7 @@ const CoverLettersPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
   const { setIsLoading } = useLoading();
 
   const fetchEmails = async () => {
@@ -60,6 +63,14 @@ const CoverLettersPage = () => {
       setLoading(true);
       setError(null);
 
+      // Check credit limit
+      const creditCheck = await checkCanPerformAction('follow_up_email');
+      if (!creditCheck.allowed) {
+        setShowPaywall(true);
+        setLoading(false);
+        return;
+      }
+
       const {
         data: { user },
         error: userError,
@@ -93,6 +104,7 @@ const CoverLettersPage = () => {
         throw new Error("Failed to save email to Supabase");
       }
 
+      await recordUsage('follow_up_email');
       await fetchEmails();
       setIsModalOpen(false);
     } catch (err) {
@@ -261,6 +273,13 @@ const CoverLettersPage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateCoverLetter}
+      />
+
+      <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Follow-Up Emails"
+        limitMessage="You've used all your free follow-up email credits. Upgrade to continue."
       />
     </div>
   );

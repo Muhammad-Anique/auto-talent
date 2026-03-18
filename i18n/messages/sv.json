@@ -154,42 +154,41 @@
     "description": "Börja gratis och skala när du växer. Alla planer inkluderar våra kärnfunktioner utan dolda avgifter.",
     "mostPopular": "Mest populär",
     "perMonth": "/månad",
-    "per3Months": "/3 månader",
     "perForever": "för alltid",
     "perOneTime": "engångsbetalning",
     "getStarted": "Kom igång",
     "tiers": {
       "small": {
-        "name": "Liten",
-        "price": "$49",
-        "description": "Perfekt för att komma igång",
+        "name": "Starter",
+        "price": "$9",
+        "description": "Perfekt för att komma igång med jobbsökning",
         "features": [
-          "Intelligent CV-byggare",
-          "Ansök till 100 jobb/månad",
-          "AI-driven jobbmatchning",
-          "Intervjuassistent"
+          "5 CV-nedladdningar/månad",
+          "5 personliga brev/månad",
+          "50 jobbansökningar/månad",
+          "50 agentmeddelanden/månad"
         ]
       },
       "starter": {
-        "name": "Start",
-        "price": "$99",
-        "description": "För seriösa jobbsökare",
+        "name": "Pro",
+        "price": "$19",
+        "description": "Allt obegränsat för seriösa jobbsökare",
         "features": [
-          "Intelligent CV-byggare",
-          "Ansök till 250 jobb/månad",
-          "AI-driven jobbmatchning",
-          "Intervjuassistent"
+          "Obegränsade CV-nedladdningar",
+          "Obegränsade personliga brev",
+          "Obegränsade jobbansökningar",
+          "Obegränsade agentmeddelanden"
         ]
       },
       "pro": {
-        "name": "Pro",
-        "price": "$199",
-        "description": "Bästa värdet för 3 månader",
+        "name": "Lifetime",
+        "price": "$149",
+        "description": "En betalning, obegränsat för alltid",
         "features": [
-          "Intelligent CV-byggare",
-          "Ansök till 250 jobb/månad",
-          "AI-driven jobbmatchning",
-          "Intervjuassistent"
+          "Allt i Pro, för alltid",
+          "Smart Apply (kommer snart)",
+          "Alla framtida funktioner inkluderade",
+          "Prioriterad support"
         ]
       }
     }
