@@ -156,9 +156,7 @@ export function PricingSection() {
                       {tier.price}
                     </span>
                     <span className="text-gray-800 sm:text-lg text-gray-500 ml-2">
-                      {tier.name === t("pricing.tiers.small.name")
-                        ? t("pricing.perForever")
-                        : tier.name === t("pricing.tiers.pro.name")
+                      {tier.name === t("pricing.tiers.pro.name")
                         ? t("pricing.perOneTime")
                         : t("pricing.perMonth")}
                     </span>
