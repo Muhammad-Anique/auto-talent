@@ -20,7 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
 import { PaywallModal } from "@/components/ui/paywall-modal";
-import { useTranslations } from "next-intl";
+import { useLocale } from "@/components/providers/locale-provider";
 
 interface CoverLetter {
   id: string;
@@ -30,7 +30,8 @@ interface CoverLetter {
 }
 
 const CoverLettersPage = () => {
-  const t = useTranslations("dashboard.coverLetterPage");
+  const { t: translate } = useLocale();
+  const t = (key: string) => translate(`dashboard.coverLetterPage.${key}`);
   const [coverLetters, setCoverLetters] = useState<CoverLetter[]>([]);
   const [filteredCoverLetters, setFilteredCoverLetters] = useState<
     CoverLetter[]
