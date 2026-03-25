@@ -20,22 +20,30 @@ import { cn } from "@/lib/utils";
 import { createCheckoutSession, getSubscriptionStatus } from "@/utils/actions/subscriptions/actions";
 import Link from "next/link";
 import type { PlanType } from "@/lib/stripe";
+import { useTranslations } from "next-intl";
 
 const proMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID!;
 const proAnnualPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_PRICE_ID!;
 const lifetimePriceId = process.env.NEXT_PUBLIC_STRIPE_LIFETIME_PRICE_ID!;
 
 export default function SubscriptionPage() {
+  const t = useTranslations("dashboard.subscriptionPage");
+  const tCommon = useTranslations("dashboard.common");
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [loading, setLoading] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<PlanType>("free");
   const [pageLoading, setPageLoading] = useState(true);
+  const [geo, setGeo] = useState<{ currency: string; symbol: string; symbolAfter: boolean; pro: number; lifetime: number } | null>(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const sub = await getSubscriptionStatus();
+        const [sub, geoData] = await Promise.all([
+          getSubscriptionStatus(),
+          fetch("/api/geo-pricing").then((r) => r.json()).catch(() => ({ currency: "USD", symbol: "$", symbolAfter: false, pro: 19, lifetime: 149 })),
+        ]);
         setCurrentPlan(sub.plan);
+        setGeo(geoData);
       } catch (e) {
         console.error(e);
       } finally {
@@ -45,10 +53,15 @@ export default function SubscriptionPage() {
     load();
   }, []);
 
+  const formatPrice = (amount: number) => {
+    if (!geo) return `$${amount}`;
+    return geo.symbolAfter ? `${amount} ${geo.symbol}` : `${geo.symbol}${amount}`;
+  };
+
   const handleCheckout = async (priceId: string) => {
     setLoading(priceId);
     try {
-      await createCheckoutSession(priceId);
+      await createCheckoutSession(priceId, geo?.currency || "USD");
     } catch (error) {
       console.error("Checkout error:", error);
     } finally {
@@ -58,11 +71,15 @@ export default function SubscriptionPage() {
 
   const isPaid = currentPlan === "pro" || currentPlan === "lifetime";
 
+  const proMonthly = geo?.pro ?? 19;
+  const proAnnual = proMonthly * 10;
+  const annualSavings = proMonthly * 2;
+
   const plans = [
     {
       name: "Free",
       description: "Perfect for trying out the platform",
-      price: "$0",
+      price: formatPrice(0),
       period: "forever",
       icon: Zap,
       iconBg: "bg-zinc-100",
@@ -82,9 +99,9 @@ export default function SubscriptionPage() {
     {
       name: "Pro",
       description: "Everything unlimited for serious job seekers",
-      price: billing === "monthly" ? "$19" : "$190",
+      price: billing === "monthly" ? formatPrice(proMonthly) : formatPrice(proAnnual),
       period: billing === "monthly" ? "/mo" : "/yr",
-      savings: billing === "annual" ? "Save $38" : null,
+      savings: billing === "annual" ? `Save ${formatPrice(annualSavings)}` : null,
       icon: Sparkles,
       iconBg: "bg-[#5b6949]/10",
       iconColor: "text-[#5b6949]",
@@ -103,7 +120,7 @@ export default function SubscriptionPage() {
     {
       name: "Lifetime",
       description: "One payment, unlimited forever",
-      price: "$149",
+      price: formatPrice(geo?.lifetime ?? 149),
       period: "one-time",
       icon: Crown,
       iconBg: "bg-zinc-900/10",
@@ -127,7 +144,7 @@ export default function SubscriptionPage() {
       <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-zinc-200 border-t-[#5b6949] rounded-full animate-spin" />
-          <span className="text-sm text-zinc-500">Loading plans...</span>
+          <span className="text-sm text-zinc-500">{t("loadingPlans")}</span>
         </div>
       </div>
     );
@@ -144,7 +161,7 @@ export default function SubscriptionPage() {
           className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 transition-colors mb-8 group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          Back to Dashboard
+          {t("backToDashboard")}
         </Link>
 
         {/* Header */}
@@ -152,14 +169,14 @@ export default function SubscriptionPage() {
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#5b6949]/10 border border-[#5b6949]/20 mb-2">
             <Sparkles className="w-3.5 h-3.5 text-[#5b6949]" />
             <span className="text-xs font-semibold text-[#5b6949] uppercase tracking-wide">
-              Pricing
+              {t("badge")}
             </span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 tracking-tight">
-            Supercharge your job search
+            {t("title")}
           </h1>
           <p className="text-zinc-500 max-w-lg mx-auto text-sm sm:text-base">
-            Start free, upgrade when you&apos;re ready. No hidden fees, cancel anytime.
+            {t("subtitle")}
           </p>
 
           {/* Billing Toggle */}
@@ -174,7 +191,7 @@ export default function SubscriptionPage() {
                     : "text-zinc-500 hover:text-zinc-700"
                 )}
               >
-                Monthly
+                {t("monthly")}
               </button>
               <button
                 onClick={() => setBilling("annual")}
@@ -185,7 +202,7 @@ export default function SubscriptionPage() {
                     : "text-zinc-500 hover:text-zinc-700"
                 )}
               >
-                Annual
+                {t("annual")}
                 <span className="text-[10px] font-bold text-[#5b6949] bg-[#5b6949]/10 px-1.5 py-0.5 rounded-full">
                   -17%
                 </span>
@@ -212,7 +229,7 @@ export default function SubscriptionPage() {
               {plan.highlight && !plan.current && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                   <span className="px-4 py-1 rounded-full text-[11px] font-bold bg-[#5b6949] text-white uppercase tracking-wider shadow-sm">
-                    Most Popular
+                    {t("mostPopular")}
                   </span>
                 </div>
               )}
@@ -221,7 +238,7 @@ export default function SubscriptionPage() {
               {plan.current && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                   <span className="px-4 py-1 rounded-full text-[11px] font-bold bg-zinc-900 text-white uppercase tracking-wider shadow-sm">
-                    Your Plan
+                    {t("yourPlan")}
                   </span>
                 </div>
               )}
@@ -308,7 +325,7 @@ export default function SubscriptionPage() {
                   {loading === plan.priceId ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      Processing...
+                      {t("processing")}
                     </div>
                   ) : (
                     <span className="flex items-center justify-center gap-2">
@@ -329,17 +346,17 @@ export default function SubscriptionPage() {
         <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-sm text-zinc-400">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
-            <span>Secure checkout via Stripe</span>
+            <span>{t("secureCheckout")}</span>
           </div>
           <div className="w-1 h-1 rounded-full bg-zinc-300 hidden sm:block" />
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4" />
-            <span>Cancel anytime</span>
+            <span>{t("cancelAnytime")}</span>
           </div>
           <div className="w-1 h-1 rounded-full bg-zinc-300 hidden sm:block" />
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4" />
-            <span>Instant access</span>
+            <span>{t("instantAccess")}</span>
           </div>
         </div>
 
@@ -347,26 +364,26 @@ export default function SubscriptionPage() {
         <div className="mt-16 rounded-2xl border border-zinc-200 bg-white overflow-hidden shadow-sm">
           <div className="px-6 py-5 border-b border-zinc-100 bg-zinc-50/50">
             <h3 className="text-lg font-bold text-zinc-900">
-              Compare all features
+              {t("compareFeatures")}
             </h3>
             <p className="text-sm text-zinc-400 mt-1">
-              See what&apos;s included in each plan
+              {t("seeWhatsIncluded")}
             </p>
           </div>
 
           {/* Column headers */}
           <div className="grid grid-cols-4 px-6 py-3.5 border-b border-zinc-100 bg-zinc-50/30">
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-              Feature
+              {t("feature")}
             </div>
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-400 text-center">
-              Free
+              {t("free")}
             </div>
             <div className="text-xs font-bold uppercase tracking-wider text-[#5b6949] text-center">
-              Pro
+              {t("pro")}
             </div>
             <div className="text-xs font-bold uppercase tracking-wider text-zinc-700 text-center">
-              Lifetime
+              {t("lifetime")}
             </div>
           </div>
 

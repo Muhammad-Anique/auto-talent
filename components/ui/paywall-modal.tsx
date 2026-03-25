@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   Sparkles,
@@ -38,20 +38,38 @@ export function PaywallModal({
 }: PaywallModalProps) {
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [loading, setLoading] = useState<string | null>(null);
+  const [geo, setGeo] = useState<{ currency: string; symbol: string; symbolAfter: boolean; pro: number; lifetime: number } | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      fetch("/api/geo-pricing")
+        .then((r) => r.json())
+        .then((data) => setGeo(data))
+        .catch(() => setGeo({ currency: "USD", symbol: "$", symbolAfter: false, pro: 19, lifetime: 149 }));
+    }
+  }, [open]);
+
+  const formatPrice = (amount: number) => {
+    if (!geo) return `$${amount}`;
+    return geo.symbolAfter ? `${amount} ${geo.symbol}` : `${geo.symbol}${amount}`;
+  };
 
   if (!open) return null;
 
   const handleCheckout = async (priceId: string) => {
     setLoading(priceId);
     try {
-      await createCheckoutSession(priceId);
+      await createCheckoutSession(priceId, geo?.currency || "USD");
     } catch (e) {
       console.error("Checkout error:", e);
       setLoading(null);
     }
   };
 
-  const proPrice = billing === "monthly" ? "$19" : "$190";
+  const proMonthly = geo?.pro ?? 19;
+  const proAnnual = proMonthly * 10;
+  const annualSavings = proMonthly * 2;
+  const proPrice = billing === "monthly" ? formatPrice(proMonthly) : formatPrice(proAnnual);
   const proPeriod = billing === "monthly" ? "/mo" : "/yr";
   const proPriceId = billing === "monthly" ? proMonthlyPriceId : proAnnualPriceId;
 
@@ -165,7 +183,7 @@ export function PaywallModal({
               </div>
               {billing === "annual" && (
                 <span className="inline-block mt-1.5 text-xs font-semibold text-[#5b6949] bg-[#5b6949]/10 px-2 py-0.5 rounded-full">
-                  Save $38
+                  Save {formatPrice(annualSavings)}
                 </span>
               )}
             </div>
@@ -226,7 +244,7 @@ export function PaywallModal({
             <div className="mb-5 pb-4 border-b border-zinc-100">
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-extrabold text-zinc-900">
-                  $149
+                  {formatPrice(geo?.lifetime ?? 149)}
                 </span>
                 <span className="text-sm font-medium text-zinc-400">
                   one-time

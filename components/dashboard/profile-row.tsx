@@ -1,30 +1,47 @@
 'use client';
 
 import { Profile } from "@/lib/types";
-import { Briefcase, GraduationCap, Code, Pencil } from "lucide-react";
+import { Briefcase, GraduationCap, Code, Pencil, Globe, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { useState, useRef, useEffect } from "react";
+import { useLocale } from "@/components/providers/locale-provider";
+import { locales, localeNames, localeFlags } from "@/i18n/config";
 
 interface ProfileRowProps {
   profile: Profile;
 }
 
 export function ProfileRow({ profile }: ProfileRowProps) {
+  const { locale, setLocale, t } = useLocale();
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsLangOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const stats = [
     {
       icon: Briefcase,
-      label: "Experience",
+      label: t("dashboard.profile.experience"),
       count: profile.work_experience.length,
     },
     {
       icon: GraduationCap,
-      label: "Education",
+      label: t("dashboard.profile.education"),
       count: profile.education.length,
     },
     {
       icon: Code,
-      label: "Projects",
+      label: t("dashboard.profile.projects"),
       count: profile.projects.length,
     },
   ];
@@ -56,23 +73,64 @@ export function ProfileRow({ profile }: ProfileRowProps) {
             ))}
           </div>
 
-          {/* Edit Profile Button */}
-          <Link href="/dashboard/profile" className="shrink-0">
-            <Button
-              variant="outline"
-              size="sm"
-              className={cn(
-                "w-full sm:w-auto",
-                "bg-white border-zinc-200 text-zinc-700",
-                "hover:bg-[#5b6949] hover:text-white hover:border-[#5b6949]",
-                "transition-all duration-200",
-                "rounded-lg font-medium text-sm",
+          {/* Actions */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Language Switcher */}
+            <div className="relative" ref={dropdownRef}>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsLangOpen(!isLangOpen)}
+                className={cn(
+                  "bg-white border-zinc-200 text-zinc-700",
+                  "hover:bg-zinc-50 hover:border-zinc-300",
+                  "transition-all duration-200",
+                  "rounded-lg font-medium text-sm",
+                )}
+              >
+                <Globe className="h-3.5 w-3.5 mr-1.5" />
+                <span className="text-base mr-1">{localeFlags[locale]}</span>
+                <ChevronDown className={cn("h-3 w-3 transition-transform", isLangOpen && "rotate-180")} />
+              </Button>
+              {isLangOpen && (
+                <div className="absolute top-full mt-2 right-0 bg-white rounded-lg shadow-lg border border-zinc-200 py-1.5 w-40 z-50">
+                  {locales.map((loc) => (
+                    <button
+                      key={loc}
+                      onClick={() => {
+                        setLocale(loc);
+                        setIsLangOpen(false);
+                      }}
+                      className={cn(
+                        "w-full px-3 py-2 text-left text-sm hover:bg-zinc-50 transition-colors flex items-center gap-2.5",
+                        locale === loc ? "bg-[#5b6949]/10 text-[#5b6949] font-medium" : "text-zinc-700"
+                      )}
+                    >
+                      <span className="text-base">{localeFlags[loc]}</span>
+                      <span>{localeNames[loc]}</span>
+                    </button>
+                  ))}
+                </div>
               )}
-            >
-              <Pencil className="h-3.5 w-3.5 mr-2" />
-              Edit Profile
-            </Button>
-          </Link>
+            </div>
+
+            {/* Edit Profile Button */}
+            <Link href="/dashboard/profile">
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "bg-white border-zinc-200 text-zinc-700",
+                  "hover:bg-[#5b6949] hover:text-white hover:border-[#5b6949]",
+                  "transition-all duration-200",
+                  "rounded-lg font-medium text-sm",
+                )}
+              >
+                <Pencil className="h-3.5 w-3.5 mr-2" />
+                {t("dashboard.profile.editProfile")}
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </div>

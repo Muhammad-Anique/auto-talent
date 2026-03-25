@@ -11,6 +11,7 @@ import { Mail, Plus, Sparkles, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
 import { PaywallModal } from "@/components/ui/paywall-modal";
+import { useTranslations } from "next-intl";
 
 interface Email {
   id: string;
@@ -20,6 +21,7 @@ interface Email {
 }
 
 const CoverLettersPage = () => {
+  const t = useTranslations("dashboard.followUpEmailPage");
   const [emails, setEmails] = useState<Email[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -141,10 +143,10 @@ const CoverLettersPage = () => {
           {/* Content */}
           <div className="space-y-3">
             <h2 className="text-2xl font-semibold text-zinc-900">
-              No Follow-up Emails Yet
+              {t("noEmailsTitle")}
             </h2>
             <p className="text-zinc-600 text-sm leading-relaxed">
-              Create your first professional follow-up email to HR. Stand out from the crowd and increase your chances of getting that interview.
+              {t("noEmailsDescription")}
             </p>
           </div>
 
@@ -152,15 +154,15 @@ const CoverLettersPage = () => {
           <div className="space-y-2 text-left">
             <div className="flex items-center gap-3 text-sm text-zinc-600">
               <div className="w-2 h-2 rounded-full bg-[#5b6949]" />
-              <span>Professional and personalized content</span>
+              <span>{t("benefit1")}</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-zinc-600">
               <div className="w-2 h-2 rounded-full bg-[#5b6949]" />
-              <span>AI-powered tone optimization</span>
+              <span>{t("benefit2")}</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-zinc-600">
               <div className="w-2 h-2 rounded-full bg-[#5b6949]" />
-              <span>Save and manage all your emails</span>
+              <span>{t("benefit3")}</span>
             </div>
           </div>
 
@@ -176,7 +178,7 @@ const CoverLettersPage = () => {
             )}
           >
             <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-            {loading ? "Creating..." : "Create Your First Email"}
+            {loading ? t("creating") : t("createFirst")}
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
           </Button>
         </div>
@@ -198,10 +200,10 @@ const CoverLettersPage = () => {
             </div>
             <div>
               <h1 className="text-3xl font-semibold text-zinc-900">
-                Follow-up Emails
+                {t("title")}
               </h1>
               <p className="text-zinc-600 text-sm mt-1">
-                Professional emails to HR that get you noticed
+                {t("subtitle")}
               </p>
             </div>
           </div>
@@ -219,12 +221,12 @@ const CoverLettersPage = () => {
               )}
             >
               <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-              {loading ? "Creating..." : "New Follow-up Email"}
+              {loading ? t("creating") : t("newEmail")}
             </Button>
 
             {emails.length > 0 && (
               <div className="text-sm text-zinc-500">
-                {emails.length} email{emails.length !== 1 ? 's' : ''} created
+                {emails.length} {emails.length !== 1 ? t("emailsCreated") : t("emailCreated")}
               </div>
             )}
           </div>
@@ -245,7 +247,7 @@ const CoverLettersPage = () => {
           <Card className="p-6 bg-zinc-50 border-zinc-200">
             <div className="flex items-center justify-center gap-3">
               <div className="w-4 h-4 border-2 border-[#5b6949] border-t-transparent rounded-full animate-spin" />
-              <span className="text-zinc-600">Creating your follow-up email...</span>
+              <span className="text-zinc-600">{t("creatingEmail")}</span>
             </div>
           </Card>
         )}
@@ -269,7 +271,7 @@ const CoverLettersPage = () => {
 
       {/* Modal */}
       <CoverLetterFormModal
-        modalTitle="Create New Follow Up Email"
+        modalTitle={t("modalTitle")}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleCreateCoverLetter}
@@ -278,8 +280,8 @@ const CoverLettersPage = () => {
       <PaywallModal
         open={showPaywall}
         onClose={() => setShowPaywall(false)}
-        feature="Follow-Up Emails"
-        limitMessage="You've used all your free follow-up email credits. Upgrade to continue."
+        feature={t("title")}
+        limitMessage={t("paywallMessage")}
       />
     </div>
   );

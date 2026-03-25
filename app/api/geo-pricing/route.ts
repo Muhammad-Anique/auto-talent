@@ -10,15 +10,16 @@ const EUROPEAN_COUNTRIES = new Set([
 interface PricingConfig {
   currency: string;
   symbol: string;
+  symbolAfter: boolean;
   starter: number;
   pro: number;
   lifetime: number;
 }
 
 const PRICING: Record<string, PricingConfig> = {
-  SEK: { currency: "SEK", symbol: "kr", starter: 99, pro: 199, lifetime: 1499 },
-  EUR: { currency: "EUR", symbol: "\u20AC", starter: 9, pro: 19, lifetime: 149 },
-  USD: { currency: "USD", symbol: "$", starter: 9, pro: 19, lifetime: 149 },
+  SEK: { currency: "SEK", symbol: "kr", symbolAfter: true, starter: 99, pro: 199, lifetime: 1499 },
+  EUR: { currency: "EUR", symbol: "€", symbolAfter: false, starter: 9, pro: 19, lifetime: 149 },
+  USD: { currency: "USD", symbol: "$", symbolAfter: false, starter: 9, pro: 19, lifetime: 149 },
 };
 
 export async function GET(req: NextRequest) {

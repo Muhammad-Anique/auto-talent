@@ -11,8 +11,9 @@ import { toast } from "@/hooks/use-toast";
 import { Resume, WorkExperience, Education, Project } from "@/lib/types";
 import { pdf } from '@react-pdf/renderer';
 import { ResumePDFDocument } from "../preview/resume-pdf-document";
-import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
-import { useRouter } from "next/navigation";
+import { shouldWatermark, checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
+import { useState } from "react";
+import { PaywallModal } from "@/components/ui/paywall-modal";
 
 interface ResumeContextMenuProps {
   children: React.ReactNode;
@@ -20,23 +21,23 @@ interface ResumeContextMenuProps {
 }
 
 export function ResumeContextMenu({ children, resume }: ResumeContextMenuProps) {
-  const router = useRouter();
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallMessage, setPaywallMessage] = useState("");
 
   const handleDownloadPDF = async () => {
     try {
-      // Paywall check
+      // Check if user can download CV (has credits)
       const check = await checkCanPerformAction('cv_download');
       if (!check.allowed) {
-        toast({
-          title: "Download limit reached",
-          description: "You've used your free CV download. Upgrade to Pro for unlimited downloads.",
-          variant: "destructive",
-        });
-        router.push("/dashboard/subscription");
+        setPaywallMessage(`You've used all ${check.limit} CV download${check.limit === 1 ? '' : 's'} on your ${check.plan} plan. Upgrade to download more CVs.`);
+        setShowPaywall(true);
         return;
       }
 
-      const blob = await pdf(<ResumePDFDocument resume={resume} />).toBlob();
+      // Check if user should get watermarked documents (free plan)
+      const applyWatermark = await shouldWatermark();
+
+      const blob = await pdf(<ResumePDFDocument resume={resume} withWatermark={applyWatermark} />).toBlob();
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -45,10 +46,15 @@ export function ResumeContextMenu({ children, resume }: ResumeContextMenuProps) 
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+
+      // Record the CV download usage
       await recordUsage('cv_download');
+
       toast({
         title: "Download started",
-        description: "Your resume PDF is being downloaded.",
+        description: applyWatermark
+          ? "Your resume PDF is being downloaded with watermark. Upgrade to remove watermarks."
+          : "Your resume PDF is being downloaded.",
       });
     } catch (error) {
       console.error(error);
@@ -173,26 +179,35 @@ export function ResumeContextMenu({ children, resume }: ResumeContextMenuProps) 
   };
 
   return (
-    <ContextMenu>
-      <ContextMenuTrigger className="w-full h-full">
-        {children}
-      </ContextMenuTrigger>
-      <ContextMenuContent className="w-64">
-        <ContextMenuItem
-          onClick={handleDownloadPDF}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <Download className="w-4 h-4" />
-          <span>Download as PDF</span>
-        </ContextMenuItem>
-        <ContextMenuItem
-          onClick={handleCopyToClipboard}
-          className="flex items-center gap-2 cursor-pointer"
-        >
-          <Copy className="w-4 h-4" />
-          <span>Copy to Clipboard</span>
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <>
+      <ContextMenu>
+        <ContextMenuTrigger className="w-full h-full">
+          {children}
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-64">
+          <ContextMenuItem
+            onClick={handleDownloadPDF}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download as PDF</span>
+          </ContextMenuItem>
+          <ContextMenuItem
+            onClick={handleCopyToClipboard}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <Copy className="w-4 h-4" />
+            <span>Copy to Clipboard</span>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+
+      <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="CV Downloads"
+        limitMessage={paywallMessage}
+      />
+    </>
   );
 } 

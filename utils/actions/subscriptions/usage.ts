@@ -4,8 +4,6 @@ import { createClient } from "@/utils/supabase/server";
 import { getSubscriptionStatus } from "./actions";
 import { PLANS, type ActionType, type PlanType } from "@/lib/stripe";
 
-export type { ActionType };
-
 export async function getUsageCount(actionType: ActionType): Promise<number> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -97,6 +95,13 @@ export async function checkAllCreditsExhausted(): Promise<boolean> {
   }
 
   return true; // All credits exhausted
+}
+
+export async function shouldWatermark(): Promise<boolean> {
+  const subscription = await getSubscriptionStatus();
+  const plan = subscription.plan as PlanType;
+  // Only free users get watermarks, all paid plans (starter, pro, lifetime) get clean downloads
+  return plan === "free";
 }
 
 export async function recordUsage(actionType: ActionType): Promise<{ success: boolean; error?: string }> {

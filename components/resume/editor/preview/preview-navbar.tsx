@@ -17,9 +17,10 @@ import {
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { TextImport } from "../../text-import";
-import { recordUsage, checkCanPerformAction } from "@/utils/actions/subscriptions/usage";
+import { recordUsage, checkCanPerformAction, shouldWatermark } from "@/utils/actions/subscriptions/usage";
 import { useRouter } from "next/navigation";
 import { CV_TEMPLATES } from "@/lib/cv-templates/template-registry";
+import { PaywallModal } from "@/components/ui/paywall-modal";
 
 interface PreviewNavbarProps {
   resume: Resume;
@@ -48,6 +49,9 @@ export function PreviewNavbar({
     coverLetter: false,
     followUpEmail: false
   });
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallFeature, setPaywallFeature] = useState("");
+  const [paywallMessage, setPaywallMessage] = useState("");
 
   const router = useRouter();
 
@@ -58,35 +62,27 @@ export function PreviewNavbar({
 
   const handleDownload = async () => {
     try {
-      // Check paywall for CV downloads
-      const needsCvCheck = downloadOptions.designedResume || downloadOptions.simpleResume;
-      const needsCoverLetterCheck = downloadOptions.coverLetter;
-
-      if (needsCvCheck) {
-        const cvCheck = await checkCanPerformAction('cv_download');
-        if (!cvCheck.allowed) {
-          toast({
-            title: "Download limit reached",
-            description: "You've used your free CV download. Upgrade to Pro for unlimited downloads.",
-            variant: "destructive",
-          });
-          router.push("/dashboard/subscription");
+      // Check if user can download CV (has credits)
+      const isDownloadingResume = downloadOptions.designedResume || downloadOptions.simpleResume;
+      if (isDownloadingResume) {
+        const check = await checkCanPerformAction('cv_download');
+        if (!check.allowed) {
+          setPaywallFeature("CV Downloads");
+          setPaywallMessage(`You've used all ${check.limit} CV download${check.limit === 1 ? '' : 's'} on your ${check.plan} plan. Upgrade to download more CVs.`);
+          setShowPaywall(true);
           return;
         }
       }
 
-      if (needsCoverLetterCheck) {
-        const clCheck = await checkCanPerformAction('cover_letter_create');
-        if (!clCheck.allowed) {
-          toast({
-            title: "Download limit reached",
-            description: "You've used your free cover letter download. Upgrade to Pro for unlimited downloads.",
-            variant: "destructive",
-          });
-          router.push("/dashboard/subscription");
-          return;
-        }
-      }
+      // Check if user should get watermarked documents (free plan)
+      const applyWatermark = await shouldWatermark();
+
+      // Watermark HTML overlay for html2pdf-based documents
+      const watermarkOverlay = applyWatermark ? `
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 60px; color: rgba(0, 0, 0, 0.08); font-weight: bold; font-family: Arial, sans-serif; white-space: nowrap; pointer-events: none; z-index: 1000;">
+          AutoTalent
+        </div>
+      ` : '';
 
       // Download Designed Resume
       if (downloadOptions.designedResume) {
@@ -97,7 +93,7 @@ export function PreviewNavbar({
         const htmlContent = template.generateHTML(resume);
 
         const tempContainer = document.createElement('div');
-        tempContainer.innerHTML = htmlContent;
+        tempContainer.innerHTML = `<div style="position: relative;">${htmlContent}${watermarkOverlay}</div>`;
         document.body.appendChild(tempContainer);
 
         const opt = {
@@ -127,7 +123,7 @@ export function PreviewNavbar({
 
       // Download Simple Resume
       if (downloadOptions.simpleResume) {
-        const blob = await pdf(<ResumePDFDocument resume={resume} />).toBlob();
+        const blob = await pdf(<ResumePDFDocument resume={resume} withWatermark={applyWatermark} />).toBlob();
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -156,11 +152,12 @@ export function PreviewNavbar({
 
         const tempContainer = document.createElement('div');
         tempContainer.innerHTML = `
-          <div style="font-family: 'Arial', sans-serif; width: 100%; margin: 0; padding: 60px; background-color: white;">
+          <div style="font-family: 'Arial', sans-serif; width: 100%; margin: 0; padding: 60px; background-color: white; position: relative;">
             <div style="background-color: #2563eb; color: white; font-size: 18px; font-weight: bold; margin: -60px -60px 40px -60px; padding: 20px; text-align: center; display: flex; justify-content: center; align-items: center; min-height: 60px;">Cover Letter</div>
             <div style="line-height: 1.5; font-size: 11pt; color: #1f2937; width: 100%;">
               ${content.replace(/<p>/g, '<p style="margin-bottom: 1.5em;">')}
             </div>
+            ${watermarkOverlay}
           </div>
         `;
         document.body.appendChild(tempContainer);
@@ -206,11 +203,12 @@ export function PreviewNavbar({
 
         const tempContainer = document.createElement('div');
         tempContainer.innerHTML = `
-          <div style="font-family: 'Arial', sans-serif; width: 100%; margin: 0; padding: 60px; background-color: white;">
+          <div style="font-family: 'Arial', sans-serif; width: 100%; margin: 0; padding: 60px; background-color: white; position: relative;">
             <div style="background-color: #2563eb; color: white; font-size: 18px; font-weight: bold; margin: -60px -60px 40px -60px; padding: 20px; text-align: center; display: flex; justify-content: center; align-items: center; min-height: 60px;">Follow-Up Email</div>
             <div style="line-height: 1.5; font-size: 11pt; color: #1f2937; width: 100%;">
               ${content.replace(/<p>/g, '<p style="margin-bottom: 1.5em;">')}
             </div>
+            ${watermarkOverlay}
           </div>
         `;
         document.body.appendChild(tempContainer);
@@ -238,17 +236,16 @@ export function PreviewNavbar({
         }
       }
 
-      // Record usage after successful download
-      if (needsCvCheck) {
+      // Record CV download usage if a resume was downloaded
+      if (isDownloadingResume) {
         await recordUsage('cv_download');
-      }
-      if (needsCoverLetterCheck) {
-        await recordUsage('cover_letter_create');
       }
 
       toast({
         title: "Download started",
-        description: "Your documents are being downloaded.",
+        description: applyWatermark
+          ? "Your documents are being downloaded with watermark. Upgrade to remove watermarks."
+          : "Your documents are being downloaded.",
       });
     } catch (error) {
       console.error(error);
@@ -459,6 +456,14 @@ export function PreviewNavbar({
           </Button>
         </div>
       </div>
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        open={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature={paywallFeature}
+        limitMessage={paywallMessage}
+      />
     </div>
   );
 }

@@ -33,8 +33,10 @@ import {
 import Link from "next/link";
 import type { PlanType } from "@/lib/stripe";
 import { toast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 export default function BillingPage() {
+  const t = useTranslations("dashboard.billingPage");
   const [plan, setPlan] = useState<PlanType>("free");
   const [status, setStatus] = useState<string | null>(null);
   const [periodEnd, setPeriodEnd] = useState<string | null>(null);
@@ -188,7 +190,7 @@ export default function BillingPage() {
       <div className="min-h-screen bg-[#fafaf9] flex items-center justify-center">
         <div className="flex items-center gap-3">
           <div className="w-5 h-5 border-2 border-zinc-200 border-t-[#5b6949] rounded-full animate-spin" />
-          <span className="text-sm text-zinc-500">Loading billing...</span>
+          <span className="text-sm text-zinc-500">{t("loadingBilling")}</span>
         </div>
       </div>
     );
@@ -207,16 +209,16 @@ export default function BillingPage() {
           className="inline-flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-700 transition-colors mb-8 group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          Back to Dashboard
+          {t("backToDashboard")}
         </Link>
 
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-zinc-900 tracking-tight">
-            Billing & Subscription
+            {t("title")}
           </h1>
           <p className="text-sm text-zinc-500 mt-1">
-            Manage your plan, payment method, and invoices
+            {t("subtitle")}
           </p>
         </div>
 
@@ -226,16 +228,16 @@ export default function BillingPage() {
             <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm font-semibold text-amber-800">
-                You have {unpaidInvoices.length} unpaid invoice{unpaidInvoices.length > 1 ? "s" : ""}
+                {t("unpaidInvoicesTitle", { count: unpaidInvoices.length })}
               </p>
               <p className="text-xs text-amber-700 mt-0.5">
-                Please pay to keep your subscription active.
+                {t("unpaidInvoicesMessage")}
               </p>
             </div>
             {unpaidInvoices[0]?.hosted_invoice_url && (
               <a href={unpaidInvoices[0].hosted_invoice_url} target="_blank" rel="noopener noreferrer">
                 <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white text-xs rounded-lg">
-                  Pay Now
+                  {t("payNow")}
                 </Button>
               </a>
             )}
@@ -404,10 +406,10 @@ export default function BillingPage() {
             <div>
               <h3 className="text-sm font-bold text-zinc-900 flex items-center gap-2">
                 <Receipt className="w-4 h-4 text-zinc-400" />
-                Invoice History
+                {t("invoiceHistory")}
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5">
-                View and download your past invoices
+                {t("viewAndDownload")}
               </p>
             </div>
             {isPaid && (
@@ -427,9 +429,9 @@ export default function BillingPage() {
           {invoices.length === 0 ? (
             <div className="py-12 text-center">
               <Receipt className="w-8 h-8 text-zinc-200 mx-auto mb-3" />
-              <p className="text-sm text-zinc-400">No invoices yet</p>
+              <p className="text-sm text-zinc-400">{t("noInvoices")}</p>
               <p className="text-xs text-zinc-300 mt-1">
-                Invoices will appear here after your first payment
+                {t("invoicesWillAppear")}
               </p>
             </div>
           ) : (
@@ -498,9 +500,9 @@ export default function BillingPage() {
         {/* Footer help text */}
         <div className="mt-8 text-center">
           <p className="text-xs text-zinc-400">
-            Need help with billing?{" "}
+            {t("needHelp")}{" "}
             <a href="mailto:support@autotalent.app" className="text-[#5b6949] hover:underline font-medium">
-              Contact support
+              {t("contactSupport")}
             </a>
           </p>
         </div>

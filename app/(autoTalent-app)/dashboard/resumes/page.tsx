@@ -13,7 +13,8 @@ import IsLoadingFalseforDashboard from "@/components/dashboard/isLoadingFalsefor
 import { CreateBaseResumeDialog } from "@/components/resume/management/dialogs/create-base-resume-dialog";
 import { CreateTailoredResumeDialog } from "@/components/resume/management/dialogs/create-tailored-resume-dialog";
 import { Button } from "@/components/ui/button";
-import { FileText, Mail, Plus, Sparkles, Target } from "lucide-react";
+import { FileText, Mail, Plus, Sparkles, Target, TrendingUp } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 const RESUMES_PER_PAGE = 12;
 
@@ -25,6 +26,7 @@ export default async function ResumesPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
+  const t = await getTranslations("dashboard.resumesPage");
 
   const { baseResumes, tailoredResumes, profile } = await getDashboardData();
 
@@ -62,43 +64,50 @@ export default async function ResumesPage({
   const hasResumes = baseResumes.length > 0 || tailoredResumes.length > 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden">
+    <div className="min-h-screen bg-[#fafaf9] relative">
       <IsLoadingFalseforDashboard />
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-[#5b6949]/10 to-gray-500/10 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-gray-500/10 to-[#5b6949]/10 rounded-full blur-3xl"></div>
-      </div>
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7db_0.5px,transparent_0.5px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
 
       {/* Main content */}
-      <div className="container mx-auto px-4 py-6 space-y-8 relative z-10">
-        {/* Header with controls */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div
-              className={cn(
-                "p-3 rounded-xl transition-all duration-300",
-                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
-              )}
-            >
-              <Mail className="w-6 h-6 text-[#5b6949]" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-semibold text-zinc-900">
-                My Resumes
+      <div className="relative container max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-[#3d4832] p-8 sm:p-10">
+          {/* Grid overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(91,105,73,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(91,105,73,0.07)_1px,transparent_1px)] bg-[size:32px_32px]" />
+          {/* Glow orbs */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#5b6949]/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#5b6949]/10 rounded-full blur-3xl" />
+
+          <div className="relative flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#5b6949]/20 border border-[#5b6949]/30 backdrop-blur-sm">
+                <FileText className="w-3.5 h-3.5 text-[#8fa676]" />
+                <span className="text-xs font-semibold text-[#8fa676] tracking-wide uppercase">
+                  {t("badge")}
+                </span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                {t("title")}
               </h1>
-              <p className="text-zinc-600 text-sm mt-1">
-                Manage all your resumes in one place
+              <p className="text-zinc-400 text-sm sm:text-base max-w-md leading-relaxed">
+                {t("subtitle")}
               </p>
             </div>
-          </div>
-          <div className="flex items-center gap-4">
-            {hasResumes && (
-              <Suspense>
-                <ResumeSortControls />
-              </Suspense>
-            )}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <TrendingUp className="w-4 h-4 text-[#8fa676]" />
+                <span className="text-sm text-zinc-300 font-medium">
+                  {baseResumes.length + tailoredResumes.length} {baseResumes.length + tailoredResumes.length !== 1 ? t("resumes") : t("resume")}
+                </span>
+              </div>
+              {hasResumes && (
+                <Suspense>
+                  <ResumeSortControls />
+                </Suspense>
+              )}
+            </div>
           </div>
         </div>
 
@@ -116,11 +125,10 @@ export default async function ResumesPage({
               {/* Description */}
               <div className="space-y-2">
                 <h2 className="text-2xl font-semibold text-gray-900">
-                  No resumes created yet
+                  {t("noResumesTitle")}
                 </h2>
                 <p className="text-gray-600 max-w-md">
-                  Start building your professional profile by creating your
-                  first resume
+                  {t("noResumesDescription")}
                 </p>
               </div>
 
@@ -139,7 +147,7 @@ export default async function ResumesPage({
                     )}
                   >
                     <Plus className="w-5 h-5" />
-                    Create Base Resume
+                    {t("createBaseResume")}
                   </Button>
                 </CreateBaseResumeDialog>
               ) : (
@@ -156,7 +164,7 @@ export default async function ResumesPage({
                     )}
                   >
                     <Plus className="w-5 h-5" />
-                    Create Base Resume
+                    {t("createBaseResume")}
                   </Button>
                 </Link>
               )}
@@ -173,11 +181,10 @@ export default async function ResumesPage({
                   </div>
                   <div>
                     <h2 className="text-2xl font-semibold text-zinc-900">
-                      Base Resumes
+                      {t("baseResumes")}
                     </h2>
                     <p className="text-sm text-zinc-600">
-                      {sortedBaseResumes.length} resume
-                      {sortedBaseResumes.length !== 1 ? "s" : ""}
+                      {sortedBaseResumes.length} {sortedBaseResumes.length !== 1 ? t("resumes") : t("resume")}
                     </p>
                   </div>
                 </div>
@@ -194,7 +201,7 @@ export default async function ResumesPage({
                       )}
                     >
                       <Plus className="w-4 h-4" />
-                      Create Base Resume
+                      {t("createBaseResume")}
                     </Button>
                   </CreateBaseResumeDialog>
                 ) : (
@@ -210,7 +217,7 @@ export default async function ResumesPage({
                       )}
                     >
                       <Plus className="w-4 h-4" />
-                      Create Base Resume
+                      {t("createBaseResume")}
                     </Button>
                   </Link>
                 )}
@@ -240,7 +247,7 @@ export default async function ResumesPage({
               ) : (
                 <div className="text-center py-12 px-6 rounded-2xl bg-white/60 border border-gray-200/50">
                   <p className="text-zinc-500">
-                    No base resumes yet. Create one to get started!
+                    {t("noBaseResumes")}
                   </p>
                 </div>
               )}
@@ -255,11 +262,10 @@ export default async function ResumesPage({
                   </div>
                   <div>
                     <h2 className="text-2xl font-semibold text-zinc-900">
-                      Application Kits
+                      {t("applicationKits")}
                     </h2>
                     <p className="text-sm text-zinc-600">
-                      {sortedTailoredResumes.length} application kit
-                      {sortedTailoredResumes.length !== 1 ? "s" : ""}
+                      {sortedTailoredResumes.length} {sortedTailoredResumes.length !== 1 ? t("applicationKits") : t("applicationKit")}
                     </p>
                   </div>
                 </div>
@@ -279,7 +285,7 @@ export default async function ResumesPage({
                       )}
                     >
                       <Plus className="w-4 h-4" />
-                      Create Application Kit
+                      {t("createApplicationKit")}
                     </Button>
                   </CreateTailoredResumeDialog>
                 )}
@@ -309,10 +315,10 @@ export default async function ResumesPage({
               ) : (
                 <div className="text-center py-12 px-6 rounded-2xl bg-gradient-to-br from-emerald-50/80 to-green-50/60 border border-emerald-200/50">
                   <p className="text-[#5b6949]">
-                    No application kits yet.{" "}
+                    {t("noApplicationKits")}{" "}
                     {sortedBaseResumes.length === 0
-                      ? "Create a base resume first!"
-                      : "Create one from your base resumes!"}
+                      ? t("createBaseFirst")
+                      : t("createFromBase")}
                   </p>
                 </div>
               )}

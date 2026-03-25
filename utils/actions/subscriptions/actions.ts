@@ -75,7 +75,14 @@ export async function getSubscriptionStatus(): Promise<{
   };
 }
 
-export async function createCheckoutSession(priceId: string) {
+// Currency-specific pricing in cents
+const PRICING_BY_CURRENCY: Record<string, { proMonthly: number; proAnnual: number; lifetime: number }> = {
+  SEK: { proMonthly: 19900, proAnnual: 199000, lifetime: 149900 },
+  EUR: { proMonthly: 1900, proAnnual: 19000, lifetime: 14900 },
+  USD: { proMonthly: 1900, proAnnual: 19000, lifetime: 14900 },
+};
+
+export async function createCheckoutSession(priceId: string, currency: string = "USD") {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -114,9 +121,18 @@ export async function createCheckoutSession(priceId: string) {
     });
   }
 
-  // Determine if this is a one-time or subscription payment
+  // Determine plan type from priceId
+  const proMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID;
+  const proAnnualPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_PRICE_ID;
   const lifetimePriceId = process.env.NEXT_PUBLIC_STRIPE_LIFETIME_PRICE_ID;
+
   const isLifetime = priceId === lifetimePriceId;
+  const isAnnual = priceId === proAnnualPriceId;
+  const isMonthly = priceId === proMonthlyPriceId;
+
+  const currencyUpper = currency.toUpperCase();
+  const pricing = PRICING_BY_CURRENCY[currencyUpper] || PRICING_BY_CURRENCY.USD;
+  const currencyLower = currencyUpper.toLowerCase();
 
   const sessionParams: Record<string, unknown> = {
     customer: customerId,
@@ -131,13 +147,56 @@ export async function createCheckoutSession(priceId: string) {
     // One-time payment for lifetime
     Object.assign(sessionParams, {
       mode: "payment",
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [{
+        price_data: {
+          currency: currencyLower,
+          product_data: {
+            name: "Lifetime Access",
+            description: "One-time payment for unlimited access forever",
+          },
+          unit_amount: pricing.lifetime,
+        },
+        quantity: 1,
+      }],
     });
-  } else {
-    // Recurring subscription
+  } else if (isAnnual) {
+    // Annual subscription
     Object.assign(sessionParams, {
       mode: "subscription",
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [{
+        price_data: {
+          currency: currencyLower,
+          product_data: {
+            name: "Pro Plan (Annual)",
+            description: "Unlimited access to all features",
+          },
+          unit_amount: pricing.proAnnual,
+          recurring: { interval: "year" },
+        },
+        quantity: 1,
+      }],
+      subscription_data: {
+        metadata: {
+          supabase_user_id: user.id,
+        },
+      },
+    });
+  } else {
+    // Monthly subscription (default)
+    Object.assign(sessionParams, {
+      mode: "subscription",
+      line_items: [{
+        price_data: {
+          currency: currencyLower,
+          product_data: {
+            name: "Pro Plan (Monthly)",
+            description: "Unlimited access to all features",
+          },
+          unit_amount: pricing.proMonthly,
+          recurring: { interval: "month" },
+        },
+        quantity: 1,
+      }],
       subscription_data: {
         metadata: {
           supabase_user_id: user.id,
