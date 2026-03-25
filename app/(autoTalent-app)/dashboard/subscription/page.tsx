@@ -20,15 +20,15 @@ import { cn } from "@/lib/utils";
 import { createCheckoutSession, getSubscriptionStatus } from "@/utils/actions/subscriptions/actions";
 import Link from "next/link";
 import type { PlanType } from "@/lib/stripe";
-import { useTranslations } from "next-intl";
+import { useLocale } from "@/components/providers/locale-provider";
 
 const proMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID!;
 const proAnnualPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_PRICE_ID!;
 const lifetimePriceId = process.env.NEXT_PUBLIC_STRIPE_LIFETIME_PRICE_ID!;
 
 export default function SubscriptionPage() {
-  const t = useTranslations("dashboard.subscriptionPage");
-  const tCommon = useTranslations("dashboard.common");
+  const { t: translate } = useLocale();
+  const t = (key: string) => translate(`dashboard.subscriptionPage.${key}`);
   const [billing, setBilling] = useState<"monthly" | "annual">("monthly");
   const [loading, setLoading] = useState<string | null>(null);
   const [currentPlan, setCurrentPlan] = useState<PlanType>("free");
