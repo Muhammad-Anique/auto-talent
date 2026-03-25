@@ -11,7 +11,7 @@ import { Mail, Plus, Sparkles, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
 import { PaywallModal } from "@/components/ui/paywall-modal";
-import { useTranslations } from "next-intl";
+import { useLocale } from "@/components/providers/locale-provider";
 
 interface Email {
   id: string;
@@ -21,7 +21,8 @@ interface Email {
 }
 
 const CoverLettersPage = () => {
-  const t = useTranslations("dashboard.followUpEmailPage");
+  const { t: translate } = useLocale();
+  const t = (key: string) => translate(`dashboard.followUpEmailPage.${key}`);
   const [emails, setEmails] = useState<Email[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
