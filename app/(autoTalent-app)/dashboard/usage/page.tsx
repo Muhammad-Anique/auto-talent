@@ -14,20 +14,22 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { getTranslations } from "next-intl/server";
 
-const ACTION_META: Record<ActionType, { label: string; icon: typeof Download; color: string }> = {
-  cv_download: { label: "CV Downloads", icon: Download, color: "from-blue-500 to-blue-600" },
-  cover_letter_create: { label: "Cover Letters", icon: FileText, color: "from-emerald-500 to-emerald-600" },
-  follow_up_email: { label: "Follow-Up Emails", icon: Mail, color: "from-amber-500 to-amber-600" },
-  questionnaire: { label: "Interview Questions", icon: MessageSquare, color: "from-purple-500 to-purple-600" },
-  job_search: { label: "Job Searches", icon: Search, color: "from-pink-500 to-pink-600" },
-  agent_message: { label: "Agent Messages", icon: Bot, color: "from-cyan-500 to-cyan-600" },
+const ACTION_META: Record<ActionType, { labelKey: string; icon: typeof Download; color: string }> = {
+  cv_download: { labelKey: "cvDownloads", icon: Download, color: "from-blue-500 to-blue-600" },
+  cover_letter_create: { labelKey: "coverLetters", icon: FileText, color: "from-emerald-500 to-emerald-600" },
+  follow_up_email: { labelKey: "followUpEmails", icon: Mail, color: "from-amber-500 to-amber-600" },
+  questionnaire: { labelKey: "interviewQuestions", icon: MessageSquare, color: "from-purple-500 to-purple-600" },
+  job_search: { labelKey: "jobSearches", icon: Search, color: "from-pink-500 to-pink-600" },
+  agent_message: { labelKey: "agentMessages", icon: Bot, color: "from-cyan-500 to-cyan-600" },
 };
 
 export default async function UsagePage() {
-  const [subscription, counts] = await Promise.all([
+  const [subscription, counts, t] = await Promise.all([
     getSubscriptionStatus(),
     getAllUsageCounts(),
+    getTranslations("dashboard.usagePage"),
   ]);
 
   const plan = (subscription.plan || "free") as keyof typeof PLANS;
@@ -44,9 +46,9 @@ export default async function UsagePage() {
               <BarChart3 className="w-6 h-6 text-[#5b6949]" />
             </div>
             <div>
-              <h1 className="text-3xl font-semibold text-zinc-900">Usage</h1>
+              <h1 className="text-3xl font-semibold text-zinc-900">{t("title")}</h1>
               <p className="text-zinc-600 text-sm mt-1">
-                Track your credits and plan usage
+                {t("subtitle")}
               </p>
             </div>
           </div>
@@ -60,7 +62,7 @@ export default async function UsagePage() {
                 <Crown className="w-5 h-5" />
                 <div>
                   <p className="text-xs font-medium text-white/70 uppercase tracking-wider">
-                    Current Plan
+                    {t("currentPlan")}
                   </p>
                   <h2 className="text-xl font-bold">
                     {planConfig.name}
@@ -72,13 +74,13 @@ export default async function UsagePage() {
                   href="/dashboard/billing"
                   className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#5b6949] rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors"
                 >
-                  Upgrade
+                  {t("upgrade")}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               )}
               {subscription.status && plan !== "free" && (
                 <span className="px-3 py-1 bg-white/20 rounded-full text-xs font-medium">
-                  {subscription.cancelAtPeriodEnd ? "Cancels at period end" : "Active"}
+                  {subscription.cancelAtPeriodEnd ? t("cancelsAtPeriodEnd") : t("active")}
                 </span>
               )}
             </div>
@@ -115,7 +117,7 @@ export default async function UsagePage() {
                       <Icon className="w-4 h-4 text-white" />
                     </div>
                     <span className="text-sm font-medium text-zinc-700">
-                      {meta.label}
+                      {t(meta.labelKey)}
                     </span>
                   </div>
 
@@ -142,13 +144,13 @@ export default async function UsagePage() {
 
                   {isUnlimited && (
                     <p className="text-xs text-[#5b6949] font-medium">
-                      Unlimited
+                      {t("unlimited")}
                     </p>
                   )}
 
                   {isExhausted && (
                     <p className="text-xs text-red-600 font-medium mt-1">
-                      Limit reached
+                      {t("limitReached")}
                     </p>
                   )}
                 </div>
@@ -161,16 +163,16 @@ export default async function UsagePage() {
         {plan === "free" && (
           <div className="rounded-2xl bg-gradient-to-br from-[#5b6949]/5 to-[#5b6949]/10 border border-[#5b6949]/20 p-6 text-center space-y-3">
             <h3 className="text-lg font-semibold text-zinc-900">
-              Need more credits?
+              {t("needMoreCredits")}
             </h3>
             <p className="text-sm text-zinc-600 max-w-md mx-auto">
-              Upgrade to Starter for more monthly credits, or go Pro for unlimited access to everything.
+              {t("upgradeDescription")}
             </p>
             <Link
               href="/dashboard/billing"
               className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#5b6949] text-white rounded-xl text-sm font-semibold hover:bg-[#4a573a] transition-colors shadow-lg"
             >
-              View Plans
+              {t("viewPlans")}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

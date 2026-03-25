@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/client";
 import { useLoading } from "../../../../context/LoadingContext";
@@ -37,6 +37,7 @@ import {
 import { cn } from "@/lib/utils";
 import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
 import { PaywallModal } from "@/components/ui/paywall-modal";
+import { useLocale } from "@/components/providers/locale-provider";
 
 // --- Cache utilities ---
 const CACHE_KEY = "job_search_cache";
@@ -93,10 +94,10 @@ function loadFromCache(paramsKey?: string): CachedSearch | null {
 
 // --- Search stages ---
 const SEARCH_STAGES = [
-  { id: "connecting", label: "Connecting to LinkedIn", icon: Wifi, duration: 2000 },
-  { id: "scanning", label: "Scanning job listings", icon: Radar, duration: 8000 },
-  { id: "retrieving", label: "Retrieving job details", icon: Database, duration: 15000 },
-  { id: "processing", label: "Processing results", icon: Loader2, duration: 5000 },
+  { id: "connecting", labelKey: "stageConnecting", icon: Wifi, duration: 2000 },
+  { id: "scanning", labelKey: "stageScanning", icon: Radar, duration: 8000 },
+  { id: "retrieving", labelKey: "stageRetrieving", icon: Database, duration: 15000 },
+  { id: "processing", labelKey: "stageProcessing", icon: Loader2, duration: 5000 },
 ] as const;
 
 type SearchStage = typeof SEARCH_STAGES[number]["id"] | "done";
@@ -127,65 +128,424 @@ type Job = {
 };
 
 const LOCATIONS = [
+  // North America
   { name: "United States", value: "103644278" },
-  { name: "United Kingdom", value: "101165590" },
   { name: "Canada", value: "101174742" },
+
+  // Western Europe
+  { name: "United Kingdom", value: "101165590" },
   { name: "Germany", value: "101282230" },
   { name: "France", value: "105015875" },
-  { name: "Italy", value: "92000000" },
-  { name: "Spain", value: "105646813" },
   { name: "Netherlands", value: "102890719" },
+  { name: "Belgium", value: "100565514" },
+  { name: "Switzerland", value: "106693272" },
+  { name: "Austria", value: "103883259" },
+  { name: "Ireland", value: "104738515" },
+  { name: "Luxembourg", value: "104042105" },
+
+  // Southern Europe
+  { name: "Italy", value: "103350119" },
+  { name: "Spain", value: "105646813" },
+  { name: "Portugal", value: "100364837" },
+  { name: "Greece", value: "104677530" },
+  { name: "Malta", value: "101728296" },
+  { name: "Cyprus", value: "106268007" },
+
+  // Northern Europe
+  { name: "Sweden", value: "105117694" },
+  { name: "Norway", value: "103819153" },
+  { name: "Denmark", value: "104514075" },
+  { name: "Finland", value: "100456013" },
+  { name: "Iceland", value: "105238872" },
+
+  // Eastern Europe
+  { name: "Poland", value: "105072130" },
+  { name: "Czech Republic", value: "104508036" },
+  { name: "Hungary", value: "100288700" },
+  { name: "Romania", value: "106670623" },
+  { name: "Bulgaria", value: "105333783" },
+  { name: "Slovakia", value: "103119917" },
+  { name: "Slovenia", value: "106137034" },
+  { name: "Croatia", value: "104688944" },
+  { name: "Serbia", value: "101855366" },
+  { name: "Ukraine", value: "102264497" },
+  { name: "Estonia", value: "102974008" },
+  { name: "Latvia", value: "104341318" },
+  { name: "Lithuania", value: "101464403" },
+
+  // Middle East & Arab Countries
+  { name: "United Arab Emirates", value: "104305776" },
+  { name: "Saudi Arabia", value: "100459316" },
+  { name: "Qatar", value: "104111396" },
+  { name: "Kuwait", value: "103775171" },
+  { name: "Bahrain", value: "106536815" },
+  { name: "Oman", value: "102067001" },
+  { name: "Jordan", value: "102134353" },
+  { name: "Lebanon", value: "101834488" },
+  { name: "Egypt", value: "106155005" },
+  { name: "Morocco", value: "102787409" },
+  { name: "Tunisia", value: "102477973" },
+  { name: "Algeria", value: "104514572" },
+  { name: "Iraq", value: "103844144" },
+  { name: "Israel", value: "101620260" },
+  { name: "Turkey", value: "102105699" },
+
+  // Asia Pacific
   { name: "Australia", value: "101452733" },
-  { name: "India", value: "102713980" },
+  { name: "New Zealand", value: "105490917" },
   { name: "Singapore", value: "102454443" },
   { name: "Japan", value: "101355337" },
+  { name: "South Korea", value: "105149562" },
+  { name: "China", value: "102890883" },
+  { name: "Hong Kong", value: "103291313" },
+  { name: "Taiwan", value: "104187078" },
+  { name: "India", value: "102713980" },
+  { name: "Malaysia", value: "106808692" },
+  { name: "Indonesia", value: "102478259" },
+  { name: "Thailand", value: "105146118" },
+  { name: "Vietnam", value: "104195383" },
+  { name: "Philippines", value: "103121230" },
+  { name: "Pakistan", value: "101022442" },
+
+  // Latin America
+  { name: "Brazil", value: "106057199" },
+  { name: "Mexico", value: "103323778" },
+  { name: "Argentina", value: "100446943" },
+  { name: "Chile", value: "104621616" },
+  { name: "Colombia", value: "100876405" },
+
+  // Africa
+  { name: "South Africa", value: "104035573" },
+  { name: "Nigeria", value: "105365761" },
+  { name: "Kenya", value: "100878354" },
+];
+
+// Popular job titles for autocomplete
+const JOB_TITLE_SUGGESTIONS = [
+  // Engineering & Tech
+  "Software Engineer",
+  "Software Developer",
+  "Full Stack Developer",
+  "Frontend Developer",
+  "Backend Developer",
+  "DevOps Engineer",
+  "Data Engineer",
+  "Data Scientist",
+  "Data Analyst",
+  "Machine Learning Engineer",
+  "AI Engineer",
+  "Cloud Engineer",
+  "Cloud Architect",
+  "Solutions Architect",
+  "Site Reliability Engineer",
+  "QA Engineer",
+  "Test Engineer",
+  "Mobile Developer",
+  "iOS Developer",
+  "Android Developer",
+  "React Developer",
+  "Node.js Developer",
+  "Python Developer",
+  "Java Developer",
+  "JavaScript Developer",
+  "TypeScript Developer",
+  "Golang Developer",
+  "Rust Developer",
+  "C++ Developer",
+  ".NET Developer",
+  "PHP Developer",
+  "Ruby Developer",
+  "Blockchain Developer",
+  "Security Engineer",
+  "Cybersecurity Analyst",
+  "Network Engineer",
+  "Systems Engineer",
+  "Database Administrator",
+  "System Administrator",
+  "IT Support",
+  "IT Manager",
+  "Technical Lead",
+  "Engineering Manager",
+  "CTO",
+  "VP of Engineering",
+
+  // Product & Design
+  "Product Manager",
+  "Product Owner",
+  "Project Manager",
+  "Program Manager",
+  "Scrum Master",
+  "Agile Coach",
+  "UX Designer",
+  "UI Designer",
+  "UX/UI Designer",
+  "Product Designer",
+  "Graphic Designer",
+  "Visual Designer",
+  "Interaction Designer",
+  "UX Researcher",
+  "Design Lead",
+  "Creative Director",
+  "Art Director",
+
+  // Marketing & Sales
+  "Marketing Manager",
+  "Digital Marketing Manager",
+  "Content Marketing Manager",
+  "SEO Specialist",
+  "SEO Manager",
+  "Social Media Manager",
+  "Content Writer",
+  "Copywriter",
+  "Brand Manager",
+  "Marketing Analyst",
+  "Growth Manager",
+  "Growth Hacker",
+  "Performance Marketing",
+  "Email Marketing",
+  "Sales Manager",
+  "Sales Representative",
+  "Account Executive",
+  "Business Development",
+  "Account Manager",
+  "Sales Director",
+  "VP of Sales",
+  "Customer Success Manager",
+  "Customer Support",
+
+  // Business & Operations
+  "Business Analyst",
+  "Operations Manager",
+  "Strategy Consultant",
+  "Management Consultant",
+  "Financial Analyst",
+  "Accountant",
+  "Finance Manager",
+  "CFO",
+  "Controller",
+  "HR Manager",
+  "HR Business Partner",
+  "Recruiter",
+  "Talent Acquisition",
+  "People Operations",
+  "Office Manager",
+  "Executive Assistant",
+  "Administrative Assistant",
+  "Legal Counsel",
+  "Compliance Officer",
+  "CEO",
+  "COO",
+
+  // Healthcare
+  "Nurse",
+  "Registered Nurse",
+  "Physician",
+  "Doctor",
+  "Pharmacist",
+  "Physical Therapist",
+  "Medical Assistant",
+  "Healthcare Administrator",
+  "Clinical Research",
+  "Biomedical Engineer",
+
+  // Others
+  "Teacher",
+  "Professor",
+  "Research Scientist",
+  "Consultant",
+  "Analyst",
+  "Manager",
+  "Director",
+  "Intern",
+  "Entry Level",
+  "Remote",
+];
+
+// Popular cities for autocomplete
+const CITY_SUGGESTIONS = [
+  // USA
+  "New York, NY",
+  "San Francisco, CA",
+  "Los Angeles, CA",
+  "San Jose, CA",
+  "Seattle, WA",
+  "Austin, TX",
+  "Boston, MA",
+  "Chicago, IL",
+  "Denver, CO",
+  "Atlanta, GA",
+  "Miami, FL",
+  "Dallas, TX",
+  "Houston, TX",
+  "Phoenix, AZ",
+  "San Diego, CA",
+  "Portland, OR",
+  "Washington, DC",
+  "Philadelphia, PA",
+  "Minneapolis, MN",
+  "Detroit, MI",
+  "Raleigh, NC",
+  "Nashville, TN",
+  "Salt Lake City, UT",
+
+  // UK
+  "London, UK",
+  "Manchester, UK",
+  "Birmingham, UK",
+  "Edinburgh, UK",
+  "Glasgow, UK",
+  "Bristol, UK",
+  "Leeds, UK",
+  "Liverpool, UK",
+  "Cambridge, UK",
+  "Oxford, UK",
+
+  // Europe
+  "Berlin, Germany",
+  "Munich, Germany",
+  "Frankfurt, Germany",
+  "Hamburg, Germany",
+  "Cologne, Germany",
+  "Paris, France",
+  "Lyon, France",
+  "Marseille, France",
+  "Amsterdam, Netherlands",
+  "Rotterdam, Netherlands",
+  "Brussels, Belgium",
+  "Zurich, Switzerland",
+  "Geneva, Switzerland",
+  "Vienna, Austria",
+  "Dublin, Ireland",
+  "Milan, Italy",
+  "Rome, Italy",
+  "Madrid, Spain",
+  "Barcelona, Spain",
+  "Lisbon, Portugal",
+  "Stockholm, Sweden",
+  "Copenhagen, Denmark",
+  "Oslo, Norway",
+  "Helsinki, Finland",
+  "Warsaw, Poland",
+  "Prague, Czech Republic",
+  "Budapest, Hungary",
+  "Bucharest, Romania",
+  "Athens, Greece",
+
+  // Middle East & Arab
+  "Dubai, UAE",
+  "Abu Dhabi, UAE",
+  "Riyadh, Saudi Arabia",
+  "Jeddah, Saudi Arabia",
+  "Doha, Qatar",
+  "Kuwait City, Kuwait",
+  "Manama, Bahrain",
+  "Muscat, Oman",
+  "Amman, Jordan",
+  "Beirut, Lebanon",
+  "Cairo, Egypt",
+  "Alexandria, Egypt",
+  "Casablanca, Morocco",
+  "Tunis, Tunisia",
+  "Tel Aviv, Israel",
+  "Istanbul, Turkey",
+  "Ankara, Turkey",
+
+  // Asia Pacific
+  "Singapore",
+  "Tokyo, Japan",
+  "Osaka, Japan",
+  "Seoul, South Korea",
+  "Hong Kong",
+  "Taipei, Taiwan",
+  "Beijing, China",
+  "Shanghai, China",
+  "Shenzhen, China",
+  "Bangalore, India",
+  "Mumbai, India",
+  "Delhi, India",
+  "Hyderabad, India",
+  "Chennai, India",
+  "Pune, India",
+  "Kuala Lumpur, Malaysia",
+  "Jakarta, Indonesia",
+  "Bangkok, Thailand",
+  "Ho Chi Minh City, Vietnam",
+  "Manila, Philippines",
+  "Sydney, Australia",
+  "Melbourne, Australia",
+  "Brisbane, Australia",
+  "Perth, Australia",
+  "Auckland, New Zealand",
+
+  // Latin America
+  "São Paulo, Brazil",
+  "Rio de Janeiro, Brazil",
+  "Mexico City, Mexico",
+  "Buenos Aires, Argentina",
+  "Santiago, Chile",
+  "Bogotá, Colombia",
+
+  // Africa
+  "Johannesburg, South Africa",
+  "Cape Town, South Africa",
+  "Lagos, Nigeria",
+  "Nairobi, Kenya",
+
+  // Canada
+  "Toronto, Canada",
+  "Vancouver, Canada",
+  "Montreal, Canada",
+  "Calgary, Canada",
+  "Ottawa, Canada",
 ];
 
 const WORKPLACE_TYPES = [
-  { name: "On-site", value: "1" },
-  { name: "Remote", value: "2" },
-  { name: "Hybrid", value: "3" },
+  { nameKey: "onSite", value: "1" },
+  { nameKey: "remote", value: "2" },
+  { nameKey: "hybrid", value: "3" },
 ];
 
 const JOB_TYPES = [
-  { name: "Full-time", value: "F" },
-  { name: "Contract", value: "C" },
-  { name: "Part-time", value: "P" },
-  { name: "Temporary", value: "T" },
-  { name: "Internship", value: "I" },
+  { nameKey: "fullTime", value: "F" },
+  { nameKey: "contract", value: "C" },
+  { nameKey: "partTime", value: "P" },
+  { nameKey: "temporary", value: "T" },
+  { nameKey: "internship", value: "I" },
 ];
 
 const EXPERIENCE_LEVELS = [
-  { name: "Internship", value: "1" },
-  { name: "Entry Level", value: "2" },
-  { name: "Associate", value: "3" },
-  { name: "Mid-Senior Level", value: "4" },
-  { name: "Director", value: "5" },
-  { name: "Executive", value: "6" },
+  { nameKey: "internship", value: "1" },
+  { nameKey: "entryLevel", value: "2" },
+  { nameKey: "associate", value: "3" },
+  { nameKey: "midSeniorLevel", value: "4" },
+  { nameKey: "director", value: "5" },
+  { nameKey: "executive", value: "6" },
 ];
 
 const RECENCY_OPTIONS = [
-  { name: "Any Time", value: "" },
-  { name: "Past Hour", value: "r3600" },
-  { name: "Past 24 Hours", value: "r86400" },
-  { name: "Past Week", value: "r604800" },
-  { name: "Past Month", value: "r2592000" },
+  { nameKey: "anyTime", value: "" },
+  { nameKey: "pastHour", value: "r3600" },
+  { nameKey: "past24Hours", value: "r86400" },
+  { nameKey: "pastWeek", value: "r604800" },
+  { nameKey: "pastMonth", value: "r2592000" },
 ];
 
 const DISTANCE_OPTIONS = [
-  { name: "Exact Location", value: "" },
-  { name: "Within 10 miles", value: "10" },
-  { name: "Within 25 miles", value: "25" },
-  { name: "Within 50 miles", value: "50" },
-  { name: "Within 100 miles", value: "100" },
+  { nameKey: "exactLocation", value: "" },
+  { nameKey: "within10Miles", value: "10" },
+  { nameKey: "within25Miles", value: "25" },
+  { nameKey: "within50Miles", value: "50" },
+  { nameKey: "within100Miles", value: "100" },
 ];
 
 const SORT_OPTIONS = [
-  { name: "Most Recent", value: "DD" },
-  { name: "Most Relevant", value: "R" },
+  { nameKey: "mostRecent", value: "DD" },
+  { nameKey: "mostRelevant", value: "R" },
 ];
 
 export default function JobsPage() {
+  const { t } = useLocale();
+  const tr = (key: string) => t(`dashboard.searchJobsPage.${key}`);
   const [keywords, setKeywords] = useState("");
   const [location, setLocation] = useState("");
   const [geoId, setGeoId] = useState("103644278"); // Default to US
@@ -208,6 +568,29 @@ export default function JobsPage() {
   const [searched, setSearched] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set());
+
+  // Autocomplete states
+  const [showKeywordsSuggestions, setShowKeywordsSuggestions] = useState(false);
+  const [showLocationSuggestions, setShowLocationSuggestions] = useState(false);
+  const keywordsRef = useRef<HTMLDivElement>(null);
+  const locationRef = useRef<HTMLDivElement>(null);
+
+  // Filtered suggestions based on input
+  const filteredJobTitles = useMemo(() => {
+    if (!keywords.trim() || keywords.length < 2) return [];
+    const searchLower = keywords.toLowerCase();
+    return JOB_TITLE_SUGGESTIONS
+      .filter(title => title.toLowerCase().includes(searchLower))
+      .slice(0, 8);
+  }, [keywords]);
+
+  const filteredCities = useMemo(() => {
+    if (!location.trim() || location.length < 2) return [];
+    const searchLower = location.toLowerCase();
+    return CITY_SUGGESTIONS
+      .filter(city => city.toLowerCase().includes(searchLower))
+      .slice(0, 8);
+  }, [location]);
 
   // Search progress tracking
   const [searchStage, setSearchStage] = useState<SearchStage>("connecting");
@@ -282,6 +665,13 @@ export default function JobsPage() {
       }
       if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
         setShowSortDropdown(false);
+      }
+      // Close autocomplete dropdowns
+      if (keywordsRef.current && !keywordsRef.current.contains(event.target as Node)) {
+        setShowKeywordsSuggestions(false);
+      }
+      if (locationRef.current && !locationRef.current.contains(event.target as Node)) {
+        setShowLocationSuggestions(false);
       }
     };
 
@@ -427,7 +817,7 @@ export default function JobsPage() {
     const { data: userData } = await supabase.auth.getUser();
     const userId = userData?.user?.id;
     if (!userId) {
-      alert("Please log in to save jobs.");
+      alert(tr('pleaseLogIn'));
       return;
     }
 
@@ -442,7 +832,7 @@ export default function JobsPage() {
 
     if (error) {
       console.error("Error saving job:", error);
-      alert("Failed to save job.");
+      alert(tr('failedToSave'));
     } else {
       setSavedJobs((prev) => [...prev, job.id]);
     }
@@ -476,17 +866,17 @@ export default function JobsPage() {
 
   const getSelectedDistanceName = () => {
     const dist = DISTANCE_OPTIONS.find((d) => d.value === distance);
-    return dist?.name || "Exact Location";
+    return dist?.nameKey ? tr(dist.nameKey) : tr('exactLocation');
   };
 
   const getSelectedRecencyName = () => {
     const rec = RECENCY_OPTIONS.find((r) => r.value === recency);
-    return rec?.name || "Any Time";
+    return rec?.nameKey ? tr(rec.nameKey) : tr('anyTime');
   };
 
   const getSelectedSortName = () => {
     const sort = SORT_OPTIONS.find((s) => s.value === sortBy);
-    return sort?.name || "Most Recent";
+    return sort?.nameKey ? tr(sort.nameKey) : tr('mostRecent');
   };
 
   const getActiveFiltersCount = () => {
@@ -523,15 +913,17 @@ export default function JobsPage() {
     onSelect,
     selectedValue,
     dropdownRef,
+    translateOptions = false,
   }: {
     label: string;
     value: string;
     isOpen: boolean;
     onToggle: () => void;
-    options: { name: string; value: string }[];
+    options: { name?: string; nameKey?: string; value: string }[];
     onSelect: (value: string) => void;
     selectedValue: string;
     dropdownRef: React.RefObject<HTMLDivElement | null>;
+    translateOptions?: boolean;
   }) => (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -572,7 +964,7 @@ export default function JobsPage() {
                   : "text-zinc-700 hover:bg-zinc-50"
               )}
             >
-              {opt.name}
+              {translateOptions && opt.nameKey ? tr(opt.nameKey) : opt.name}
             </button>
           ))}
         </div>
@@ -600,21 +992,21 @@ export default function JobsPage() {
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#5b6949]/20 border border-[#5b6949]/30 backdrop-blur-sm">
                 <Sparkles className="w-3.5 h-3.5 text-[#8fa676]" />
                 <span className="text-xs font-semibold text-[#8fa676] tracking-wide uppercase">
-                  LinkedIn Search
+                  {tr('badge')}
                 </span>
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
-                Job Hub
+                {tr('title')}
               </h1>
               <p className="text-zinc-400 text-sm sm:text-base max-w-md leading-relaxed">
-                Discover opportunities with advanced LinkedIn filters. Search, save, and apply smarter.
+                {tr('subtitle')}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
                 <TrendingUp className="w-4 h-4 text-[#8fa676]" />
                 <span className="text-sm text-zinc-300 font-medium">
-                  {loading ? "Searching..." : jobs.length > 0 ? `${jobs.length} results` : "Ready to search"}
+                  {loading ? tr('searching') : jobs.length > 0 ? `${jobs.length} ${tr('results')}` : tr('readyToSearch')}
                 </span>
               </div>
             </div>
@@ -626,33 +1018,89 @@ export default function JobsPage() {
           <form onSubmit={handleSearch} className="p-6 sm:p-8 space-y-6">
             {/* Main Search Row */}
             <div className="flex flex-col md:flex-row gap-3">
-              {/* Keywords */}
-              <div className="relative flex-1 group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors">
-                  <Search className="w-3.5 h-3.5 text-[#5b6949]" />
+              {/* Keywords with Autocomplete */}
+              <div className="relative flex-1" ref={keywordsRef}>
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors z-10">
+                    <Search className="w-3.5 h-3.5 text-[#5b6949]" />
+                  </div>
+                  <Input
+                    type="text"
+                    placeholder={tr('keywordsPlaceholder')}
+                    className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
+                    value={keywords}
+                    onChange={(e) => {
+                      setKeywords(e.target.value);
+                      setShowKeywordsSuggestions(e.target.value.length >= 2);
+                    }}
+                    onFocus={() => setShowKeywordsSuggestions(keywords.length >= 2 && filteredJobTitles.length > 0)}
+                    required
+                    autoComplete="off"
+                  />
                 </div>
-                <Input
-                  type="text"
-                  placeholder="Job title, keywords, company..."
-                  className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
-                  value={keywords}
-                  onChange={(e) => setKeywords(e.target.value)}
-                  required
-                />
+                {/* Keywords Suggestions Dropdown */}
+                {showKeywordsSuggestions && filteredJobTitles.length > 0 && (
+                  <div className="absolute z-[200] top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-xl shadow-black/5 max-h-64 overflow-y-auto">
+                    <div className="py-1">
+                      {filteredJobTitles.map((title, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setKeywords(title);
+                            setShowKeywordsSuggestions(false);
+                          }}
+                          className="w-full text-left px-4 py-2.5 text-sm text-zinc-700 hover:bg-[#5b6949]/5 hover:text-[#5b6949] transition-colors flex items-center gap-3"
+                        >
+                          <Briefcase className="w-4 h-4 text-zinc-400" />
+                          <span>{title}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {/* Location */}
-              <div className="relative flex-1 group">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors">
-                  <MapPin className="w-3.5 h-3.5 text-[#5b6949]" />
+              {/* Location with Autocomplete */}
+              <div className="relative flex-1" ref={locationRef}>
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors z-10">
+                    <MapPin className="w-3.5 h-3.5 text-[#5b6949]" />
+                  </div>
+                  <Input
+                    type="text"
+                    placeholder={tr('locationPlaceholder')}
+                    className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
+                    value={location}
+                    onChange={(e) => {
+                      setLocation(e.target.value);
+                      setShowLocationSuggestions(e.target.value.length >= 2);
+                    }}
+                    onFocus={() => setShowLocationSuggestions(location.length >= 2 && filteredCities.length > 0)}
+                    autoComplete="off"
+                  />
                 </div>
-                <Input
-                  type="text"
-                  placeholder="City, state, or country"
-                  className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
+                {/* Location Suggestions Dropdown */}
+                {showLocationSuggestions && filteredCities.length > 0 && (
+                  <div className="absolute z-[200] top-full left-0 right-0 mt-2 bg-white border border-zinc-200 rounded-xl shadow-xl shadow-black/5 max-h-64 overflow-y-auto">
+                    <div className="py-1">
+                      {filteredCities.map((city, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => {
+                            setLocation(city);
+                            setShowLocationSuggestions(false);
+                          }}
+                          className="w-full text-left px-4 py-2.5 text-sm text-zinc-700 hover:bg-[#5b6949]/5 hover:text-[#5b6949] transition-colors flex items-center gap-3"
+                        >
+                          <MapPin className="w-4 h-4 text-zinc-400" />
+                          <span>{city}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Search Button - visible on md+ */}
@@ -670,12 +1118,12 @@ export default function JobsPage() {
                 {loading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    Searching...
+                    {tr('searching')}
                   </div>
                 ) : (
                   <div className="flex items-center gap-2">
                     <Search className="w-4 h-4" />
-                    Search
+                    {tr('search')}
                   </div>
                 )}
               </Button>
@@ -684,7 +1132,7 @@ export default function JobsPage() {
             {/* Quick Filter Dropdowns */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <DropdownSelector
-                label="Region"
+                label={tr('region')}
                 value={getSelectedGeoName()}
                 isOpen={showGeoDropdown}
                 onToggle={() => setShowGeoDropdown(!showGeoDropdown)}
@@ -697,7 +1145,7 @@ export default function JobsPage() {
                 dropdownRef={geoRef}
               />
               <DropdownSelector
-                label="Distance"
+                label={tr('distance')}
                 value={getSelectedDistanceName()}
                 isOpen={showDistanceDropdown}
                 onToggle={() =>
@@ -710,9 +1158,10 @@ export default function JobsPage() {
                 }}
                 selectedValue={distance}
                 dropdownRef={distanceRef}
+                translateOptions={true}
               />
               <DropdownSelector
-                label="Posted"
+                label={tr('posted')}
                 value={getSelectedRecencyName()}
                 isOpen={showRecencyDropdown}
                 onToggle={() =>
@@ -725,9 +1174,10 @@ export default function JobsPage() {
                 }}
                 selectedValue={recency}
                 dropdownRef={recencyRef}
+                translateOptions={true}
               />
               <DropdownSelector
-                label="Sort By"
+                label={tr('sortBy')}
                 value={getSelectedSortName()}
                 isOpen={showSortDropdown}
                 onToggle={() => setShowSortDropdown(!showSortDropdown)}
@@ -738,6 +1188,7 @@ export default function JobsPage() {
                 }}
                 selectedValue={sortBy}
                 dropdownRef={sortRef}
+                translateOptions={true}
               />
             </div>
 
@@ -749,7 +1200,7 @@ export default function JobsPage() {
                 className="flex items-center gap-2 py-2 text-sm font-semibold text-zinc-500 hover:text-[#5b6949] transition-colors group"
               >
                 <SlidersHorizontal className="w-4 h-4 group-hover:text-[#5b6949] transition-colors" />
-                <span>Advanced Filters</span>
+                <span>{tr('advancedFilters')}</span>
                 {getActiveFiltersCount() > 0 && (
                   <span className="flex items-center justify-center w-5 h-5 text-[10px] font-bold bg-[#5b6949] text-white rounded-full">
                     {getActiveFiltersCount()}
@@ -770,7 +1221,7 @@ export default function JobsPage() {
                 {/* Workplace Type */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                    Workplace Type
+                    {tr('workplaceType')}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {WORKPLACE_TYPES.map((type) => (
@@ -791,7 +1242,7 @@ export default function JobsPage() {
                             : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                         )}
                       >
-                        {type.name}
+                        {tr(type.nameKey)}
                       </button>
                     ))}
                   </div>
@@ -800,7 +1251,7 @@ export default function JobsPage() {
                 {/* Job Type */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                    Job Type
+                    {tr('jobType')}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {JOB_TYPES.map((type) => (
@@ -817,7 +1268,7 @@ export default function JobsPage() {
                             : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                         )}
                       >
-                        {type.name}
+                        {tr(type.nameKey)}
                       </button>
                     ))}
                   </div>
@@ -826,7 +1277,7 @@ export default function JobsPage() {
                 {/* Experience Level */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                    Experience Level
+                    {tr('experienceLevel')}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     {EXPERIENCE_LEVELS.map((level) => (
@@ -847,7 +1298,7 @@ export default function JobsPage() {
                             : "bg-white text-zinc-600 border-zinc-200 hover:border-[#5b6949]/40 hover:text-[#5b6949]"
                         )}
                       >
-                        {level.name}
+                        {tr(level.nameKey)}
                       </button>
                     ))}
                   </div>
@@ -856,7 +1307,7 @@ export default function JobsPage() {
                 {/* Special Filters */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                    Special Filters
+                    {tr('specialFilters')}
                   </label>
                   <div className="flex flex-wrap gap-2">
                     <button
@@ -870,7 +1321,7 @@ export default function JobsPage() {
                       )}
                     >
                       <Zap className="w-3.5 h-3.5" />
-                      Easy Apply
+                      {tr('easyApply')}
                     </button>
                     <button
                       type="button"
@@ -883,7 +1334,7 @@ export default function JobsPage() {
                       )}
                     >
                       <Users className="w-3.5 h-3.5" />
-                      Under 10 Applicants
+                      {tr('under10Applicants')}
                     </button>
                   </div>
                 </div>
@@ -904,7 +1355,7 @@ export default function JobsPage() {
                     className="flex items-center gap-2 text-red-500 hover:text-red-600 font-semibold text-sm transition-colors"
                   >
                     <X className="w-3.5 h-3.5" />
-                    Clear All Filters
+                    {tr('clearAllFilters')}
                   </button>
                 )}
               </div>
@@ -925,12 +1376,12 @@ export default function JobsPage() {
               {loading ? (
                 <div className="flex items-center gap-2">
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Searching...
+                  {tr('searching')}
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
                   <Search className="w-4 h-4" />
-                  Search Jobs
+                  {tr('searchJobs')}
                 </div>
               )}
             </Button>
@@ -958,7 +1409,7 @@ export default function JobsPage() {
               <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-[#5b6949] animate-pulse" />
-                  <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Searching LinkedIn</span>
+                  <span className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">{tr('searchingLinkedIn')}</span>
                 </div>
                 <span className="text-xs font-mono text-zinc-400">
                   {Math.floor(searchElapsed / 60)}:{(searchElapsed % 60).toString().padStart(2, "0")}
@@ -1003,7 +1454,7 @@ export default function JobsPage() {
                           "text-sm font-semibold transition-colors duration-300",
                           isActive ? "text-zinc-800" : isComplete ? "text-zinc-500" : "text-zinc-300"
                         )}>
-                          {stage.label}
+                          {tr(stage.labelKey)}
                         </p>
                         {isActive && (
                           <div className="mt-1.5 flex gap-1">
@@ -1014,7 +1465,7 @@ export default function JobsPage() {
                         )}
                       </div>
                       {isComplete && (
-                        <span className="text-[10px] font-bold text-[#5b6949] uppercase tracking-wider">Done</span>
+                        <span className="text-[10px] font-bold text-[#5b6949] uppercase tracking-wider">{tr('done')}</span>
                       )}
                     </div>
                   );
@@ -1025,10 +1476,10 @@ export default function JobsPage() {
               <div className="mt-8 flex items-center gap-2 px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-100">
                 <Sparkles className="w-3.5 h-3.5 text-[#5b6949] flex-shrink-0" />
                 <p className="text-xs text-zinc-400">
-                  {searchElapsed < 15 ? "Connecting to LinkedIn's job database..." :
-                   searchElapsed < 45 ? "Scanning thousands of listings — hang tight..." :
-                   searchElapsed < 90 ? "Almost there! Retrieving detailed job information..." :
-                   "Taking a bit longer than usual. Still working on it..."}
+                  {searchElapsed < 15 ? tr('loadingTip1') :
+                   searchElapsed < 45 ? tr('loadingTip2') :
+                   searchElapsed < 90 ? tr('loadingTip3') :
+                   tr('loadingTip4')}
                 </p>
               </div>
             </div>
@@ -1042,9 +1493,9 @@ export default function JobsPage() {
               <Briefcase className="w-7 h-7 text-zinc-300" />
             </div>
             <div className="text-center space-y-1">
-              <p className="text-zinc-700 font-semibold">No jobs found</p>
+              <p className="text-zinc-700 font-semibold">{tr('noJobsFound')}</p>
               <p className="text-zinc-400 text-sm">
-                Try adjusting your search criteria or filters
+                {tr('tryAdjusting')}
               </p>
             </div>
           </div>
@@ -1058,12 +1509,12 @@ export default function JobsPage() {
               <div className="flex items-center gap-3">
                 <div className="h-6 w-1 rounded-full bg-[#5b6949]" />
                 <h2 className="text-lg font-bold text-zinc-900">
-                  {jobs.length} result{jobs.length !== 1 ? "s" : ""}
+                  {jobs.length} {jobs.length !== 1 ? tr('results') : tr('result')}
                 </h2>
                 {cachedResultsShown && (
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#5b6949] bg-[#5b6949]/10 rounded-full">
                     <Clock className="w-3 h-3" />
-                    Cached
+                    {tr('cached')}
                   </span>
                 )}
               </div>
@@ -1100,7 +1551,7 @@ export default function JobsPage() {
                   className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 hover:text-[#5b6949] transition-colors"
                 >
                   <Search className="w-3.5 h-3.5" />
-                  Refresh
+                  {tr('refresh')}
                 </button>
               )}
             </div>
@@ -1211,7 +1662,7 @@ export default function JobsPage() {
                           {job.descriptionHtml && (
                             <div>
                               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400 mb-3">
-                                Description
+                                {tr('description')}
                               </h4>
                               <div
                                 className="text-sm text-zinc-600 prose prose-sm prose-zinc max-w-none prose-headings:text-zinc-800 prose-a:text-[#5b6949]"
@@ -1229,7 +1680,7 @@ export default function JobsPage() {
                               job.companyWebsite) && (
                               <div className="space-y-3 p-5 bg-zinc-50/80 rounded-xl border border-zinc-100">
                                 <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                                  About {job.companyName}
+                                  {tr('aboutCompany').replace('{company}', job.companyName)}
                                 </h4>
                                 {job.companySlogan && (
                                   <p className="text-sm text-zinc-500 italic leading-relaxed">
@@ -1249,7 +1700,7 @@ export default function JobsPage() {
                                     className="inline-flex items-center gap-1.5 text-sm text-[#5b6949] font-semibold hover:underline"
                                   >
                                     <Globe className="w-3.5 h-3.5" />
-                                    Visit Website
+                                    {tr('visitWebsite')}
                                     <ArrowRight className="w-3 h-3" />
                                   </a>
                                 )}
@@ -1258,23 +1709,23 @@ export default function JobsPage() {
 
                             <div className="space-y-3 p-5 bg-zinc-50/80 rounded-xl border border-zinc-100">
                               <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-400">
-                                Details
+                                {tr('details')}
                               </h4>
                               {job.jobFunction && (
                                 <div className="text-sm">
-                                  <span className="text-zinc-400 font-medium">Function </span>
+                                  <span className="text-zinc-400 font-medium">{tr('function')} </span>
                                   <span className="text-zinc-700 font-semibold">{job.jobFunction}</span>
                                 </div>
                               )}
                               {job.industries && (
                                 <div className="text-sm">
-                                  <span className="text-zinc-400 font-medium">Industries </span>
+                                  <span className="text-zinc-400 font-medium">{tr('industries')} </span>
                                   <span className="text-zinc-700 font-semibold">{job.industries}</span>
                                 </div>
                               )}
                               {job.benefits && job.benefits.length > 0 && (
                                 <div>
-                                  <span className="text-sm text-zinc-400 font-medium">Benefits</span>
+                                  <span className="text-sm text-zinc-400 font-medium">{tr('benefits')}</span>
                                   <div className="flex flex-wrap gap-1.5 mt-2">
                                     {job.benefits.map((benefit, idx) => (
                                       <span
@@ -1299,7 +1750,7 @@ export default function JobsPage() {
                               className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#5b6949] text-white rounded-xl hover:bg-[#4a573a] shadow-sm shadow-[#5b6949]/20 hover:shadow-md transition-all text-sm font-semibold"
                             >
                               <ExternalLink className="w-3.5 h-3.5" />
-                              View on LinkedIn
+                              {tr('viewOnLinkedIn')}
                             </Link>
                             {job.applyUrl && (
                               <a
@@ -1309,7 +1760,7 @@ export default function JobsPage() {
                                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#5b6949] text-[#5b6949] rounded-xl hover:bg-[#5b6949] hover:text-white transition-all text-sm font-semibold"
                               >
                                 <Zap className="w-3.5 h-3.5" />
-                                Apply Now
+                                {tr('applyNow')}
                               </a>
                             )}
                             {job.companyLinkedinUrl && (
@@ -1320,7 +1771,7 @@ export default function JobsPage() {
                                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-zinc-100 text-zinc-600 rounded-xl hover:bg-zinc-200 transition-all text-sm font-medium"
                               >
                                 <Building2 className="w-3.5 h-3.5" />
-                                Company
+                                {tr('company')}
                               </a>
                             )}
                           </div>
@@ -1335,12 +1786,12 @@ export default function JobsPage() {
                         {isExpanded ? (
                           <>
                             <ChevronUp className="w-4 h-4" />
-                            Less
+                            {tr('less')}
                           </>
                         ) : (
                           <>
                             <ChevronDown className="w-4 h-4" />
-                            Details
+                            {tr('details')}
                           </>
                         )}
                       </button>
@@ -1364,7 +1815,7 @@ export default function JobsPage() {
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    Load More
+                    {tr('loadMore')}
                     <ArrowRight className="w-4 h-4" />
                   </span>
                 </Button>
@@ -1375,7 +1826,7 @@ export default function JobsPage() {
               <div className="flex justify-center py-6">
                 <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white border border-zinc-200 shadow-sm">
                   <div className="w-4 h-4 border-2 border-zinc-200 border-t-[#5b6949] rounded-full animate-spin" />
-                  <span className="text-zinc-500 text-sm font-medium">Loading more...</span>
+                  <span className="text-zinc-500 text-sm font-medium">{tr('loadingMore')}</span>
                 </div>
               </div>
             )}
@@ -1395,10 +1846,10 @@ export default function JobsPage() {
             </div>
             <div className="text-center space-y-2 max-w-sm">
               <p className="text-zinc-700 font-semibold text-lg">
-                Start your search
+                {tr('startYourSearch')}
               </p>
               <p className="text-zinc-400 text-sm leading-relaxed">
-                Enter keywords and location to discover thousands of opportunities from LinkedIn
+                {tr('startYourSearchDescription')}
               </p>
             </div>
           </div>

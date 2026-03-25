@@ -15,10 +15,12 @@ import {
   ArrowRight,
   AlertCircle,
   Search,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
 import { PaywallModal } from "@/components/ui/paywall-modal";
+import { useTranslations } from "next-intl";
 
 interface CoverLetter {
   id: string;
@@ -28,6 +30,7 @@ interface CoverLetter {
 }
 
 const CoverLettersPage = () => {
+  const t = useTranslations("dashboard.coverLetterPage");
   const [coverLetters, setCoverLetters] = useState<CoverLetter[]>([]);
   const [filteredCoverLetters, setFilteredCoverLetters] = useState<
     CoverLetter[]
@@ -167,11 +170,10 @@ const CoverLettersPage = () => {
         {/* Description */}
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold text-gray-900">
-            No cover letters created yet
+            {t("noCoverLetters")}
           </h2>
           <p className="text-gray-600 max-w-md">
-            Start building your professional profile by creating your first
-            cover letter
+            {t("noCoverLettersDescription")}
           </p>
         </div>
 
@@ -189,46 +191,66 @@ const CoverLettersPage = () => {
           )}
         >
           <Plus className="w-5 h-5" />
-          Create Cover Letter
+          {t("createNew")}
         </Button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-gray-50">
-      <div className="container mx-auto p-6 space-y-8">
-        {/* Header Section */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div
-              className={cn(
-                "p-3 rounded-xl transition-all duration-300",
-                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
-              )}
-            >
-              <FileText className="w-6 h-6 text-[#5b6949]" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-semibold text-zinc-900">
-                Cover Letters
+    <div className="min-h-screen bg-[#fafaf9] relative">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7db_0.5px,transparent_0.5px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+
+      <div className="relative container max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-[#3d4832] p-8 sm:p-10">
+          {/* Grid overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(91,105,73,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(91,105,73,0.07)_1px,transparent_1px)] bg-[size:32px_32px]" />
+          {/* Glow orbs */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#5b6949]/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#5b6949]/10 rounded-full blur-3xl" />
+
+          <div className="relative flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#5b6949]/20 border border-[#5b6949]/30 backdrop-blur-sm">
+                <Sparkles className="w-3.5 h-3.5 text-[#8fa676]" />
+                <span className="text-xs font-semibold text-[#8fa676] tracking-wide uppercase">
+                  {t("badge")}
+                </span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                {t("title")}
               </h1>
-              <p className="text-zinc-600 text-sm mt-1">
-                Professional cover letters that get you noticed
+              <p className="text-zinc-400 text-sm sm:text-base max-w-md leading-relaxed">
+                {t("subtitle")}
               </p>
             </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <TrendingUp className="w-4 h-4 text-[#8fa676]" />
+                <span className="text-sm text-zinc-300 font-medium">
+                  {coverLetters.length} {coverLetters.length !== 1 ? t("coverLettersCount") : t("coverLetterCount")}
+                </span>
+              </div>
+            </div>
           </div>
+        </div>
 
+        {/* Search and Action Card */}
+        <div className="relative rounded-2xl bg-white border border-zinc-200/80 shadow-sm shadow-black/[0.03] p-6 sm:p-8 space-y-4">
           {/* Search Bar */}
           {coverLetters.length > 0 && (
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <div className="relative group">
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors">
+                <Search className="w-3.5 h-3.5 text-[#5b6949]" />
+              </div>
               <Input
                 type="text"
-                placeholder="Search cover letters by title or content..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 h-12 text-gray-800 bg-white/80 border-gray-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
               />
             </div>
           )}
@@ -239,21 +261,22 @@ const CoverLettersPage = () => {
               onClick={() => setIsModalOpen(true)}
               disabled={loading}
               className={cn(
-                "text-white shadow-lg hover:shadow-xl transition-all duration-500",
-                "bg-gradient-to-r from-[#5b6949] to-[#5b6949]/80",
-                "hover:from-[#5b6949]/90 hover:to-[#5b6949]/70",
+                "h-12 px-6 font-semibold rounded-xl",
+                "bg-[#5b6949] text-white shadow-md shadow-[#5b6949]/20",
+                "hover:bg-[#4a573a] hover:shadow-lg hover:shadow-[#5b6949]/25",
+                "active:scale-[0.98] transition-all duration-200",
+                "disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none",
                 "group",
               )}
             >
               <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-              {loading ? "Creating..." : "New Cover Letter"}
+              {loading ? t("generating") : t("createNew")}
             </Button>
 
             {coverLetters.length > 0 && (
               <div className="text-sm text-zinc-500">
-                {filteredCoverLetters.length} of {coverLetters.length} cover
-                letter{coverLetters.length !== 1 ? "s" : ""}
-                {searchQuery && ` matching "${searchQuery}"`}
+                {filteredCoverLetters.length} of {coverLetters.length} {coverLetters.length !== 1 ? t("coverLettersCount") : t("coverLetterCount")}
+                {searchQuery && ` ${t("matching")} "${searchQuery}"`}
               </div>
             )}
           </div>
@@ -275,7 +298,7 @@ const CoverLettersPage = () => {
             <div className="flex items-center justify-center gap-3">
               <div className="w-4 h-4 border-2 border-[#5b6949] border-t-transparent rounded-full animate-spin" />
               <span className="text-zinc-600">
-                Creating your cover letter...
+                {t("creatingCoverLetter")}
               </span>
             </div>
           </Card>
@@ -305,7 +328,7 @@ const CoverLettersPage = () => {
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-50 border border-gray-200">
                 <Search className="w-4 h-4 text-gray-500" />
                 <span className="text-gray-600 text-sm">
-                  No cover letters found matching "{searchQuery}"
+                  {t("noSearchResults")} "{searchQuery}"
                 </span>
               </div>
             </div>
@@ -323,8 +346,8 @@ const CoverLettersPage = () => {
       <PaywallModal
         open={showPaywall}
         onClose={() => setShowPaywall(false)}
-        feature="Cover Letters"
-        limitMessage="You've used all your free cover letter credits. Upgrade to continue creating cover letters."
+        feature={t("title")}
+        limitMessage={t("paywallMessage")}
       />
     </div>
   );

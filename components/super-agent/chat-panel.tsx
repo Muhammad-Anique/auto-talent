@@ -26,6 +26,7 @@ import { MemoizedMarkdown } from '@/components/ui/memoized-markdown';
 import { StickToBottom, useStickToBottomContext } from 'use-stick-to-bottom';
 import pdfToText from 'react-pdftotext';
 import type { ArtifactState } from './use-super-agent';
+import { useLocale } from '@/components/providers/locale-provider';
 
 interface ChatPanelProps {
   messages: Message[];
@@ -42,13 +43,13 @@ interface ChatPanelProps {
 }
 
 const QUICK_ACTIONS = [
-  { icon: FileText, label: 'Build a Resume', prompt: 'Create a professional resume for me using my profile data. Make it modern and ATS-friendly.' },
-  { icon: FileSignature, label: 'Cover Letter', prompt: 'Write me a compelling cover letter. Ask me about the job first.' },
-  { icon: Mail, label: 'Follow-Up Email', prompt: 'Draft a professional follow-up email to a hiring manager after an interview.' },
-  { icon: Languages, label: 'Translate', prompt: 'Please translate my current document to another language. What language would you like?' },
-  { icon: BarChart3, label: 'Score Resume', prompt: 'Analyze and score my most recent resume for ATS compatibility.' },
-  { icon: Sparkles, label: 'Improve Resume', prompt: 'Review my latest resume and suggest improvements to make it more impactful.' },
-  { icon: Search, label: 'Search Jobs', prompt: 'Search for jobs that match my profile and skills. Show me the best opportunities.' },
+  { icon: FileText, labelKey: 'buildResume', prompt: 'Create a professional resume for me using my profile data. Make it modern and ATS-friendly.' },
+  { icon: FileSignature, labelKey: 'coverLetter', prompt: 'Write me a compelling cover letter. Ask me about the job first.' },
+  { icon: Mail, labelKey: 'followUpEmail', prompt: 'Draft a professional follow-up email to a hiring manager after an interview.' },
+  { icon: Languages, labelKey: 'translate', prompt: 'Please translate my current document to another language. What language would you like?' },
+  { icon: BarChart3, labelKey: 'scoreResume', prompt: 'Analyze and score my most recent resume for ATS compatibility.' },
+  { icon: Sparkles, labelKey: 'improveResume', prompt: 'Review my latest resume and suggest improvements to make it more impactful.' },
+  { icon: Search, labelKey: 'searchJobs', prompt: 'Search for jobs that match my profile and skills. Show me the best opportunities.' },
 ];
 
 // Compact tool label
@@ -202,6 +203,8 @@ export default function ChatPanel({
   onClear,
   className,
 }: ChatPanelProps) {
+  const { t } = useLocale();
+  const tr = (key: string) => t(`dashboard.agentPage.${key}`);
   const [input, setInput] = useState('');
   const [attachedFile, setAttachedFile] = useState<{ name: string; text: string } | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
@@ -316,10 +319,10 @@ export default function ChatPanel({
               <FileText className="h-4 w-4 text-zinc-400" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-[12px] font-medium text-zinc-500">Reading file...</div>
+              <div className="text-[12px] font-medium text-zinc-500">{tr('readingFile')}</div>
               <div className="text-[10px] text-zinc-400 flex items-center gap-1 mt-0.5">
                 <Loader2 className="h-2.5 w-2.5 animate-spin" />
-                Extracting text
+                {tr('extractingText')}
               </div>
             </div>
           </div>
@@ -335,7 +338,7 @@ export default function ChatPanel({
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-[12px] font-medium text-zinc-700 truncate">{attachedFile.name}</div>
-            <div className="text-[10px] text-zinc-400 mt-0.5">Ready to send</div>
+            <div className="text-[10px] text-zinc-400 mt-0.5">{tr('readyToSend')}</div>
           </div>
           <button
             onClick={() => setAttachedFile(null)}
@@ -358,8 +361,8 @@ export default function ChatPanel({
           <div className="inline-flex p-3 bg-[#5b6949]/10 rounded-2xl mb-5">
             <BriefcaseBusiness className="h-7 w-7 text-[#5b6949]" />
           </div>
-          <h2 className="text-2xl font-semibold text-zinc-800 mb-1">How can I help you?</h2>
-          <p className="text-sm text-zinc-400 mb-8">Your AI career assistant — resumes, cover letters, job search & more</p>
+          <h2 className="text-2xl font-semibold text-zinc-800 mb-1">{tr('howCanIHelp')}</h2>
+          <p className="text-sm text-zinc-400 mb-8">{tr('subtitle')}</p>
 
           {/* Input bar */}
           <div className="w-full max-w-2xl">
@@ -382,7 +385,7 @@ export default function ChatPanel({
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={attachedFile ? 'Add a message or press Enter to send...' : 'Type a message...'}
+                  placeholder={attachedFile ? tr('addMessage') : tr('typeMessage')}
                   className="flex-1 min-h-6 max-h-40 resize-none text-sm text-zinc-800 placeholder:text-zinc-400 bg-transparent outline-none leading-relaxed"
                   rows={1}
                 />
@@ -405,12 +408,12 @@ export default function ChatPanel({
             <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
               {QUICK_ACTIONS.map((action) => (
                 <button
-                  key={action.label}
+                  key={action.labelKey}
                   onClick={() => onSubmit(action.prompt)}
                   className="flex items-center gap-1.5 px-3 py-1.5 text-[13px] text-zinc-600 bg-white hover:bg-[#5b6949]/5 hover:text-[#5b6949] hover:border-[#5b6949]/30 rounded-full border border-zinc-200 transition-all"
                 >
                   <action.icon className="h-3.5 w-3.5 text-[#5b6949]" />
-                  {action.label}
+                  {tr(action.labelKey)}
                 </button>
               ))}
             </div>
@@ -429,14 +432,14 @@ export default function ChatPanel({
       <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-100 shrink-0">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-[#5b6949] animate-pulse" />
-          <span className="text-xs font-medium text-zinc-600">AI Agent</span>
+          <span className="text-xs font-medium text-zinc-600">{tr('aiAgent')}</span>
         </div>
         <button
           onClick={onClear}
           className="flex items-center gap-1 px-2 py-1 text-[11px] text-zinc-400 hover:text-[#5b6949] rounded-md transition-colors"
         >
           <RefreshCw className="h-3 w-3" />
-          Clear
+          {tr('clear')}
         </button>
       </div>
 
@@ -468,7 +471,7 @@ export default function ChatPanel({
                                 </div>
                                 <div className="min-w-0 flex-1">
                                   <div className="text-[13px] font-medium text-white truncate">{fileName}</div>
-                                  <div className="text-[11px] text-white/60 mt-0.5">Resume uploaded for extraction</div>
+                                  <div className="text-[11px] text-white/60 mt-0.5">{tr('resumeUploaded')}</div>
                                 </div>
                                 <Paperclip className="h-3.5 w-3.5 text-white/40 shrink-0 mt-1" />
                               </div>
@@ -555,10 +558,10 @@ export default function ChatPanel({
                       <div className="px-4 py-2.5 bg-white/90 backdrop-blur-sm flex items-center justify-between border-t border-white/20">
                         <div className="min-w-0 flex-1 pr-2">
                           <div className="text-[13px] font-semibold text-zinc-800 truncate leading-tight">{art.title}</div>
-                          <div className="text-[10px] text-zinc-400 mt-0.5">Click to open</div>
+                          <div className="text-[10px] text-zinc-400 mt-0.5">{tr('clickToOpen')}</div>
                         </div>
                         <div className={cn('shrink-0 text-[10px] font-medium px-2 py-1 rounded-lg transition-colors', meta.cta)}>
-                          Open
+                          {tr('open')}
                         </div>
                       </div>
                     </button>
@@ -609,7 +612,7 @@ export default function ChatPanel({
                 className="flex items-center gap-1.5 px-3 py-1 bg-white border border-zinc-200 text-zinc-600 text-[12px] font-medium rounded-full hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all"
               >
                 <Square className="h-3 w-3" />
-                Stop
+                {tr('stop')}
               </button>
             </div>
           ) : (
@@ -630,7 +633,7 @@ export default function ChatPanel({
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder={attachedFile ? 'Add a message or press Enter to send...' : 'Type a message...'}
+                  placeholder={attachedFile ? tr('addMessage') : tr('typeMessage')}
                   className="flex-1 min-h-6 max-h-28 resize-none text-[13px] text-zinc-800 placeholder:text-zinc-400 bg-transparent outline-none leading-relaxed"
                   rows={1}
                 />

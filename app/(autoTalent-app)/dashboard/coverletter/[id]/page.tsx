@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
-import { checkCanPerformAction, recordUsage } from "@/utils/actions/subscriptions/usage";
+import { shouldWatermark } from "@/utils/actions/subscriptions/usage";
 
 const EditCoverLetterPage: FC = () => {
   const { id } = useParams(); // Get the dynamic 'id' from params
@@ -94,60 +94,68 @@ const EditCoverLetterPage: FC = () => {
   };
 
   const handleDownloadPDF = async () => {
-    // Paywall check
-    const check = await checkCanPerformAction('cover_letter_create');
-    if (!check.allowed) {
-      toast({
-        title: "Download limit reached",
-        description: "You've used your free cover letter download. Upgrade to Pro for unlimited downloads.",
-        variant: "destructive",
-      });
-      router.push("/dashboard/subscription");
-      return;
-    }
+    // Check if user should get watermarked documents (free plan)
+    const applyWatermark = await shouldWatermark();
 
     const doc = new jsPDF();
-  
+
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 20;
-    const lineHeight = 10;
     const maxWidth = pageWidth - margin * 2;
-  
+
     // Draw a colored header background
     doc.setFillColor(91, 105, 73); // #5b6949
     doc.rect(0, 0, pageWidth, 30, 'F');
-  
+
     // Title styling
     doc.setTextColor(255, 255, 255); // White
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text(coverLetter.title, margin, 20);
-  
+
     // Reset for body text
     doc.setTextColor(33, 33, 33); // Almost black
     doc.setFontSize(12);
     doc.setFont('times', 'normal');
-  
+
     // Add body text with better spacing
     doc.text(editedContent, margin, 50, {
       maxWidth: maxWidth,
       lineHeightFactor: 1.6,
     });
-  
+
     // Optional: draw a footer line
     doc.setDrawColor(200);
     doc.line(margin, pageHeight - 20, pageWidth - margin, pageHeight - 20);
     doc.setFontSize(10);
     doc.setTextColor(120);
-  
+
+    // Add watermark for free users
+    if (applyWatermark) {
+      doc.setTextColor(0, 0, 0);
+      doc.setFontSize(60);
+      doc.setFont('helvetica', 'bold');
+      // Set transparency using setGState
+      const gState = { opacity: 0.08, "stroke-opacity": 0.08 };
+      (doc as any).setGState((doc as any).GState(gState));
+      // Rotate and center the watermark
+      const centerX = pageWidth / 2;
+      const centerY = pageHeight / 2;
+      doc.text('AutoTalent', centerX, centerY, {
+        angle: 45,
+        align: 'center',
+      });
+    }
+
     // Save the PDF
     doc.save(`${coverLetter.title}.pdf`);
 
-    await recordUsage('cover_letter_create');
     toast({
       title: "Downloaded",
-      description: "Cover letter downloaded as PDF successfully!",
+      description: applyWatermark
+        ? "Cover letter downloaded with watermark. Upgrade to remove watermarks."
+        : "Cover letter downloaded as PDF successfully!",
     });
   };
   

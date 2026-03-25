@@ -16,6 +16,7 @@ import {
 import type { Profile, Resume } from "@/lib/types";
 import { useState } from "react";
 import { PaywallModal } from "@/components/ui/paywall-modal";
+import { useLocale } from "@/components/providers/locale-provider";
 
 interface JobHubSectionProps {
   type: "base" | "tailored";
@@ -45,6 +46,7 @@ export function JobHubSection({
   baseResumes = [],
   canCreateMore,
 }: JobHubSectionProps) {
+  const { t } = useLocale();
   const [pagination, setPagination] = useState<PaginationState>({
     currentPage: 1,
     itemsPerPage: 9,
@@ -105,7 +107,7 @@ export function JobHubSection({
             "transition-colors duration-300",
           )}
         >
-          New Application Kit
+          {t("dashboard.applicationKits.newKit")}
         </span>
         <span
           className={cn(
@@ -114,7 +116,7 @@ export function JobHubSection({
             "transition-colors duration-300",
           )}
         >
-          Resume + Cover Letter + Follow-up
+          {t("dashboard.applicationKits.kitDescription")}
         </span>
       </div>
     </button>
@@ -149,7 +151,7 @@ export function JobHubSection({
         <div className="flex items-center gap-3">
           <div className="h-7 w-1 rounded-full bg-[#5b6949]" />
           <h2 className="text-xl font-bold tracking-tight text-zinc-900">
-            Application Kits
+            {t("dashboard.applicationKits.title")}
           </h2>
           {resumes.length > 0 && (
             <span className="flex items-center justify-center px-2 py-0.5 text-[11px] font-bold bg-[#5b6949]/10 text-[#5b6949] rounded-full">
@@ -203,7 +205,7 @@ export function JobHubSection({
       {resumes.length === 0 && (
         <div className="text-center py-10 col-span-full">
           <p className="text-sm text-zinc-400">
-            No application kits yet. Create one to get started.
+            {t("dashboard.applicationKits.noKits")}
           </p>
         </div>
       )}

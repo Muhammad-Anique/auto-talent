@@ -15,8 +15,6 @@ import {
   LogOut,
   Brain,
   Briefcase,
-  Pin,
-  PinOff,
   BrainCircuitIcon,
   CreditCard,
   Rocket,
@@ -25,12 +23,15 @@ import {
 import { useState } from "react";
 import React from "react";
 import { useSidebarContext } from "@/context/SidebarContext";
+import { useLocale } from "@/components/providers/locale-provider";
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { setIsLoading } = useLoading();
   const { expanded, pinned, setPinned, setHovered } = useSidebarContext();
+  const { dir, t } = useLocale();
+  const isRTL = dir === 'rtl';
 
   const handleNavigation = (href: string) => {
     if (pathname === href) return;
@@ -45,60 +46,60 @@ export default function Sidebar() {
     router.push("/signin");
   };
 
-  const links: { name: string; href: string; icon: React.ReactElement; badge?: string }[] = [
+  const links: { nameKey: string; href: string; icon: React.ReactElement; badgeKey?: string }[] = [
     {
-      name: "Job Hub",
+      nameKey: "dashboard.sidebar.jobHub",
       href: "/dashboard",
       icon: <Home className="w-6 h-6 mr-3" />,
     },
     {
-      name: "AI Agent",
+      nameKey: "dashboard.sidebar.aiAgent",
       href: "/dashboard/agent",
       icon: <Brain className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Resume Builder",
+      nameKey: "dashboard.sidebar.resumeBuilder",
       href: "/dashboard/resumes",
       icon: <FileText className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Cover Letter",
+      nameKey: "dashboard.sidebar.coverLetter",
       href: "/dashboard/coverletter",
       icon: <FileSignature className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Email To HR",
+      nameKey: "dashboard.sidebar.emailToHR",
       href: "/dashboard/follow-up-email",
       icon: <Mail className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Job Interviews",
+      nameKey: "dashboard.sidebar.jobInterviews",
       href: "/dashboard/interview-questions",
       icon: <Briefcase className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Search Jobs",
+      nameKey: "dashboard.sidebar.searchJobs",
       href: "/dashboard/search-jobs",
       icon: <Search className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Saved Jobs",
+      nameKey: "dashboard.sidebar.savedJobs",
       href: "/dashboard/saved-jobs",
       icon: <Bookmark className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Smart Apply",
+      nameKey: "dashboard.sidebar.smartApply",
       href: "/dashboard/smart-apply",
       icon: <Rocket className="w-6 h-6 mr-3" />,
-      badge: "Soon",
+      badgeKey: "dashboard.sidebar.soon",
     },
     {
-      name: "Usage",
+      nameKey: "dashboard.sidebar.usage",
       href: "/dashboard/usage",
       icon: <BarChart3 className="w-6 h-6 mr-3" />,
     },
     {
-      name: "Billing",
+      nameKey: "dashboard.sidebar.billing",
       href: "/dashboard/billing",
       icon: <CreditCard className="w-6 h-6 mr-3" />,
     },
@@ -106,9 +107,9 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`h-screen bg-white border-r border-r-gray-200 shadow-lg flex flex-col p-3 transition-all duration-200 ease-in-out ${
+      className={`h-screen bg-white shadow-lg flex flex-col p-3 transition-all duration-200 ease-in-out ${
         expanded ? "w-72" : "w-20"
-      }`}
+      } ${isRTL ? "border-l border-l-gray-200" : "border-r border-r-gray-200"}`}
       style={{ colorScheme: "light" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -146,10 +147,10 @@ export default function Sidebar() {
                     minWidth: 0,
                   }}
                 >
-                  {link.name}
-                  {link.badge && expanded && (
+                  {t(link.nameKey)}
+                  {link.badgeKey && expanded && (
                     <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#5b6949]/10 text-[#5b6949] border border-[#5b6949]/20">
-                      {link.badge}
+                      {t(link.badgeKey)}
                     </span>
                   )}
                 </span>
@@ -160,15 +161,15 @@ export default function Sidebar() {
       </nav>
       <button
         onClick={handleLogout}
-        className={`mt-8 flex items-center justify-center px-2 py-3 bg-[#5b6949] text-white rounded-md hover:bg-[#5b6949]/90 text-gray-800 transition-all duration-200 ${expanded ? "w-full" : "w-12 mx-auto"}`}
+        className={`mt-8 flex items-center justify-center px-2 py-3 bg-[#5b6949] text-white rounded-md hover:bg-[#5b6949]/90 transition-all duration-200 ${expanded ? "w-full" : "w-12 mx-auto"}`}
       >
-        <LogOut className="w-5 h-5 mr-2" />
+        <LogOut className="w-5 h-5 flex-shrink-0" />
         <span
-          className={`font-semibold transition-all duration-200 ${
+          className={`ml-2 font-semibold transition-all duration-200 ${
             expanded ? "opacity-100 w-auto" : "opacity-0 w-0 overflow-hidden"
           }`}
         >
-          Logout
+          {t("dashboard.sidebar.logout")}
         </span>
       </button>
     </aside>

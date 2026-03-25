@@ -37,19 +37,23 @@ const tierStyles = [
 
 export function PricingSection() {
   const { t } = useLocale();
-  const [geo, setGeo] = useState<{ symbol: string; starter: number; pro: number; lifetime: number } | null>(null);
+  const [geo, setGeo] = useState<{ symbol: string; symbolAfter: boolean; starter: number; pro: number; lifetime: number } | null>(null);
 
   useEffect(() => {
     fetch("/api/geo-pricing")
       .then((r) => r.json())
       .then((data) => setGeo(data))
-      .catch(() => setGeo({ symbol: "$", starter: 9, pro: 19, lifetime: 149 }));
+      .catch(() => setGeo({ symbol: "$", symbolAfter: false, starter: 9, pro: 19, lifetime: 149 }));
   }, []);
 
-  const sym = geo?.symbol ?? "$";
-  const starterPrice = geo ? `${sym}${geo.starter}` : t("pricing.tiers.small.price");
-  const proPrice = geo ? `${sym}${geo.pro}` : t("pricing.tiers.starter.price");
-  const lifetimePrice = geo ? `${sym}${geo.lifetime}` : t("pricing.tiers.pro.price");
+  const formatPrice = (amount: number) => {
+    if (!geo) return `$${amount}`;
+    return geo.symbolAfter ? `${amount} ${geo.symbol}` : `${geo.symbol}${amount}`;
+  };
+
+  const starterPrice = geo ? formatPrice(geo.starter) : t("pricing.tiers.small.price");
+  const proPrice = geo ? formatPrice(geo.pro) : t("pricing.tiers.starter.price");
+  const lifetimePrice = geo ? formatPrice(geo.lifetime) : t("pricing.tiers.pro.price");
 
   const tiers: PricingTier[] = [
     {

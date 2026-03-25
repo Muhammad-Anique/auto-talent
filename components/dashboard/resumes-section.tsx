@@ -45,6 +45,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { PaywallModal } from "@/components/ui/paywall-modal";
+import { useLocale } from "@/components/providers/locale-provider";
 
 interface ResumesSectionProps {
   type: "base" | "tailored";
@@ -74,6 +75,7 @@ export function ResumesSection({
   baseResumes = [],
   canCreateMore,
 }: ResumesSectionProps) {
+  const { t } = useLocale();
   const config = {
     base: {
       gradient: "from-[#5b6949] to-[#5b6949]/90",
@@ -173,7 +175,7 @@ export function ResumesSection({
             "group-hover/new-resume:font-semibold",
           )}
         >
-          Create {type === "base" ? "Base" : "Tailored"} Resume
+          {t("dashboard.resumes.createNew")}
         </span>
 
         <span
@@ -223,7 +225,7 @@ export function ResumesSection({
           <h2
             className={`text-2xl sm:text-3xl font-semibold tracking-tight bg-linear-to-r ${config.gradient} bg-clip-text text-transparent`}
           >
-            {type === "base" ? "Base" : "Tailored"} Resumes
+            {type === "base" ? t("dashboard.resumes.baseResume") : t("dashboard.resumes.tailoredResume")}
           </h2>
           <div className="flex items-center gap-2 mb-4">
             <ResumeSortControls
@@ -393,7 +395,7 @@ export function ResumesSection({
                           </div>
                           <AlertDialogContent>
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Resume</AlertDialogTitle>
+                              <AlertDialogTitle>{t("dashboard.common.delete")} {t("dashboard.resumes.title")}</AlertDialogTitle>
                               <AlertDialogDescription>
                                 Are you sure you want to delete &quot;
                                 {resume.name}&quot;? This action cannot be
@@ -401,7 +403,7 @@ export function ResumesSection({
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogCancel>{t("dashboard.common.cancel")}</AlertDialogCancel>
                               <form
                                 action={async () => {
                                   await deleteResume(resume.id);
@@ -411,7 +413,7 @@ export function ResumesSection({
                                   type="submit"
                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                                 >
-                                  Delete
+                                  {t("dashboard.common.delete")}
                                 </AlertDialogAction>
                               </form>
                             </AlertDialogFooter>
@@ -493,14 +495,14 @@ export function ResumesSection({
                 </div>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Delete Resume</AlertDialogTitle>
+                    <AlertDialogTitle>{t("dashboard.common.delete")} {t("dashboard.resumes.title")}</AlertDialogTitle>
                     <AlertDialogDescription>
                       Are you sure you want to delete &quot;{resume.name}&quot;?
                       This action cannot be undone.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t("dashboard.common.cancel")}</AlertDialogCancel>
                     <form
                       action={async () => {
                         await deleteResume(resume.id);
@@ -510,7 +512,7 @@ export function ResumesSection({
                         type="submit"
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
-                        Delete
+                        {t("dashboard.common.delete")}
                       </AlertDialogAction>
                     </form>
                   </AlertDialogFooter>

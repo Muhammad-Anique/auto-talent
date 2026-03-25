@@ -21,8 +21,11 @@ import {
   SortAsc,
   ArrowRight,
   DollarSign,
+  Sparkles,
+  TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/providers/locale-provider";
 
 type Job = {
   id: string;
@@ -50,6 +53,7 @@ type Job = {
 };
 
 export default function SavedJobsPage() {
+  const { t } = useLocale();
   const { setIsLoading } = useLoading();
   const [savedJobs, setSavedJobs] = useState<{ id: string; job: Job }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -159,11 +163,10 @@ export default function SavedJobsPage() {
         {/* Content */}
         <div className="space-y-2">
           <h2 className="text-2xl font-semibold text-zinc-900">
-            No saved jobs yet
+            {t("dashboard.savedJobsPage.noSavedJobs")}
           </h2>
           <p className="text-zinc-600 max-w-md">
-            Start building your job collection by saving interesting positions
-            from your search results
+            {t("dashboard.savedJobsPage.noSavedJobsDescription")}
           </p>
         </div>
 
@@ -180,7 +183,7 @@ export default function SavedJobsPage() {
           )}
         >
           <Briefcase className="w-5 h-5" />
-          Search Jobs
+          {t("dashboard.sidebar.searchJobs")}
           <ArrowRight className="w-4 h-4" />
         </Button>
       </div>
@@ -188,26 +191,41 @@ export default function SavedJobsPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 via-white to-gray-50">
-      <div className="container mx-auto p-6 space-y-8">
-        {/* Header */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-4">
-            <div
-              className={cn(
-                "p-3 rounded-xl transition-all duration-300",
-                "bg-gradient-to-br from-zinc-100/80 to-gray-100/80 border border-zinc-200/60",
-              )}
-            >
-              <Bookmark className="w-6 h-6 text-[#5b6949]" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-semibold text-zinc-900">
-                Saved Jobs
+    <div className="min-h-screen bg-[#fafaf9] relative">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e5e7db_0.5px,transparent_0.5px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
+
+      <div className="relative container max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+        {/* Hero Header */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-900 via-zinc-800 to-[#3d4832] p-8 sm:p-10">
+          {/* Grid overlay */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(91,105,73,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(91,105,73,0.07)_1px,transparent_1px)] bg-[size:32px_32px]" />
+          {/* Glow orbs */}
+          <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#5b6949]/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-[#5b6949]/10 rounded-full blur-3xl" />
+
+          <div className="relative flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#5b6949]/20 border border-[#5b6949]/30 backdrop-blur-sm">
+                <Heart className="w-3.5 h-3.5 text-[#8fa676]" />
+                <span className="text-xs font-semibold text-[#8fa676] tracking-wide uppercase">
+                  {t("dashboard.savedJobsPage.badge")}
+                </span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+                {t("dashboard.savedJobsPage.title")}
               </h1>
-              <p className="text-zinc-600 text-sm mt-1">
-                Your collection of interesting job opportunities
+              <p className="text-zinc-400 text-sm sm:text-base max-w-md leading-relaxed">
+                {t("dashboard.savedJobsPage.subtitle")}
               </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                <TrendingUp className="w-4 h-4 text-[#8fa676]" />
+                <span className="text-sm text-zinc-300 font-medium">
+                  {savedJobs.length} {savedJobs.length !== 1 ? t("dashboard.savedJobsPage.savedJobs") : t("dashboard.savedJobsPage.savedJob")}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -217,7 +235,7 @@ export default function SavedJobsPage() {
             <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-[#5b6949]/10 to-gray-500/10 border border-[#5b6949]/20">
               <div className="w-4 h-4 border-2 border-[#5b6949]/30 border-t-[#5b6949] rounded-full animate-spin"></div>
               <span className="text-zinc-700 font-medium">
-                Loading your saved jobs...
+                {t("dashboard.savedJobsPage.loadingJobs")}
               </span>
             </div>
           </div>
@@ -226,15 +244,17 @@ export default function SavedJobsPage() {
         ) : (
           <>
             {/* Search and Filters */}
-            <Card className="p-6 bg-white/80 backdrop-blur-sm border-white/40 shadow-sm">
+            <div className="relative rounded-2xl bg-white border border-zinc-200/80 shadow-sm shadow-black/[0.03] p-6 sm:p-8">
               <div className="space-y-4">
                 {/* Search Input */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
+                <div className="relative group">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 p-1 rounded-md bg-[#5b6949]/10 group-focus-within:bg-[#5b6949]/20 transition-colors">
+                    <Search className="w-3.5 h-3.5 text-[#5b6949]" />
+                  </div>
                   <Input
                     type="text"
-                    placeholder="Search job titles..."
-                    className="pl-10 h-12 text-gray-800 bg-white/80 border-zinc-200 focus:border-[#5b6949] focus:ring-[#5b6949]/20"
+                    placeholder={t("dashboard.savedJobsPage.searchPlaceholder")}
+                    className="pl-12 h-12 text-zinc-800 bg-zinc-50/50 border-zinc-200 rounded-xl focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 focus:bg-white placeholder:text-zinc-400 transition-all"
                     value={searchTitle}
                     onChange={(e) => setSearchTitle(e.target.value)}
                   />
@@ -246,15 +266,15 @@ export default function SavedJobsPage() {
                     <div className="flex items-center gap-2 mb-2">
                       <Building2 className="w-4 h-4 text-[#5b6949]" />
                       <span className="text-sm font-medium text-zinc-700">
-                        Company
+                        {t("dashboard.searchJobsPage.company")}
                       </span>
                     </div>
                     <select
-                      className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
+                      className="w-full p-3 h-12 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 transition-all duration-200"
                       value={filterCompany}
                       onChange={(e) => setFilterCompany(e.target.value)}
                     >
-                      <option value="">All Companies</option>
+                      <option value="">{t("dashboard.savedJobsPage.allCompanies")}</option>
                       {companyOptions.map((company) => (
                         <option key={company} value={company}>
                           {company}
@@ -267,15 +287,15 @@ export default function SavedJobsPage() {
                     <div className="flex items-center gap-2 mb-2">
                       <MapPin className="w-4 h-4 text-[#5b6949]" />
                       <span className="text-sm font-medium text-zinc-700">
-                        Location
+                        {t("dashboard.jobs.location")}
                       </span>
                     </div>
                     <select
-                      className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
+                      className="w-full p-3 h-12 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 transition-all duration-200"
                       value={filterLocation}
                       onChange={(e) => setFilterLocation(e.target.value)}
                     >
-                      <option value="">All Locations</option>
+                      <option value="">{t("dashboard.savedJobsPage.allLocations")}</option>
                       {locationOptions.map((loc) => (
                         <option key={loc} value={loc}>
                           {loc}
@@ -288,44 +308,46 @@ export default function SavedJobsPage() {
                     <div className="flex items-center gap-2 mb-2">
                       <SortAsc className="w-4 h-4 text-[#5b6949]" />
                       <span className="text-sm font-medium text-zinc-700">
-                        Sort By
+                        {t("dashboard.searchJobsPage.sortBy")}
                       </span>
                     </div>
                     <select
-                      className="w-full p-3 h-12 rounded-lg border border-zinc-200 bg-white/80 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/20 transition-all duration-200"
+                      className="w-full p-3 h-12 rounded-xl border border-zinc-200 bg-zinc-50/50 focus:border-[#5b6949] focus:ring-2 focus:ring-[#5b6949]/10 transition-all duration-200"
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value)}
                     >
-                      <option value="newest">Newest First</option>
-                      <option value="oldest">Oldest First</option>
-                      <option value="az">Title A–Z</option>
-                      <option value="za">Title Z–A</option>
+                      <option value="newest">{t("dashboard.savedJobsPage.newestFirst")}</option>
+                      <option value="oldest">{t("dashboard.savedJobsPage.oldestFirst")}</option>
+                      <option value="az">{t("dashboard.savedJobsPage.titleAZ")}</option>
+                      <option value="za">{t("dashboard.savedJobsPage.titleZA")}</option>
                     </select>
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
 
             {/* Results Header */}
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-zinc-900">
-                {filteredJobs.length} saved job
-                {filteredJobs.length !== 1 ? "s" : ""}
-                {(searchTitle || filterCompany || filterLocation) && (
-                  <span className="text-zinc-600 font-normal ml-2">
-                    matching your filters
-                  </span>
-                )}
-              </h2>
+              <div className="flex items-center gap-3">
+                <div className="h-6 w-1 rounded-full bg-[#5b6949]" />
+                <h2 className="text-lg font-bold text-zinc-900">
+                  {filteredJobs.length} {filteredJobs.length !== 1 ? t("dashboard.savedJobsPage.savedJobs") : t("dashboard.savedJobsPage.savedJob")}
+                  {(searchTitle || filterCompany || filterLocation) && (
+                    <span className="text-zinc-500 font-normal ml-2">
+                      {t("dashboard.savedJobsPage.matchingFilters")}
+                    </span>
+                  )}
+                </h2>
+              </div>
             </div>
 
             {/* Job Cards */}
             {filteredJobs.length > 0 ? (
-              <div className="grid gap-4">
+              <div className="grid gap-3">
                 {filteredJobs.map(({ id, job }) => (
-                  <Card
+                  <div
                     key={id}
-                    className="group relative bg-white/80 backdrop-blur-sm border-white/40 shadow-sm hover:shadow-lg transition-all duration-300 p-6"
+                    className="group relative bg-white border border-zinc-200/80 rounded-xl hover:border-[#5b6949]/30 hover:shadow-lg hover:shadow-[#5b6949]/[0.04] transition-all duration-300 p-5 sm:p-6"
                   >
                     {/* Remove Button */}
                     <button
@@ -405,7 +427,7 @@ export default function SavedJobsPage() {
                         </div>
                       </div>
                     </Link>
-                  </Card>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -413,7 +435,7 @@ export default function SavedJobsPage() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-50 border border-zinc-200">
                   <Search className="w-4 h-4 text-zinc-500" />
                   <span className="text-zinc-600 text-sm">
-                    No jobs match your current filters
+                    {t("dashboard.savedJobsPage.noJobsMatchFilters")}
                   </span>
                 </div>
               </div>

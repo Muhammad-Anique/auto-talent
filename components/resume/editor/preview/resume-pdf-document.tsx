@@ -617,22 +617,25 @@ interface ResumePDFDocumentProps {
   resume: Resume;
   variant?: "base" | "tailored";
   template?: "basic" | "modern" | "professional" | "default";
+  withWatermark?: boolean;
 }
 export const ResumePDFDocument = memo(
   function ResumePDFDocument({
     resume,
     variant = "base",
     template = "default",
+    withWatermark = false,
   }: ResumePDFDocumentProps) {
     // Currently only default template is implemented
     // Other templates can be added later
-    return <DefaultTemplate resume={resume} />;
+    return <DefaultTemplate resume={resume} withWatermark={withWatermark} />;
   },
   (prevProps, nextProps) => {
     return (
       prevProps.resume === nextProps.resume &&
       prevProps.variant === nextProps.variant &&
-      prevProps.template === nextProps.template
+      prevProps.template === nextProps.template &&
+      prevProps.withWatermark === nextProps.withWatermark
     );
   }
 );

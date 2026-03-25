@@ -1,6 +1,7 @@
-
+'use client';
 
 import { cn } from "@/lib/utils";
+import { useLocale } from "@/components/providers/locale-provider";
 
 interface MiniResumePreviewProps {
   name: string;
@@ -17,6 +18,8 @@ export function MiniResumePreview({
   createdAt,
   className
 }: MiniResumePreviewProps) {
+  const { t } = useLocale();
+  const tr = (key: string) => t(`dashboard.resumesPage.${key}`);
 
   function formatDate(dateString?: string) {
     if (!dateString) return '';
@@ -57,7 +60,7 @@ export function MiniResumePreview({
             "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium",
             `bg-${accentBg} text-${accentText}`
           )}>
-            {type === 'base' ? 'Base Resume' : 'Application Kit'}
+            {type === 'base' ? tr('baseResumeLabel') : tr('applicationKitLabel')}
           </div>
         </div>
 

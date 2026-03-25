@@ -9,6 +9,7 @@ import {
 import ChatPanel from '@/components/super-agent/chat-panel';
 import ArtifactPanel from '@/components/super-agent/artifact-panel';
 import { useSuperAgent } from '@/components/super-agent/use-super-agent';
+import { useLocale } from '@/components/providers/locale-provider';
 
 export default function AgentPage() {
   const {
@@ -158,6 +159,8 @@ function MobileTabs({
   onRequestSave: () => void;
   onRequestTranslate: (language: string) => void;
 }) {
+  const { t } = useLocale();
+  const tr = (key: string) => t(`dashboard.agentPage.${key}`);
   const [tab, setTab] = React.useState<'chat' | 'artifact'>('chat');
 
   return (
@@ -169,7 +172,7 @@ function MobileTabs({
             tab === 'chat' ? 'text-zinc-800 border-b-2 border-zinc-800' : 'text-zinc-400 hover:text-zinc-600'
           }`}
         >
-          Chat
+          {tr('chat')}
         </button>
         <button
           onClick={() => setTab('artifact')}
@@ -177,7 +180,7 @@ function MobileTabs({
             tab === 'artifact' ? 'text-zinc-800 border-b-2 border-zinc-800' : 'text-zinc-400 hover:text-zinc-600'
           }`}
         >
-          Document
+          {tr('document')}
         </button>
       </div>
       <div className="flex-1 overflow-hidden">
