@@ -62,10 +62,8 @@ export function initializeAIClient(config?: AIConfig, isPro?: boolean, useThinki
 
     // Default to OpenAI for Pro
     if (!process.env.OPENAI_API_KEY) throw new Error('OpenAI API key not found');
-    return createOpenAI({ 
+    return createOpenAI({
       apiKey: process.env.OPENAI_API_KEY,
-      compatibility: 'strict',
-    
     })('gpt-4o-mini');
   }
 

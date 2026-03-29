@@ -230,7 +230,7 @@ export function TextImportDialog({
                   variant="outline"
                   size="sm"
                   className="text-red-600 border-red-200 hover:bg-red-50/50 w-auto mx-auto text-xs h-7"
-                  onClick={() => (window.location.href = "/settings")}
+                  onClick={() => (window.location.href = "/dashboard/settings")}
                 >
                   Set API Keys in Settings
                 </Button>

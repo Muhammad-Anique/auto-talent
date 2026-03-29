@@ -12,7 +12,7 @@ export default function DashboardClientLayout({ children }: { children: ReactNod
 
   return (
     <div className="flex flex-row min-h-screen overflow-hidden" dir="ltr">
-      <div className={`overflow-hidden fixed ${isRTL ? 'right-0' : 'left-0'}`}>
+      <div className={`fixed top-0 h-screen ${isRTL ? 'right-0' : 'left-0'}`}>
         <Sidebar />
       </div>
       <main

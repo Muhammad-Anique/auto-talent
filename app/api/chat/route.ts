@@ -1,4 +1,5 @@
-import { LanguageModelV1, ToolInvocation, smoothStream, streamText } from 'ai';
+import { LanguageModelV1, smoothStream, streamText } from 'ai';
+import type { ToolInvocation } from '@ai-sdk/ui-utils';
 import { Resume, Job } from '@/lib/types';
 import { initializeAIClient, type AIConfig } from '@/utils/ai-tools';
 import { tools } from '@/lib/tools';
@@ -68,19 +69,12 @@ export async function POST(req: Request) {
       The target role is ${target_role}. The job is ${job}.
       `,
       messages,
-      maxSteps: 5,
       tools,
+      maxSteps: 5,
       experimental_transform: smoothStream(),
     });
 
-    return result.toDataStreamResponse({
-      sendUsage: false,
-      getErrorMessage: error => {
-        if (!error) return 'Unknown error occurred';
-        if (error instanceof Error) return error.message;
-        return JSON.stringify(error);
-      },
-    });
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error('Error in chat route:', error);
     return new Response(

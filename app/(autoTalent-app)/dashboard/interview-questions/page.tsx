@@ -130,6 +130,10 @@ export default function InterviewPage() {
 
       const data = await res.json();
 
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to generate interview questions");
+      }
+
       if (data.questions) {
         const {
           data: { user },
