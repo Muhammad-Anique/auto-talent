@@ -1458,11 +1458,11 @@ export function CreateBaseResumeDialog({
           errorMessage={errorMessage}
           onUpgrade={() => {
             setShowErrorDialog(false);
-            window.location.href = "/subscription";
+            window.location.href = "/dashboard/subscription";
           }}
           onSettings={() => {
             setShowErrorDialog(false);
-            window.location.href = "/settings";
+            window.location.href = "/dashboard/settings";
           }}
         />
 

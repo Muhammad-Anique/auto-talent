@@ -1,5 +1,5 @@
 import { createOpenAI } from '@ai-sdk/openai';
-import { generateText, LanguageModelV1 } from 'ai';
+import { generateText } from 'ai';
 import { createClient } from '@/utils/supabase/server';
 
 export async function POST(req: Request) {
@@ -19,10 +19,9 @@ export async function POST(req: Request) {
 
     const openai = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY!,
-      compatibility: 'strict',
     });
 
-    const model = openai('gpt-4o') as LanguageModelV1;
+    const model = openai('gpt-4o');
 
     const { text } = await generateText({
       model,

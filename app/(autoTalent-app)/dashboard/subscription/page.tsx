@@ -310,7 +310,7 @@ export default function SubscriptionPage() {
                 {/* CTA */}
                 <Button
                   onClick={() => plan.priceId && handleCheckout(plan.priceId)}
-                  disabled={plan.disabled || loading === plan.priceId}
+                  disabled={plan.disabled || (plan.priceId !== null && loading === plan.priceId)}
                   className={cn(
                     "w-full h-12 rounded-xl font-semibold text-sm transition-all duration-200",
                     plan.current
@@ -322,7 +322,7 @@ export default function SubscriptionPage() {
                       : "bg-zinc-900 text-white hover:bg-zinc-800 shadow-md hover:shadow-lg"
                   )}
                 >
-                  {loading === plan.priceId ? (
+                  {plan.priceId !== null && loading === plan.priceId ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       {t("processing")}

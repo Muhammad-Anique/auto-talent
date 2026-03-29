@@ -181,7 +181,7 @@ export default function Header() {
                 Log in
               </Link>
               <Link
-                href="/signup"
+                href="/signin"
                 className="px-4 sm:px-6 py-1.5 sm:py-2 bg-[#5b6949] rounded-lg text-white text-xs sm:text-sm font-medium hover:bg-[#5b6949]/90 transition-colors"
               >
                 Start now

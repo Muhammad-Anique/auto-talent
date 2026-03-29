@@ -93,7 +93,9 @@ const CoverLettersPage = () => {
 
       const result = await response.json();
 
-      console.log("API Response:", result);
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to generate email");
+      }
 
       const { subject, content } = result;
       const { error: insertError } = await supabase.from("email_hr").insert({

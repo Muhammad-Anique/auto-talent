@@ -119,7 +119,7 @@ export default function Sidebar() {
           <BrainCircuitIcon className="text-[#ffffff] size-6" />
         </span>
       </div>
-      <nav className="flex-1 gap-1 flex flex-col">
+      <nav className="flex-1 gap-1 flex flex-col overflow-y-auto min-h-0">
         <ul className="flex flex-col gap-2">
           {links.map((link) => (
             <li key={link.href}>

@@ -1,4 +1,4 @@
-import { CoreMessage, LanguageModelV1, smoothStream, streamText, generateObject, tool as createTool } from 'ai';
+import { CoreMessage, smoothStream, streamText, generateObject, tool as createTool, LanguageModelV1 } from 'ai';
 import { z } from 'zod';
 import { createOpenAI } from '@ai-sdk/openai';
 import { createClient } from '@/utils/supabase/server';
@@ -301,8 +301,7 @@ function buildTools(supabase: SupabaseClient, userId: string) {
         try {
           const openaiClient = createOpenAI({
             apiKey: process.env.OPENAI_API_KEY!,
-            compatibility: 'strict',
-          });
+                      });
           const extractionModel = openaiClient('gpt-4o') as LanguageModelV1;
 
           const { object } = await generateObject({
@@ -645,8 +644,7 @@ export async function POST(req: Request) {
     // Initialize OpenAI
     const openai = createOpenAI({
       apiKey: process.env.OPENAI_API_KEY!,
-      compatibility: 'strict',
-    });
+          });
 
     const model = openai('gpt-4o') as LanguageModelV1;
 
