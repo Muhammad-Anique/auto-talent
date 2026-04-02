@@ -17,9 +17,9 @@ interface PricingConfig {
 }
 
 const PRICING: Record<string, PricingConfig> = {
-  SEK: { currency: "SEK", symbol: "kr", symbolAfter: true, starter: 99, pro: 199, lifetime: 1499 },
-  EUR: { currency: "EUR", symbol: "€", symbolAfter: false, starter: 9, pro: 19, lifetime: 149 },
-  USD: { currency: "USD", symbol: "$", symbolAfter: false, starter: 9, pro: 19, lifetime: 149 },
+  SEK: { currency: "SEK", symbol: "kr", symbolAfter: true, starter: 0, pro: 199, lifetime: 1499 },
+  EUR: { currency: "EUR", symbol: "€", symbolAfter: false, starter: 0, pro: 19, lifetime: 149 },
+  USD: { currency: "USD", symbol: "$", symbolAfter: false, starter: 0, pro: 19, lifetime: 149 },
 };
 
 export async function GET(req: NextRequest) {

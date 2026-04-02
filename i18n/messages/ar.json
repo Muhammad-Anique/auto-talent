@@ -159,8 +159,8 @@
     "getStarted": "ابدأ الآن",
     "tiers": {
       "small": {
-        "name": "مبتدئ",
-        "price": "$9",
+        "name": "مجاني",
+        "price": "$0",
         "description": "رائع للبدء في البحث عن وظيفة",
         "features": [
           "5 تحميلات سيرة ذاتية/شهرياً",
@@ -537,7 +537,6 @@
       "backToDashboard": "العودة للوحة التحكم",
       "currentPlan": "الخطة الحالية",
       "free": "مجاني",
-      "starter": "المبتدئ",
       "pro": "الاحترافي",
       "lifetime": "مدى الحياة",
       "upgradePlan": "ترقية الخطة",
@@ -656,7 +655,7 @@
       "limitReached": "تم بلوغ الحد",
       "upgradeForMore": "ترقية للمزيد",
       "needMoreCredits": "هل تحتاج المزيد من الرصيد؟",
-      "upgradeDescription": "قم بالترقية إلى Starter للحصول على المزيد من الرصيد الشهري، أو اختر Pro للوصول غير المحدود لكل شيء.",
+      "upgradeDescription": "قم بالترقية إلى Pro للوصول غير المحدود لكل شيء.",
       "viewPlans": "عرض الخطط",
       "usageHistory": "سجل الاستخدام",
       "noUsageHistory": "لا يوجد سجل استخدام بعد",

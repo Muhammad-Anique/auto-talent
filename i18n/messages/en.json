@@ -159,8 +159,8 @@
     "getStarted": "Get Started",
     "tiers": {
       "small": {
-        "name": "Starter",
-        "price": "$9",
+        "name": "Free",
+        "price": "$0",
         "description": "Great for getting started with your job search",
         "features": [
           "5 CV downloads/month",
@@ -537,7 +537,6 @@
       "backToDashboard": "Back to Dashboard",
       "currentPlan": "Current Plan",
       "free": "Free",
-      "starter": "Starter",
       "pro": "Pro",
       "lifetime": "Lifetime",
       "upgradePlan": "Upgrade Plan",
@@ -656,7 +655,7 @@
       "limitReached": "Limit reached",
       "upgradeForMore": "Upgrade for more",
       "needMoreCredits": "Need more credits?",
-      "upgradeDescription": "Upgrade to Starter for more monthly credits, or go Pro for unlimited access to everything.",
+      "upgradeDescription": "Upgrade to Pro for unlimited access to everything.",
       "viewPlans": "View Plans",
       "usageHistory": "Usage History",
       "noUsageHistory": "No usage history yet",
