@@ -159,8 +159,8 @@
     "getStarted": "Kom igång",
     "tiers": {
       "small": {
-        "name": "Starter",
-        "price": "$9",
+        "name": "Gratis",
+        "price": "0 kr",
         "description": "Perfekt för att komma igång med jobbsökning",
         "features": [
           "5 CV-nedladdningar/månad",
@@ -537,7 +537,6 @@
       "backToDashboard": "Tillbaka till kontrollpanelen",
       "currentPlan": "Nuvarande plan",
       "free": "Gratis",
-      "starter": "Starter",
       "pro": "Pro",
       "lifetime": "Livstid",
       "upgradePlan": "Uppgradera plan",
@@ -656,7 +655,7 @@
       "limitReached": "Gräns nådd",
       "upgradeForMore": "Uppgradera för mer",
       "needMoreCredits": "Behöver du fler krediter?",
-      "upgradeDescription": "Uppgradera till Starter för fler månatliga krediter, eller välj Pro för obegränsad åtkomst till allt.",
+      "upgradeDescription": "Uppgradera till Pro för obegränsad åtkomst till allt.",
       "viewPlans": "Visa planer",
       "usageHistory": "Användningshistorik",
       "noUsageHistory": "Ingen användningshistorik ännu",
