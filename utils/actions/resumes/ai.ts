@@ -6,7 +6,7 @@ import {
   textImportSchema,
   workExperienceBulletPointsSchema,
 } from "@/lib/zod-schemas";
-import { generateObject } from "ai";
+import { generateObject, LanguageModelV1 } from "ai";
 import { z } from "zod";
 import { initializeAIClient, type AIConfig } from "@/utils/ai-tools";
 import {
@@ -45,7 +45,7 @@ export async function convertTextToResume(
     : initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
     schema: z.object({
       content: textImportSchema,
     }),
@@ -134,7 +134,7 @@ export async function generateWorkExperiencePoints(
     : initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
     schema: z.object({
       content: workExperienceBulletPointsSchema,
     }),
@@ -172,7 +172,7 @@ export async function improveWorkExperience(
     : initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
 
     schema: z.object({
       content: z.string().describe("The improved work experience bullet point"),
@@ -207,7 +207,7 @@ export async function improveProject(
     : initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
     schema: z.object({
       content: z.string().describe("The improved project bullet point"),
     }),
@@ -244,7 +244,7 @@ export async function generateProjectPoints(
     : initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
     schema: z.object({
       content: projectAnalysisSchema,
     }),
@@ -265,7 +265,7 @@ export async function processTextImport(text: string, config?: AIConfig) {
   const aiClient = initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
     schema: z.object({
       content: textImportSchema,
     }),
@@ -288,7 +288,7 @@ export async function modifyWorkExperience(
     : initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
     schema: z.object({
       content: workExperienceItemsSchema,
     }),
@@ -318,7 +318,7 @@ export async function addTextToResume(
     : initializeAIClient(config);
 
   const { object } = await generateObject({
-    model: aiClient,
+    model: aiClient as LanguageModelV1,
     schema: z.object({
       content: textImportSchema,
     }),
