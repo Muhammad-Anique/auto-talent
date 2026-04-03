@@ -18,6 +18,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Normalize the LinkedIn URL - remove tracking parameters and ensure clean format
+    let normalizedUrl = profileUrl;
+    try {
+      const url = new URL(profileUrl);
+      // Extract just the pathname (e.g., /in/username or /in/username-12345678)
+      const pathMatch = url.pathname.match(/^\/in\/[^\/]+/);
+      if (pathMatch) {
+        normalizedUrl = `https://www.linkedin.com${pathMatch[0]}`;
+      }
+      console.log("🔗 Normalized Profile URL:", normalizedUrl);
+    } catch (e) {
+      console.log("⚠️ Could not parse URL, using original:", profileUrl);
+    }
+
     const APIFY_API_TOKEN = process.env.APIFY_API_TOKEN;
     const ACTOR_ID = "dev_fusion~linkedin-profile-scraper";
 
@@ -34,7 +48,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          profileUrls: [profileUrl],
+          profileUrls: [normalizedUrl],
         }),
       }
     );
