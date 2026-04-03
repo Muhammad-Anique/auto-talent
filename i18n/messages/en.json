@@ -163,10 +163,10 @@
         "price": "$0",
         "description": "Great for getting started with your job search",
         "features": [
-          "5 CV downloads/month",
-          "5 cover letters/month",
-          "50 job applications/month",
-          "50 agent messages/month"
+          "1 CV download",
+          "1 cover letter",
+          "10 job applications",
+          "10 agent messages"
         ]
       },
       "starter": {
