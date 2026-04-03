@@ -131,7 +131,11 @@ function SignInForm() {
     });
 
     if (signUpError) {
-      setError(signUpError.message);
+      if (signUpError.message.toLowerCase().includes('rate limit')) {
+        setError("Too many sign-up attempts. Please wait a few minutes and try again, or sign in with Google.");
+      } else {
+        setError(signUpError.message);
+      }
       setLoading(false);
     } else {
       setSuccess(true);
