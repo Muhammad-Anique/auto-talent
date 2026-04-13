@@ -13,7 +13,7 @@ function SignInForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [signInMode, setSignInMode] = useState<"password" | "magic">("password");
+  const [signInMode] = useState<"password" | "magic">("password");
 
   const plan = searchParams.get("plan");
   const postAuthPath = plan ? "/dashboard/subscription" : "/dashboard";
@@ -125,31 +125,6 @@ function SignInForm() {
           Enter your email and password to get started
         </p>
 
-        {/* Toggle between Password and Magic Link */}
-        <div className="flex gap-2 mb-4 w-full">
-          <button
-            type="button"
-            onClick={() => setSignInMode("password")}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
-              signInMode === "password"
-                ? "bg-gray-200 text-gray-900"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            Password
-          </button>
-          <button
-            type="button"
-            onClick={() => setSignInMode("magic")}
-            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition ${
-              signInMode === "magic"
-                ? "bg-gray-200 text-gray-900"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            Magic Link
-          </button>
-        </div>
 
         <form
           onSubmit={
